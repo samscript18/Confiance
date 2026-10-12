@@ -2,6 +2,7 @@ import { encodeAbiParameters, keccak256, parseAbi, type Address } from "viem";
 /** ABI copied from the official ERC-8004 IdentityRegistryUpgradeable source; check live version before writes. */
 export const identityAbi = parseAbi([
   "function getVersion() pure returns (string)",
+  "function balanceOf(address owner) view returns (uint256)",
   "function register(string agentURI) returns (uint256 agentId)",
   "function ownerOf(uint256 agentId) view returns (address)",
   "function getAgentWallet(uint256 agentId) view returns (address)",

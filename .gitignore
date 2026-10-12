@@ -16,11 +16,15 @@ deployments/monad.json
 proofs/
 deployments/agent-wallet.json
 deployments/identity.json
+deployments/pending-deployment.json
+credentials/
+*.service-account.json
 indexer/config.yaml
 indexer/abis/
 indexer/.envio/
 indexer/persisted_state/
 cre/workflows/milestone/config.json
 cre/workflows/milestone/dist/
+cre/workflows/milestone/binary.wasm.br.b64
 test-results/
 playwright-report/

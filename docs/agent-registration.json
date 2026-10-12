@@ -1,7 +1,7 @@
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "Payroll Agent",
-  "description": "Confiance Payroll Agent on Monad Testnet. Intended to pay the approved contractor through onchain session authorization after an authorized milestone report. Deployment and session setup are pending.",
+  "description": "Confiance Payroll Agent on Monad Testnet. Confiance is deployed; owner session authorization and live payroll verification are pending.",
   "services": [
     {
       "name": "agentWallet",
@@ -10,5 +10,10 @@
   ],
   "active": false,
   "x402Support": false,
-  "registrations": []
+  "registrations": [
+    {
+      "agentId": 2210,
+      "agentRegistry": "eip155:10143:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+    }
+  ]
 }

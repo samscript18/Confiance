@@ -116,8 +116,8 @@ export async function runAttack(
     if (
       receipt.status !== "reverted" ||
       receipt.logs.length !== 0 ||
-      tx.from !== signer.address ||
-      tx.to !== account ||
+      tx.from.toLowerCase() !== signer.address.toLowerCase() ||
+      tx.to?.toLowerCase() !== account.toLowerCase() ||
       tx.input !== data
     )
       throw new Error(
