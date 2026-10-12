@@ -3,7 +3,7 @@ const { loadEnvConfig } = nextEnv;
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 loadEnvConfig(root);
-process.env.CONFIANCE_PROJECT_ROOT = root;
+process.env.CONFIANCE_PROJECT_ROOT ||= root;
 export default {
   devIndicators: false,
   outputFileTracingRoot: root,

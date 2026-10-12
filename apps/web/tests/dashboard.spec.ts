@@ -31,7 +31,7 @@ test("mutation endpoints reject unauthenticated and foreign-origin calls", async
   request,
 }) => {
   const missing = await request.post("/api/agent?action=run", {
-    headers: { Origin: "http://localhost:3000" },
+    headers: { Origin: "http://localhost:3021" },
   });
   expect(missing.status()).toBe(409);
   const foreign = await request.post("/api/auth?action=challenge", {
@@ -39,7 +39,7 @@ test("mutation endpoints reject unauthenticated and foreign-origin calls", async
   });
   expect(foreign.status()).toBe(401);
   const fake = await request.post("/api/auth", {
-    headers: { Origin: "http://localhost:3000" },
+    headers: { Origin: "http://localhost:3021" },
     data: {
       id: "invented",
       owner: "0x1111111111111111111111111111111111111111",
@@ -84,7 +84,7 @@ test("owner authentication verifies a Mera signature and consumes the challenge"
   try {
     const account = toViemAccount(session);
     const response = await request.post("/api/auth?action=challenge", {
-      headers: { Origin: "http://localhost:3000" },
+      headers: { Origin: "http://localhost:3021" },
     });
     expect(response.status()).toBe(200);
     const challenge = (await response.json()) as {
@@ -94,14 +94,14 @@ test("owner authentication verifies a Mera signature and consumes the challenge"
     const signature = await account.signMessage({ message: challenge.message });
     const data = { id: challenge.id, owner: account.address, signature };
     const login = await request.post("/api/auth", {
-      headers: { Origin: "http://localhost:3000" },
+      headers: { Origin: "http://localhost:3021" },
       data,
     });
     expect(login.status()).toBe(200);
     expect(login.headers()["set-cookie"]).toContain("HttpOnly");
     expect(login.headers()["set-cookie"]).toContain("SameSite=strict");
     const replay = await request.post("/api/auth", {
-      headers: { Origin: "http://localhost:3000" },
+      headers: { Origin: "http://localhost:3021" },
       data,
     });
     expect(replay.status()).toBe(401);

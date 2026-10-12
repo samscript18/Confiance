@@ -39,7 +39,7 @@ const events = confianceAbi
   .join("\n");
 await writeFile(
   "indexer/config.yaml",
-  `name: confiance\ndescription: Confiance activity on Monad Testnet\nhandlers: ./src/handlers\ncontracts:\n  - name: Confiance\n    abi_file_path: ./abis/Confiance.json\n    events:\n${events}\nfield_selection:\n  transaction_fields:\n    - hash\nchains:\n  - id: 10143\n    start_block: ${receipt.blockNumber}\n    block_lag: 2\n    rpc: \"\u0024{ENVIO_MONAD_RPC_URL}\"\n    contracts:\n      - name: Confiance\n        address: \"${record.contract}\"\n`,
+  `name: confiance\ndescription: Confiance activity on Monad Testnet\nhandlers: ./src/handlers\ncontracts:\n  - name: Confiance\n    abi_file_path: ./abis/Confiance.json\n    events:\n${events}\nfield_selection:\n  transaction_fields:\n    - hash\nchains:\n  - id: 10143\n    start_block: ${receipt.blockNumber}\n    block_lag: 2\n    rpc:\n      url: \"\u0024{ENVIO_MONAD_RPC_URL}\"\n      for: sync\n      initial_block_interval: 100\n      interval_ceiling: 100\n    contracts:\n      - name: Confiance\n        address: \"${record.contract}\"\n`,
 );
 console.log(
   "Indexer configuration derived from a live deployment receipt. Run Envio codegen, then start the indexer.",
