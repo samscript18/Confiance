@@ -1,0 +1,7 @@
+staging-settings:
+  user-workflow:
+    workflow-name: confiance-github-milestone
+  workflow-artifacts:
+    workflow-path: ./workflow.ts
+    config-path: ./config.json
+    secrets-path: ""

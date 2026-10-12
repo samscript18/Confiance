@@ -1,0 +1,27 @@
+# Type generation only. This chain is skipped and has no deployment addresses.
+# Never use this configuration to claim indexed Monad activity.
+name: confiance
+description: Confiance event type generation
+handlers: ./src/handlers
+contracts:
+  - name: Confiance
+    abi_file_path: ./abis/Confiance.json
+    events:
+      - event: AgentRegistered
+      - event: SessionCreated
+      - event: PolicyUpdated
+      - event: SessionRevoked
+      - event: PaymentRequested
+      - event: PaymentExecuted
+      - event: ConditionVerified
+      - event: ReporterConfigured
+field_selection:
+  transaction_fields:
+    - hash
+chains:
+  - id: 10143
+    skip: true
+    start_block: 0
+    contracts:
+      - name: Confiance
+        address: []

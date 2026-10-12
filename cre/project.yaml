@@ -1,0 +1,4 @@
+staging-settings:
+  rpcs:
+    - chain-name: monad-testnet
+      url: ${MONAD_RPC_URL}

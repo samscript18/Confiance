@@ -1,0 +1,15 @@
+type Activity {
+  id: ID!
+  chainId: Int!
+  account: String! @index
+  kind: String!
+  hash: String!
+  block: BigInt! @index
+  timestamp: BigInt!
+  agent: String
+  recipient: String
+  asset: String
+  amount: BigInt
+  generation: BigInt
+  condition: String
+}
