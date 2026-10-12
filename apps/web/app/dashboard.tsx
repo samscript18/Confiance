@@ -811,11 +811,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 Sign out
               </ActionButton>
             ) : remoteOwnerConsole ? (
-              <a
-                className="action-button"
-                href={`${state.ownerConsoleUrl}/app/account`}
-              >
-                Open owner console
+              <a className="action-button" href="/owner-setup">
+                Set up live owner
               </a>
             ) : (
               <ActionButton
@@ -895,11 +892,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               after you sign in with your owner passkey.
             </p>
             {remoteOwnerConsole ? (
-              <a
-                className="action-button primary"
-                href={`${state.ownerConsoleUrl}/app/account`}
-              >
-                Open owner console ↗
+              <a className="action-button primary" href="/owner-setup">
+                Set up live owner ↗
               </a>
             ) : (
               <ActionButton
@@ -1326,7 +1320,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                         <h2>Your account, your authority.</h2>
                         <p>
                           {remoteOwnerConsole
-                            ? "Owner controls use your localhost passkey for this preview. Open the owner console to fund the account, change permissions or revoke the agent."
+                            ? "Create your owner passkey on this website to manage the hosted account. Your previous account and proofs stay preserved."
                             : owner
                               ? "You are signed in with your owner passkey. You can manage the account and the agent’s authority."
                               : hasPasskey || state.account
@@ -1336,9 +1330,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                         {remoteOwnerConsole ? (
                           <a
                             className="action-button primary"
-                            href={`${state.ownerConsoleUrl}/app/account`}
+                            href="/owner-setup"
                           >
-                            Open owner console
+                            Set up live owner
                           </a>
                         ) : owner ? (
                           <p className="setup-status">✓ Owner signed in</p>

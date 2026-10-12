@@ -2957,3 +2957,24 @@ footer a {
     width: 100%;
   }
 }
+.owner-setup-page {
+  width: min(880px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 32px 0 80px;
+}
+.owner-setup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 72px;
+}
+.owner-setup-page > .panel {
+  margin-top: 32px;
+}
+.owner-setup-address {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 24px;
+}
