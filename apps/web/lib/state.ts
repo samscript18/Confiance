@@ -7,6 +7,7 @@ export interface DashboardState {
   account?: `0x${string}`;
   agent?: `0x${string}`;
   asset?: `0x${string}`;
+  taskAsset?: `0x${string}`;
   recipient?: `0x${string}`;
   registry?: `0x${string}`;
   identity?: { id: string; owner: string; wallet: string; uri: string };

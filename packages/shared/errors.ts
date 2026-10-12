@@ -15,6 +15,12 @@ export const messages: Readonly<Record<string, string>> = {
     "The policy changed. Read the current session before retrying.",
   AGENT_NOT_REGISTERED: "This signer is not a registered agent.",
   SESSION_NOT_CREATED: "The owner has not created this agent’s session.",
+  SESSION_ALREADY_ACTIVE:
+    "This agent already has an active session. Revoke it before creating a session for a different token, or update its existing policy using the same token.",
+  INVALID_POLICY:
+    "This policy is invalid. An existing session cannot change tokens or reduce its budget below the amount already spent. Revoke and create a new session to change tokens.",
+  OWNER_ONLY: "Only the Confiance owner can approve this action.",
+  AGENT_ALREADY_REGISTERED: "This agent is already registered with Confiance.",
 };
 export function contractError(error: unknown): {
   code: string;

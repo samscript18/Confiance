@@ -28,7 +28,7 @@ import { identityCommitment } from "../../../packages/shared/identity";
 import { validGithubRepo } from "../../../packages/shared/github";
 import { parseReporterSettings } from "../../../packages/shared/reporter";
 import { parseExactAmount } from "../../../agent/tools/amount";
-import { contractError } from "../../../packages/shared/errors";
+import { contractError, messages } from "../../../packages/shared/errors";
 import {
   connectOwner,
   disconnectOwner,
@@ -119,8 +119,10 @@ export default function Dashboard() {
   }, [refresh]);
   useEffect(() => {
     if (state.account) setAccount(state.account);
-    if (state.asset) setAsset(state.asset);
-    if (state.recipient) setRecipient(state.recipient);
+    if (state.taskAsset || state.asset)
+      setAsset((current) => current || state.taskAsset || state.asset || "");
+    if (state.recipient)
+      setRecipient((current) => current || state.recipient || "");
     if (state.agent) setAgent(state.agent);
     if (state.github) {
       setRepo(state.github.repo);
@@ -266,6 +268,32 @@ export default function Dashboard() {
     if (!validGithubRepo(repo) || !/^\d+$/.test(pr) || Number(pr) <= 0)
       throw new Error("Configure a real GitHub repository and pull request.");
     const { client } = clients();
+    const [currentSession, currentBlock] = await Promise.all([
+      client.readContract({
+        address: account,
+        abi: confianceAbi,
+        functionName: "getSession",
+        args: [agent],
+      }),
+      client.getBlock(),
+    ]);
+    if (
+      !update &&
+      currentSession.active &&
+      currentSession.policy.expiry > currentBlock.timestamp
+    )
+      throw new Error(messages.SESSION_ALREADY_ACTIVE);
+    if (update && (!currentSession.exists || !currentSession.active))
+      throw new Error(
+        "There is no active session to update. Create a new session instead.",
+      );
+    if (
+      update &&
+      currentSession.policy.allowedAsset.toLowerCase() !== asset.toLowerCase()
+    )
+      throw new Error(
+        "An existing session cannot change tokens. Revoke the session, then authorize a new one with the funded token.",
+      );
     const decimals = await client.readContract({
       address: asset,
       abi: erc20Abi,
@@ -1030,7 +1058,12 @@ export default function Dashboard() {
             <div className="button-row">
               <button
                 className="primary"
-                disabled={disabled || !owner || !commitment}
+                disabled={
+                  disabled ||
+                  !owner ||
+                  !commitment ||
+                  Boolean(session?.active && !session.expired)
+                }
                 onClick={() =>
                   void act("Authorizing session", () => authorize())
                 }
@@ -1046,6 +1079,13 @@ export default function Dashboard() {
                 Update policy
               </button>
             </div>
+            {session?.active && !session.expired && (
+              <p className="footnote">
+                A session is already active. To use a different token, revoke
+                the session in Overview, then return here and authorize a new
+                session. Update policy keeps the current token and spending.
+              </p>
+            )}
             <label>
               Fund treasury · token units
               <input

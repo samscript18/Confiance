@@ -10,6 +10,7 @@ import { toViemAccount } from "@category-labs/mera/viem";
 import { HDKey } from "@scure/bip32";
 import { entropyToMnemonic, mnemonicToSeedSync } from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english.js";
+import { BaseError } from "viem";
 
 let session: Secp256k1SigningSession | undefined;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -84,6 +85,8 @@ export async function connectOwner(create: boolean) {
   }
 }
 export function ownerError(error: unknown): string {
+  if (error instanceof BaseError)
+    return "The transaction could not be prepared. Check the current session policy, Monad Testnet connection, and wallet funding.";
   if (isMeraError(error)) {
     if (error.code === "PRF_UNAVAILABLE")
       return "This authenticator does not return PRF. Use a supported iCloud Keychain, 1Password, or Google Password Manager passkey. Chrome local-profile passkeys may fail.";

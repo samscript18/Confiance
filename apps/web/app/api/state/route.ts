@@ -82,7 +82,10 @@ export async function GET() {
     if (env.AGENT_ADDRESS) state.agent = address(env, "AGENT_ADDRESS");
     if (env.PRIVY_APP_ID && env.PRIVY_APP_SECRET && env.PRIVY_AGENT_WALLET_ID)
       state.agent = (await connectPrivy(env)).address;
-    if (env.PAYMENT_ASSET) state.asset = address(env, "PAYMENT_ASSET");
+    if (env.PAYMENT_ASSET) {
+      state.asset = address(env, "PAYMENT_ASSET");
+      state.taskAsset = state.asset;
+    }
     if (env.PAYMENT_RECIPIENT)
       state.recipient = address(env, "PAYMENT_RECIPIENT");
     if (env.ERC8004_IDENTITY_REGISTRY)
