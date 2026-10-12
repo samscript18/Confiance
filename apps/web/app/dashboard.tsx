@@ -426,7 +426,17 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
           },
     );
   }
-  async function saveTask(receiptHash = taskPolicyHash) {
+  const indexedPolicyHash = state.events.find(
+    (event) =>
+      ["SessionCreated", "PolicyUpdated"].includes(event.kind) &&
+      (!event.agent || event.agent.toLowerCase() === agent?.toLowerCase()),
+  )?.hash;
+  const approvedPolicyHash =
+    taskPolicyHash ||
+    (indexedPolicyHash && isHex(indexedPolicyHash)
+      ? indexedPolicyHash
+      : undefined);
+  async function saveTask(receiptHash = approvedPolicyHash) {
     if (!receiptHash) throw new Error("Approve the task policy first.");
     await api("/api/task", {
       action: "save",
@@ -1441,7 +1451,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                       inputMode="decimal"
                     />
                   </label>
-                  {taskPolicyHash && (
+                  {approvedPolicyHash && (
                     <ActionButton
                       pending={busy === "Saving payroll task"}
                       pendingLabel="Saving task…"

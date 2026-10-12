@@ -35,3 +35,4 @@ deployments/worker-status.json
 deployments/payroll-lease.json
 deployments/cleanverse-registration.json
 deployments/hosting.json
+.vercel/

@@ -1,5 +1,6 @@
 {
   "framework": "nextjs",
+  "installCommand": "cd ../.. && npm ci --include=dev",
   "buildCommand": "cd ../.. && npm run build",
   "functions": {
     "app/api/agent/route.ts": { "maxDuration": 300 },

@@ -32,9 +32,11 @@ export function parseConfig(value: unknown): Config {
   if (
     data.tasksUrl !== undefined &&
     (typeof data.tasksUrl !== "string" ||
-      new URL(data.tasksUrl).protocol !== "https:" ||
-      new URL(data.tasksUrl).username ||
-      new URL(data.tasksUrl).password)
+      // The CRE WASM runtime cannot construct Node's URL class.
+      // Require HTTPS, a DNS hostname and no embedded credentials or fragment.
+      !/^https:\/\/[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?(?::[0-9]{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?$/i.test(
+        data.tasksUrl,
+      ))
   )
     throw new Error("Task discovery requires public HTTPS.");
   return {

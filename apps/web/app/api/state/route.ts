@@ -417,10 +417,10 @@ export async function GET(request: Request) {
       const head = await client.getBlockNumber();
       // Bounded recent view; complete history is supplied by Envio.
       const from =
-        BigInt(env.CONFIANCE_DEPLOYMENT_BLOCK) > head - 2000n
+        BigInt(env.CONFIANCE_DEPLOYMENT_BLOCK) > head - 99n
           ? BigInt(env.CONFIANCE_DEPLOYMENT_BLOCK)
-          : head > 2000n
-            ? head - 2000n
+          : head > 99n
+            ? head - 99n
             : 0n;
       const logs = await client.getContractEvents({
         address: state.account,
@@ -436,6 +436,9 @@ export async function GET(request: Request) {
           kind: log.eventName || "Contract event",
           hash: log.transactionHash,
           block: log.blockNumber.toString(),
+          ...("agent" in log.args && typeof log.args.agent === "string"
+            ? { agent: log.args.agent }
+            : {}),
           ...("amount" in log.args && typeof log.args.amount === "bigint"
             ? { amount: log.args.amount.toString() }
             : {}),

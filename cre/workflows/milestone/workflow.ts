@@ -28,6 +28,7 @@ import {
   type Config,
   type MergeEvidence,
 } from "./config.js";
+import { validGithubRepo } from "../../../packages/shared/github.js";
 
 // Published SDK selector is routing metadata; tenant write support must still be confirmed.
 const selector =
@@ -90,7 +91,7 @@ function fetchTasks(runtime: NodeRuntime<Config>): Task[] {
       typeof t.agent !== "string" ||
       !isAddress(t.agent) ||
       typeof t.repo !== "string" ||
-      !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(t.repo) ||
+      !validGithubRepo(t.repo) ||
       typeof t.pr !== "number" ||
       !Number.isSafeInteger(t.pr) ||
       t.pr <= 0 ||

@@ -2,8 +2,8 @@ services:
   - type: web
     name: confiance-backend
     runtime: node
-    plan: 1c-2g
-    buildCommand: npm ci && npm run build
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm run backend:start
     healthCheckPath: /api/health
     envVars:

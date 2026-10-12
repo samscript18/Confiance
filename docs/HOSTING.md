@@ -23,8 +23,9 @@ No end-user terminal command or environment edit is needed for a new payroll tas
 
 ## Render backend
 
-Import root `render.yaml` as a Blueprint. The service uses a paid always-on plan;
-review its cost before creating it. `npm run backend:start` supervises Next's API
+Import root `render.yaml` as a Blueprint. The preview uses the free plan and can
+sleep; continuous observation requires upgrading to an always-on paid plan.
+`npm run backend:start` supervises Next's API
 server and the polling worker; if either exits, the service exits for restart.
 MongoDB removes the need for a persistent Render disk. Never scale this deployment
 without preserving its namespace and testing recovery. MongoDB execution leases
@@ -84,3 +85,13 @@ for the local two-server proxy/authentication/restart test. These tests cannot m
 a real payment. Run unit, contract and browser tests separately. Hosted URLs and
 task-discovery CRE delivery still require a live deployment rehearsal; compilation
 and a local proxy test do not constitute that proof.
+
+## Current hosting rollout
+
+Vercel project: `confiance`, public domain `https://confiance-eta.vercel.app`.
+Render service: `confiance-backend`, URL `https://confiance-backend.onrender.com`.
+These are provisioned resources; check their actual deployment health before use.
+Vercel Git linking was rejected because its account has no GitHub Login Connection.
+The initial frontend uses a direct source upload. Connect GitHub in Vercel Settings
+to enable future automatic Git deployments. Render uses the `dev` branch, with
+automatic deploys disabled while the rollout is being checked.
