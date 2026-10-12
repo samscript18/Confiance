@@ -22,6 +22,11 @@ in ../docs/INTEGRATIONS.md. See ../docs/SETUP.md for the complete run procedure.
 
 ## Envio Cloud
 
+The `confiance` indexer has been created under `samscript18`, with automatic
+deployments disabled during verification. Its public Monad RPC is configured.
+The Development tier is free and limited to a maximum 30-day deployment lifetime;
+see the current official pricing/billing documentation before production use.
+
 Deploy branch `dev`, indexer directory `indexer`, config file `config.cloud.yaml`,
 development tier and public GraphQL access. Set `ENVIO_MONAD_RPC_URL` to the actual
 Monad testnet RPC. The cloud config and committed ABI derive from the verified
