@@ -495,7 +495,12 @@ export default function Dashboard() {
       Number(pr) > 0,
   );
   let policyChanged = true;
-  if (session && policyReady && state.decimals !== undefined) {
+  if (
+    session &&
+    policyReady &&
+    state.decimals !== undefined &&
+    asset.toLowerCase() === state.asset?.toLowerCase()
+  ) {
     try {
       policyChanged =
         asset.toLowerCase() !== state.asset?.toLowerCase() ||
