@@ -1,26 +1,46 @@
 {
   "registry": "private",
   "name": "confiance-github-milestone",
-  "workflowId": "0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74",
+  "workflowId": "0x002de83854f367d591931bbd62aa30913140bd61330b59fe5df3c67a18b580f3",
   "workflowOwner": "0x1db255D03A90f194483fEc22A9a32965e98a521E",
   "status": "Active",
   "receiver": "0x952bbdDeCE639f678733F310890d15E28b213489",
   "chainId": 10143,
   "forwarder": "0xF8344CFd5c43616a4366C34E3EEE75af79a74482",
-  "binaryHash": "4b481bb32da99b49c20952259981ac9805505ed5c64430b51170edb9372fd13d",
+  "binaryHash": "56d8fe59f384cad44e4cfcb9e7bd1cf3494369e2dd12ac3c4a5bf662d975bbf5",
   "configHash": "94ca7c126b4bad464e63ef6e29e5df0d571a5667025af80975518fa6516ca56b",
-  "evidence": "Authenticated CRE CLI deployment response. Receiver has not authorized reporter; no onchain report/payment proof.",
+  "evidence": "Owner approved the updated reporter; Monad receipt and ConditionVerified event independently verified.",
   "initialExecutionFailure": {
     "executionId": "24ccb50274b0ba427be6d594678eafcc6b1b34a381f9bc83d641c3f7fcb50e57",
     "reason": "DON HTTP capability rejected the custom User-Agent header; removed and workflow updated."
   },
+  "previousDeployment": {
+    "workflowId": "0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74",
+    "binaryHash": "4b481bb32da99b49c20952259981ac9805505ed5c64430b51170edb9372fd13d",
+    "executionProof": {
+      "executionId": "50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11",
+      "status": "SUCCESS",
+      "startedAt": "2026-10-12T11:29:01Z",
+      "finishedAt": "2026-10-12T11:29:04Z",
+      "nodeCount": 10,
+      "log": "GitHub PR state: open; no condition report generated.",
+      "limitation": "Offchain waiting-state verification only. Owner reporter authorization and merged-PR onchain delivery are unproven."
+    }
+  },
+  "gasLimit": "500000",
+  "reportingFailure": {
+    "executionId": "801fd2bb087786a8e800789194fc5b579c4a9753064b3d578aa528704c213301",
+    "error": "Gas limit 200000 below required minimum 200500; corrected to 500000."
+  },
   "executionProof": {
-    "executionId": "50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11",
+    "executionId": "8aea75e0-ed73-4d85-8999-94f4b5b17be5",
     "status": "SUCCESS",
-    "startedAt": "2026-10-12T11:29:01Z",
-    "finishedAt": "2026-10-12T11:29:04Z",
+    "startedAt": "2026-10-12T14:13:01Z",
+    "finishedAt": "2026-10-12T14:13:09Z",
     "nodeCount": 10,
-    "log": "GitHub PR state: open; no condition report generated.",
-    "limitation": "Offchain waiting-state verification only. Owner reporter authorization and merged-PR onchain delivery are unproven."
+    "transactionHash": "0x8fe3b6a5b5865b45f151713190126bee9c23591ea09fced1f47514ce481a7b9d",
+    "blockNumber": "70418309",
+    "condition": "0x14c3db02f83f16bf9877316660c667e6086184e84f648588cf372421e8a9b562",
+    "verification": "Successful Monad receipt and matching ConditionVerified event from Confiance, through the authorized forwarder."
   }
 }

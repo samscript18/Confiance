@@ -1,8 +1,35 @@
 # Live setup progress
 
-Verified 2026-10-12. No autonomous payment is claimed.
+Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 
-## Current status (supersedes earlier attempts below)
+## Current status
+
+- CRE delivered the merged PR #1 report on Monad at block **70418309**.
+  The workflow write had failed because 200,000 gas was below its 200,500
+  minimum. The deployed replacement uses 500,000 gas; the owner approved its
+  new workflow identity. Receipt and Confiance event are verified.
+- The owner corrected a separate session milestone mismatch. Generation **3**
+  now authorizes the exact condition independently verified by CRE.
+- Vertex Gemini independently requested **30 CTT** through Privy. The real
+  [payment](https://testnet.monadexplorer.com/tx/0xa9d80f0c7087fe812b527737a440ce63e6801b6acb95e313126ab8ac3a03a5fe)
+  succeeded at block **70422755** without an owner payment signature. Sender,
+  target, event, contractor balance and onchain spending were checked.
+  Budget: **50 CTT**, spent: **30**, remaining: **20**.
+- The same Privy signer attempted 500 CTT. Its
+  [transaction](https://testnet.monadexplorer.com/tx/0x3fedaa78f306389c35712b3b1af3784d8679ba4e5c4c1e1155f9b23731ad82d8)
+  reverted at block **70423405**; simulation identified the spending limit.
+- Direct GitHub inspection was rate-limited. The model reported that honestly;
+  matching CRE-verified onchain evidence established milestone completion.
+- Public landing page is `/`; the app has separate Overview, Account, Agent,
+  Policy, Milestone, Activity, Security and Connections routes under `/app`.
+  Its persistent layout preserves the in-memory owner session between app pages.
+- Remaining live proof: owner revocation followed by the same agent retry.
+  Cleanverse requires legitimate enrollment/issuance and compliant-transfer proof.
+  These limitations prevent declaring the full requested MVP complete.
+
+See [DEPLOYMENTS.md](DEPLOYMENTS.md) for exact live receipts.
+
+## Historical status (superseded by the current status above)
 
 Latest milestone-blocking proof:
 

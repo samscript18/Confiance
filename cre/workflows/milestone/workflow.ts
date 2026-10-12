@@ -64,6 +64,7 @@ function verifyMilestone(runtime: Runtime<Config>): Record<string, string> {
     );
     return { status: "waiting", state: milestone.state };
   }
+  runtime.log("GitHub merge verified. Reading the onchain condition.");
   const condition = keccak256(
     stringToHex(`github:${config.repo}:${config.pr}`),
   );
@@ -98,11 +99,14 @@ function verifyMilestone(runtime: Runtime<Config>): Record<string, string> {
     [10143n, config.receiver, condition, evidence],
   );
   const report = runtime.report(prepareReportRequest(payload)).result();
+  runtime.log(
+    "Condition report prepared. Submitting through the authorized forwarder.",
+  );
   const result = evm
     .writeReport(runtime, {
       receiver: config.receiver,
       report,
-      gasConfig: { gasLimit: "200000" },
+      gasConfig: { gasLimit: "500000" },
     })
     .result();
   // Receiver enum SUCCESS=0 in the installed SDK. A broadcast hash alone is not verification.
