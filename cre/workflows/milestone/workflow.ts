@@ -40,8 +40,6 @@ function fetchMilestone(runtime: NodeRuntime<Config>): MergeEvidence {
       method: "GET",
       headers: {
         Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "Confiance-CRE",
       },
       cacheSettings: { store: true, maxAge: "30s" },
     })
@@ -60,7 +58,12 @@ function verifyMilestone(runtime: Runtime<Config>): Record<string, string> {
       consensusIdenticalAggregation<MergeEvidence>(),
     )()
     .result();
-  if (!milestone.merged) return { status: "waiting", state: milestone.state };
+  if (!milestone.merged) {
+    runtime.log(
+      `GitHub PR state: ${milestone.state}; no condition report generated.`,
+    );
+    return { status: "waiting", state: milestone.state };
+  }
   const condition = keccak256(
     stringToHex(`github:${config.repo}:${config.pr}`),
   );

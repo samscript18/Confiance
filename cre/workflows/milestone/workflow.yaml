@@ -1,6 +1,7 @@
 staging-settings:
   user-workflow:
     workflow-name: confiance-github-milestone
+    deployment-registry: private
   workflow-artifacts:
     workflow-path: ./workflow.ts
     config-path: ./config.json
