@@ -152,15 +152,15 @@ required before a tool reports execution.
 
 ## Integrations and limitations
 
-| Integration   | Status                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Monad         | Real account deployment, two autonomous payments, limit/replay/revocation receipts verified                         |
-| Privy         | Real separate agent wallet signs payments; SDK 0.35.0                                                               |
-| Mera          | Existing localhost owner signs setup, policy and revocation; hosted domain owner intentionally deferred             |
-| ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                         |
-| Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                       |
-| Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked |
-| Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                         |
+| Integration   | Status                                                                                                                                  |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Monad         | Real account deployment, two autonomous payments, limit/replay/revocation receipts verified                                             |
+| Privy         | Real separate agent wallet signs payments; SDK 0.35.0                                                                                   |
+| Mera          | Original passkey owner signed setup, policy and revocation; live-domain owner deployed its new account, with fresh policy setup pending |
+| ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                                             |
+| Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                                           |
+| Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked                     |
+| Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                                             |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**
 Mera belongs to the human owner and will not supply the agent key. Chainlink

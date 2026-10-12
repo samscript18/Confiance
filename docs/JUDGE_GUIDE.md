@@ -20,8 +20,9 @@ revocation, not routine agent payments.
 
 Public app: [Confiance preview](https://confiance-eta.vercel.app).
 The workspace requires owner sign-in. Evaluators do not need credentials to
-inspect the public evidence below. The current preview intentionally retains
-the existing owner console on localhost; hosted owner onboarding is deferred.
+inspect the public evidence below. Owner controls now run on the live domain.
+The new live-owner account is deployed; its first autonomous payment remains
+pending. The completed rehearsals below used the original account.
 
 ## What is technically distinctive
 
@@ -53,18 +54,27 @@ receipts plus explicitly identified diagnostic simulations, not invented logs.
 The negative controls are deterministic security tests through the same Privy
 signer; they are not presented as spontaneous LLM decisions.
 
+The primary hosted payment is block **70465941**, documented in
+[hosted-payment.json](research/hosted-payment.json). Block **70422755** is the
+earlier PR #1 payment rehearsal. The negative controls in the table belong to
+that earlier rehearsal; they are not subsequent transactions from the PR #2
+session. [DEPLOYMENTS.md](DEPLOYMENTS.md) is the canonical receipt index.
+Both payment rehearsals used `0x952bbdDeCE639f678733F310890d15E28b213489`.
+The new account `0xde4dfd84ed78c4c65d7670e22be1e002403f057f` has deployment
+proof at block **70494094**, not yet a payment proof.
+
 ## Sponsor integration responsibilities
 
-| Integration   | Real responsibility                               | Verified status                                               |
-| ------------- | ------------------------------------------------- | ------------------------------------------------------------- |
-| Monad         | Onchain authorization and ERC-20 settlement       | Deployment and successful/reverted receipts                   |
-| Mera          | Human passkey-derived owner signer                | Local owner setup, policy and revocation ceremonies           |
-| Privy         | Separate agent signer                             | Real agent wallet and submitted payments                      |
-| ERC-8004      | Agent identity                                    | Identity 2210, registry wallet binding                        |
-| Chainlink CRE | Independently verify GitHub and report to account | Two real onchain milestone reports                            |
-| Envio         | Index actual activity                             | Hosted HyperSync history matched to both payments             |
-| Vertex Gemini | Decide whether to request payroll                 | Real tool-using local and Render runs                         |
-| Cleanverse    | Intended compliant token/recipient path           | Official adapter tested; live registration/settlement blocked |
+| Integration   | Real responsibility                               | Verified status                                                                       |
+| ------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Monad         | Onchain authorization and ERC-20 settlement       | Deployment and successful/reverted receipts                                           |
+| Mera          | Human passkey-derived owner signer                | Original owner ceremonies plus live-domain owner deployment; new policy setup pending |
+| Privy         | Separate agent signer                             | Real agent wallet and submitted payments                                              |
+| ERC-8004      | Agent identity                                    | Identity 2210, registry wallet binding                                                |
+| Chainlink CRE | Independently verify GitHub and report to account | Two real onchain milestone reports                                                    |
+| Envio         | Index actual activity                             | Hosted HyperSync history matched to both payments                                     |
+| Vertex Gemini | Decide whether to request payroll                 | Real tool-using local and Render runs                                                 |
+| Cleanverse    | Intended compliant token/recipient path           | Official adapter tested; live registration/settlement blocked                         |
 
 ## Technical review map
 
@@ -87,5 +97,6 @@ CTT, not USD, a stablecoin or a Cleanverse A-Token. No A-Pass enforcement is cla
 
 This is a single-owner testnet MVP, not an independently audited production wallet.
 Free Render can sleep; free Envio development deployments have a 30-day lifetime.
-The localhost passkey is not assumed to recover on the Vercel hostname. Test
+The live domain uses its own passkey owner and a new account; the original
+localhost account and its historical proofs remain preserved. Test
 results and exact receipts support each claim; no judging score is asserted.

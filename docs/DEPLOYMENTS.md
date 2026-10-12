@@ -46,8 +46,9 @@ signature. The temporary local worker was stopped before the merge. Monitoring
 automatically paused after recognizing the task was paid. Machine-readable evidence:
 [payment](research/hosted-payment.json), [CRE](research/cre-deployment.json).
 
-Hosted owner-domain onboarding and public Envio hosting remain separate setup
-steps. This test token is not Cleanverse-compliant.
+The later live-domain owner account and its pending payment setup are documented
+above. Envio now indexes both accounts. This test token is not
+Cleanverse-compliant.
 
 ## Original account deployment
 
@@ -78,9 +79,9 @@ Identity ID: **2210**, minted at Monad testnet block **70362555**.
 Sender/calldata, event and current ownership/wallet binding verified.
 No session, CRE delivery, compliance or autonomous payroll payment is implied.
 
-## Deployed CRE workflow
+## Historical PR #1 CRE workflow
 
-Registry: Chainlink private registry. Status returned by deployment: **Active**.
+Registry: Chainlink private registry. Status returned at that deployment: **Active**.
 Name: `confiance-github-milestone`.
 Workflow ID: `0x002de83854f367d591931bbd62aa30913140bd61330b59fe5df3c67a18b580f3`.
 Workflow owner: `0x1db255D03A90f194483fEc22A9a32965e98a521E`.
@@ -88,7 +89,9 @@ Tenant-listed Monad forwarder: `0xF8344CFd5c43616a4366C34E3EEE75af79a74482`.
 Owner authorization is confirmed onchain. The actual report delivered
 `ConditionVerified` for `samscript18/Confiance` PR #1 at block **70418309**.
 [CRE report transaction](https://testnet.monadexplorer.com/tx/0x8fe3b6a5b5865b45f151713190126bee9c23591ea09fced1f47514ce481a7b9d).
-See [deployment evidence](research/cre-deployment.json).
+Historical evidence is retained under `previousDeployment` in
+[deployment evidence](research/cre-deployment.json). The current live-owner
+workflow is identified in the cutover section above.
 
 ## Autonomous payroll proof — 2026-10-12
 

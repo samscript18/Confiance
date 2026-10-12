@@ -6,14 +6,38 @@ This demo has two real completed rehearsals. Use their recorded receipts when
 reviewing the existing proof; use a new actual PR for a fresh autonomous payment.
 Do not replay a paid milestone or imply historical receipts are new transactions.
 
-| Time      | Screen / action                                      | What the audience learns                                                        |
-| --------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 0:00–0:30 | Public landing, then owner sign-in at localhost:3050 | The human controls authority; signed-out workspaces hide financial details      |
-| 0:30–1:00 | Overview and Agent permissions                       | Separate owner/agent; 50 CTT total cap, asset, contractor, expiry and milestone |
-| 1:00–1:30 | Open PR waiting result, then CRE receipt             | Real AI waits; an external authorized report unlocks the exact condition        |
-| 1:30–2:00 | Successful 30 CTT receipt and Activity               | Agent signs payment without a human popup; 30 spent, 20 remaining               |
-| 2:00–2:30 | 500 CTT diagnostic receipt                           | The same signer cannot exceed its financial authority                           |
-| 2:30–3:00 | Revocation and same-key retry receipts               | The key still exists. The authority does not.                                   |
+## Which receipts to present
+
+[DEPLOYMENTS.md](DEPLOYMENTS.md) is the canonical receipt index. Use these exact
+references consistently with [JUDGE_GUIDE.md](JUDGE_GUIDE.md) and
+[VALIDATION.md](VALIDATION.md):
+
+| Evidence                                                               | Block        | Receipt                                                                                                                                                                    |
+| ---------------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Latest hosted autonomous payment: Render, Gemini, Privy, PR #2, 30 CTT | **70465941** | [Payment](https://testnet.monadexplorer.com/tx/0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c), [machine-readable proof](research/hosted-payment.json) |
+| CRE verification for that hosted PR #2 payment                         | **70465820** | [Authorized report](https://testnet.monadexplorer.com/tx/0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff)                                               |
+| Earlier PR #1 autonomous payment rehearsal, 30 CTT                     | **70422755** | [Earlier payment](https://testnet.monadexplorer.com/tx/0xa9d80f0c7087fe812b527737a440ce63e6801b6acb95e313126ab8ac3a03a5fe)                                                 |
+
+Both completed payments used original account
+`0x952bbdDeCE639f678733F310890d15E28b213489`. The negative-control receipts
+come from the earlier PR #1 rehearsal. Present them as separate security proof,
+not as later actions in the hosted PR #2 payment's timeline.
+
+The new live-domain account `0xde4dfd84ed78c4c65d7670e22be1e002403f057f`
+was deployed at block **70494094**. Hosted services are connected, but its
+funding, owner policy/reporter approvals and first autonomous payment must be
+verified before claiming this account has completed the demo.
+
+## Presentation screens
+
+| Time      | Screen / action                                        | What the audience learns                                                        |
+| --------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| 0:00–0:30 | Public landing, then owner sign-in on the live website | The human controls authority; signed-out workspaces hide financial details      |
+| 0:30–1:00 | Overview and Agent permissions                         | Separate owner/agent; 50 CTT total cap, asset, contractor, expiry and milestone |
+| 1:00–1:30 | Open PR waiting result, then CRE receipt               | Real AI waits; an external authorized report unlocks the exact condition        |
+| 1:30–2:00 | Successful 30 CTT receipt and Activity                 | Agent signs payment without a human popup; 30 spent, 20 remaining               |
+| 2:00–2:30 | 500 CTT diagnostic receipt                             | The same signer cannot exceed its financial authority                           |
+| 2:30–3:00 | Revocation and same-key retry receipts                 | The key still exists. The authority does not.                                   |
 
 Use [DEPLOYMENTS.md](DEPLOYMENTS.md) for exact hashes and checked events. The
 negative controls are explicitly labeled diagnostics, not fabricated AI intent.
@@ -22,8 +46,10 @@ authorization, without an A-Pass compliance claim.
 
 ## Repeat the autonomous hosted flow without editing configuration
 
-1. Start the configured local console on port 3050 and sign in with its existing
-   Mera passkey. The public Vercel preview directs owner actions to this console.
+1. Sign in on the live website using its live-domain Mera passkey. Complete the
+   new account's funding, session and CRE reporter setup first. The original
+   localhost console remains available for its separate historical account;
+   the live website no longer redirects owner actions there.
 2. Create a real GitHub PR and keep it open. In Agent, choose its repo/number,
    actual token, contractor, 30-token payment and 50-token total budget.
 3. Approve the onchain policy once. Save the receipt-bound task and start monitoring.
@@ -114,7 +140,7 @@ funding, `/app/agent` for the Privy wallet and ERC-8004 identity, and `/app/agen
 for owner-authorized spending rules. `/app/overview#milestone` shows onchain verification;
 `/app/activity` shows real events.
 Authorize the actual CRE forwarder/workflow identity in Settings. Start
-`npm run agent:watch` before merging the PR. The worker retries without owner
+monitoring through the Agent page before merging the PR. The Render worker retries without owner
 payment signing and stops once the verified task receipt is recovered.
 
 The Overview page reads authority from Monad, history from Envio (or a bounded
