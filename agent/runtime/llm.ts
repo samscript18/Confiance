@@ -1,6 +1,7 @@
 import { required } from "../../packages/shared/config.js";
 import { toolDefinitions, type ToolName } from "../tools/payroll.js";
 import { payrollPrompt } from "../prompts/payroll.js";
+import { runVertexPayroll } from "./vertex.js";
 
 interface ToolCall {
   id: string;
@@ -59,6 +60,9 @@ export async function runPayroll(
   env: NodeJS.ProcessEnv,
   dispatch: (name: string, args: string) => Promise<string>,
 ) {
+  if (env.LLM_PROVIDER === "vertex") return runVertexPayroll(env, dispatch);
+  if (env.LLM_PROVIDER && env.LLM_PROVIDER !== "chat-completions")
+    throw new Error("Unsupported LLM provider.");
   const base = new URL(required(env, "LLM_BASE_URL"));
   if (base.protocol !== "https:")
     throw new Error("LLM endpoint must use HTTPS.");

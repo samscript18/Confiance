@@ -33,7 +33,12 @@ export async function GET() {
       },
       {
         name: "AI runtime",
-        ready: Boolean(env.LLM_BASE_URL && env.LLM_MODEL && env.LLM_API_KEY),
+        ready:
+          env.LLM_PROVIDER === "vertex"
+            ? Boolean(
+                env.VERTEX_PROJECT_ID && env.VERTEX_LOCATION && env.LLM_MODEL,
+              )
+            : Boolean(env.LLM_BASE_URL && env.LLM_MODEL && env.LLM_API_KEY),
         detail: "Configured LLM provider",
       },
       {

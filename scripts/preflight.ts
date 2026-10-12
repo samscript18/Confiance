@@ -19,7 +19,10 @@ const groups: Readonly<Record<string, readonly string[]>> = {
     "PAYMENT_RECIPIENT",
   ],
   privy: ["PRIVY_APP_ID", "PRIVY_APP_SECRET", "PRIVY_AGENT_WALLET_ID"],
-  llm: ["LLM_BASE_URL", "LLM_API_KEY", "LLM_MODEL"],
+  llm:
+    env.LLM_PROVIDER === "vertex"
+      ? ["VERTEX_PROJECT_ID", "VERTEX_LOCATION", "LLM_MODEL"]
+      : ["LLM_BASE_URL", "LLM_API_KEY", "LLM_MODEL"],
   github: ["GITHUB_REPO", "GITHUB_PR_NUMBER"],
   cre: [
     "CHAINLINK_CRE_FORWARDER",
