@@ -1,0 +1,19 @@
+{
+  "name": "@confiance/indexer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/repair-envio-types.mjs",
+    "codegen": "envio --config config.cloud.yaml codegen",
+    "dev": "envio --config config.cloud.yaml dev",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "envio": "3.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "6.0.3"
+  }
+}

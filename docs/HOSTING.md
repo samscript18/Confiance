@@ -83,8 +83,10 @@ a hosted backend never silently falls back to an ephemeral filesystem.
 Run `npm run test:mongo` for isolated live database tests and `npm run test:hosted`
 for the local two-server proxy/authentication/restart test. These tests cannot make
 a real payment. Run unit, contract and browser tests separately. Hosted URLs and
-task-discovery CRE delivery still require a live deployment rehearsal; compilation
-and a local proxy test do not constitute that proof.
+The hosted PR #2 rehearsal additionally proves task-discovery CRE delivery and
+Render's autonomous Privy payment. See the independently checked receipts in
+[DEPLOYMENTS.md](DEPLOYMENTS.md). Owner setup/signing used the localhost passkey;
+this is not yet proof of owner authentication on the new Vercel hostname.
 
 ## Current hosting rollout
 

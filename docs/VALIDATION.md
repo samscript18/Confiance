@@ -4,21 +4,21 @@ Verified 2026-10-12 against the current source and pinned dependencies.
 
 ## Current results
 
-| Check                                       | Result                                                                                                                            |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Foundry contracts                           | PASS: 59 tests, 0 failed, 0 skipped; includes 512 fuzz runs                                                                       |
-| TypeScript unit tests                       | PASS: 31 tests                                                                                                                    |
-| Strict TypeScript and Next production build | PASS                                                                                                                              |
-| Formatting lint                             | PASS                                                                                                                              |
-| Production-server browser tests             | PASS: 4 tests; four-item landing navigation, app routing, isolated pages, mobile overflow, authentication and mutation boundaries |
-| Desktop/mobile visual inspection            | PASS: public landing and app screenshots inspected                                                                                |
-| CRE WASM compilation                        | PASS; updated deployed workflow uses 500,000 report gas                                                                           |
-| CRE live delivery                           | PASS: actual authorized ConditionVerified event at Monad block 70418309                                                           |
-| Vertex Gemini → Privy → Confiance           | PASS: autonomous 30 CTT payment, block 70422755; no owner payment signature                                                       |
-| 500 CTT request                             | PASS: same Privy signer transaction reverted; simulation identified SESSION_SPENDING_LIMIT                                        |
-| Reused nonce                                | PASS: same Privy signer transaction reverted, block 70423647; simulation identified INVALID_NONCE                                 |
-| Live same-key attempt after revocation      | PASS: same Privy key reverted at block 70425005; session inactive and balances unchanged                                          |
-| Cleanverse compliant transfer               | Pending Confiance/recipient enrollment and issuance; adapter fixture tests are not live compliance proof                          |
+| Check                                       | Result                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Foundry contracts                           | PASS: 59 tests, 0 failed, 0 skipped; includes 512 fuzz runs                                                        |
+| TypeScript unit tests                       | PASS: 39 tests                                                                                                     |
+| Strict TypeScript and Next production build | PASS                                                                                                               |
+| Formatting lint                             | PASS                                                                                                               |
+| Production-server browser tests             | PASS: 14 tests; landing navigation, five app pages at desktop/mobile sizes, authentication and mutation boundaries |
+| Desktop/mobile visual inspection            | PASS: public landing and app screenshots inspected                                                                 |
+| CRE WASM compilation                        | PASS; updated deployed workflow uses 500,000 report gas                                                            |
+| CRE live delivery                           | PASS: actual authorized ConditionVerified event at Monad block 70418309                                            |
+| Vertex Gemini → Privy → Confiance           | PASS: autonomous 30 CTT payment, block 70422755; no owner payment signature                                        |
+| 500 CTT request                             | PASS: same Privy signer transaction reverted; simulation identified SESSION_SPENDING_LIMIT                         |
+| Reused nonce                                | PASS: same Privy signer transaction reverted, block 70423647; simulation identified INVALID_NONCE                  |
+| Live same-key attempt after revocation      | PASS: same Privy key reverted at block 70425005; session inactive and balances unchanged                           |
+| Cleanverse compliant transfer               | Pending Confiance/recipient enrollment and issuance; adapter fixture tests are not live compliance proof           |
 
 Exact chain receipts are recorded in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 Browser fixtures use an unfunded authentication key and unconfigured application;

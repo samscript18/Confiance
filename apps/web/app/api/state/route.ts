@@ -7,6 +7,7 @@ import { readJob, readMonitoring } from "../../../../../agent/job";
 import { relayBackend } from "../../../lib/backend";
 import {
   erc20Abi,
+  decodeEventLog,
   formatUnits,
   zeroAddress,
   zeroHash,
@@ -463,7 +464,7 @@ export async function GET(request: Request) {
           !proof ||
           typeof proof !== "object" ||
           !("status" in proof) ||
-          proof.status !== "reverted" ||
+          !["reverted", "executed"].includes(String(proof.status)) ||
           !("chainId" in proof) ||
           proof.chainId !== 10143
         )
@@ -474,11 +475,40 @@ export async function GET(request: Request) {
           client.getTransactionReceipt({ hash }),
           client.getTransaction({ hash }),
         ]);
-        if (
-          receipt.status !== "reverted" ||
-          tx.to?.toLowerCase() !== state.account.toLowerCase()
-        )
+        if (tx.to?.toLowerCase() !== state.account.toLowerCase()) continue;
+        if (receipt.status === "success" && proof.status === "executed") {
+          for (const log of receipt.logs) {
+            if (log.address.toLowerCase() !== state.account.toLowerCase())
+              continue;
+            const event = decodeEventLog({
+              abi: confianceAbi,
+              data: log.data,
+              topics: log.topics,
+            });
+            if (
+              event.eventName !== "PaymentExecuted" ||
+              event.args.agent.toLowerCase() !== tx.from.toLowerCase()
+            )
+              continue;
+            if (
+              !state.events.some(
+                (item) => item.hash === hash && item.kind === "PaymentExecuted",
+              )
+            ) {
+              state.events.push({
+                id: `10143-${hash}-${log.logIndex}`,
+                kind: "PaymentExecuted",
+                hash,
+                block: receipt.blockNumber.toString(),
+                agent: event.args.agent,
+                asset: event.args.asset,
+                amount: event.args.amount.toString(),
+              });
+            }
+          }
           continue;
+        }
+        if (receipt.status !== "reverted") continue;
         let reason =
           "reason" in proof && typeof proof.reason === "string"
             ? proof.reason
@@ -505,6 +535,13 @@ export async function GET(request: Request) {
         /* A malformed or unavailable proof cannot become a rejection-history entry. */
       }
     }
+    state.events.sort((a, b) =>
+      BigInt(a.block) > BigInt(b.block)
+        ? -1
+        : BigInt(a.block) < BigInt(b.block)
+          ? 1
+          : 0,
+    );
     return publicResponse(state);
   } catch {
     return publicResponse({

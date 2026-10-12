@@ -1,0 +1,30 @@
+name: confiance
+description: Confiance activity on Monad Testnet
+handlers: ./src/handlers
+contracts:
+  - name: Confiance
+    abi_file_path: ./contracts/Confiance.json
+    events:
+      - event: AgentRegistered
+      - event: ConditionVerified
+      - event: PaymentExecuted
+      - event: PaymentRequested
+      - event: PolicyUpdated
+      - event: ReporterConfigured
+      - event: SessionCreated
+      - event: SessionRevoked
+field_selection:
+  transaction_fields:
+    - hash
+chains:
+  - id: 10143
+    start_block: 70364758
+    block_lag: 2
+    rpc:
+      url: "${ENVIO_MONAD_RPC_URL}"
+      for: sync
+      initial_block_interval: 100
+      interval_ceiling: 100
+    contracts:
+      - name: Confiance
+        address: "0x952bbdDeCE639f678733F310890d15E28b213489"

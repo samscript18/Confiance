@@ -4,6 +4,38 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 
 ## Current status
 
+- Frontend deployed at https://confiance-eta.vercel.app. Render backend deployed
+  at https://confiance-backend.onrender.com on the user-selected free preview plan.
+  Public pages, health, task feed and real account-state relay returned HTTP 200.
+  Public state shows 970 CTT, the real agent and current generation 5 session.
+- MongoDB is connected. Thirteen existing records were migrated without replacing
+  records. Live database tests prove CRUD, concurrent unique intents and shared
+  leases. Paid PR #1 is recognized as already paid, preventing another submission.
+- The owner saved the PR #2 task and enabled monitoring entirely in the app.
+  Render's Gemini worker observed the open PR and correctly withheld payment.
+  After the actual merge, it independently paid 30 CTT in transaction
+  `0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c`,
+  block 70465941. The temporary local worker was stopped before the merge.
+  Sender, target, event and balances were checked: generation 5 spent 30 CTT,
+  remaining 20 CTT; contractor total balance 60 CTT across the two rehearsals.
+  The cloud worker recognized the paid task and paused further monitoring.
+- CRE task-discovery workflow is Active with ID ending `43b9ca`. Real simulation
+  fetched the public feed and returned `no_task`. The owner approved its reporter.
+  Task-fed PR #2 delivery is proved by matching onchain event in transaction
+  `0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff`,
+  block 70465820. Previous PR #1 delivery remains proven.
+- Local owner controls are now at http://localhost:3050. The localhost passkey
+  cannot be assumed to work on the Vercel hostname. Hosted owner onboarding needs
+  a domain-matching passkey/account configuration before claiming the hosted demo.
+- Envio works locally. Its configured endpoint is localhost, so cloud history
+  currently uses Monad RPC and persisted receipts. A public Envio endpoint is
+  still required. Vercel Git auto-deployment also needs a GitHub Login Connection.
+- Latest verification: **59 Solidity**, **39 unit**, **14 Playwright** tests pass,
+  plus live MongoDB and split-server authentication/restart tests. Strict types,
+  formatting lint, production builds and actual CRE WASM simulation pass.
+
+## Completed core payment rehearsal
+
 - CRE delivered the merged PR #1 report on Monad at block **70418309**.
   The workflow write had failed because 200,000 gas was below its 200,500
   minimum. The deployed replacement uses 500,000 gas; the owner approved its
@@ -27,12 +59,11 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 - Owner revoked the session at block **70424861**. The same Privy agent's
   30 CTT retry reverted at block **70425005**; simulation identified
   `SESSION_REVOKED`. Contractor balance and onchain spending stayed at 30 CTT.
-  The current session is revoked; renewed permission requires owner approval.
+  That generation was revoked; the owner subsequently renewed permission.
 - Core Monad execution, limit, replay and same-key revocation proofs are complete.
   Cleanverse still requires legitimate enrollment/issuance and compliant-transfer
   proof; the full compliance requirement is not complete.
-- Validation: **59 Solidity tests**, **31 unit tests**, **4 browser tests**,
-  strict typechecks, lint, CRE compilation and production build pass.
+- Core receipts below are preserved independently of the subsequent hosting rollout.
 
 See [DEPLOYMENTS.md](DEPLOYMENTS.md) for exact live receipts.
 

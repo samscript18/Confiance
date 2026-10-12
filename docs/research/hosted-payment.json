@@ -1,0 +1,17 @@
+{
+  "chainId": 10143,
+  "hash": "0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c",
+  "blockNumber": "70465941",
+  "sender": "0x9a62195bb2c8eceaaf306ec7ee87f7e4994ba11d",
+  "account": "0x952bbddece639f678733f310890d15e28b213489",
+  "recipient": "0xF3481b1A06cc5f19a3BF0843eDb296F96083c505",
+  "asset": "0xaBC746C3C77C73160ACEB419349C6980De4567BE",
+  "amountRaw": "30000000",
+  "amount": "30 CTT",
+  "generation": "5",
+  "nonce": "1",
+  "source": "Render autonomous worker; temporary local worker was stopped before PR merge",
+  "milestone": "samscript18/Confiance PR #2",
+  "explorer": "https://testnet.monadexplorer.com/tx/0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c",
+  "verification": "Successful actual Monad receipt, matching sender/target/PaymentExecuted event; contractor total balance 60 CTT and generation 5 spent 30 CTT."
+}

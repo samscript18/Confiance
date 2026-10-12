@@ -2,9 +2,14 @@
 
 Provider credentials and an owner address are configured locally. Confiance is
 deployed, the Privy agent is funded and ERC-8004 identity 2210 is minted. The full
-payment flow remains unverified. See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) for current operations
+30 CTT autonomous payment, limit, replay and revocation flows are verified.
+The new hosted task-discovery rehearsal remains pending. See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) for current operations
 and blockers; the instructions below describe the complete setup sequence.
 Keep secrets in ignored `.env`, never in chat or source control.
+
+The hosted preview is https://confiance-eta.vercel.app. Current local owner controls
+use http://localhost:3050; set `WEB_ORIGIN` to the exact local origin when moving ports.
+See [HOSTING.md](HOSTING.md) for MongoDB, Render/Vercel and terminal-free task setup.
 
 For provider signup links, exact credential fields and tasks that require human
 authentication, see [CREDENTIALS.md](CREDENTIALS.md). Current local setup checks

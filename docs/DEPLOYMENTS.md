@@ -1,5 +1,32 @@
 # Deployments
 
+## Hosted PR #2 rehearsal
+
+Frontend: https://confiance-eta.vercel.app
+Backend: https://confiance-backend.onrender.com (free preview; can sleep).
+
+CRE report: [transaction](https://testnet.monadexplorer.com/tx/0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff),
+block **70465820**, matching ConditionVerified event for PR #2.
+Authorized workflow: `0x000aa0784b0fb840ea903da674bf9964ec02a045037f7cb115ed4c2acd43b9ca`.
+
+Render's autonomous **30 CTT** payment:
+[transaction](https://testnet.monadexplorer.com/tx/0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c),
+block **70465941**, agent sender, expected Confiance target and matching
+PaymentExecuted event independently checked. Nonce **1**, generation **5**.
+This session spent **30 CTT**, leaving **20 CTT**. Contractor total balance was
+**60 CTT**, including the preceding PR #1 rehearsal.
+
+The owner saved/started the task in the local app. Render's worker observed the
+open PR, then paid after the real merge and CRE delivery without an owner payment
+signature. The temporary local worker was stopped before the merge. Monitoring
+automatically paused after recognizing the task was paid. Machine-readable evidence:
+[payment](research/hosted-payment.json), [CRE](research/cre-deployment.json).
+
+Hosted owner-domain onboarding and public Envio hosting remain separate setup
+steps. This test token is not Cleanverse-compliant.
+
+## Original account deployment
+
 Verified deployment receipt:
 
 ```json
