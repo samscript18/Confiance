@@ -1,4 +1,11 @@
 import {
+  readRecord,
+  recordNames,
+  dataPath,
+} from "../../../../../packages/shared/storage";
+import { readJob, readMonitoring } from "../../../../../agent/job";
+import { relayBackend } from "../../../lib/backend";
+import {
   erc20Abi,
   formatUnits,
   zeroAddress,
@@ -14,13 +21,15 @@ import { checkGithub } from "../../../../../agent/tools/github";
 import { checkedClient, publicResponse } from "../../../lib/server";
 import { runtimeEnv } from "../../../lib/settings";
 import { connectPrivy } from "../../../../../agent/wallet/privy";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { isHex } from "viem";
 import type { DashboardState } from "../../../lib/state";
 import { parseReporterSettings } from "../../../../../packages/shared/reporter";
 export const runtime = "nodejs";
-export async function GET() {
+export async function GET(request: Request) {
+  const relay = await relayBackend(request);
+  if (relay) return relay;
   const state: DashboardState = {
     network: "Monad Testnet",
     chainId: 10143,
@@ -32,6 +41,45 @@ export async function GET() {
   };
   try {
     const env = await runtimeEnv();
+    state.taskAmount = env.PAYMENT_AMOUNT || "30";
+    const job = await readJob(env);
+    state.savedTask = Boolean(job);
+    state.monitoring = await readMonitoring(env);
+    const worker = await readRecord(dataPath(env, "worker-status.json"));
+    if (
+      worker &&
+      typeof worker === "object" &&
+      "status" in worker &&
+      typeof worker.status === "string" &&
+      "heartbeat" in worker &&
+      typeof worker.heartbeat === "string"
+    )
+      state.worker = { status: worker.status, heartbeat: worker.heartbeat };
+    if (
+      worker &&
+      typeof worker === "object" &&
+      "result" in worker &&
+      worker.result &&
+      typeof worker.result === "object" &&
+      "transcript" in worker.result &&
+      Array.isArray(worker.result.transcript)
+    ) {
+      state.workerTranscript = worker.result.transcript
+        .filter(
+          (row: unknown) =>
+            row &&
+            typeof row === "object" &&
+            "kind" in row &&
+            (row.kind === "tool" || row.kind === "reasoning") &&
+            "content" in row &&
+            typeof row.content === "string",
+        )
+        .map((row: { kind: string; content: string; name?: unknown }) => ({
+          kind: row.kind,
+          content: row.content,
+          ...(typeof row.name === "string" ? { name: row.name } : {}),
+        }));
+    }
     if (
       env.GITHUB_REPO &&
       validGithubRepo(env.GITHUB_REPO) &&
@@ -402,14 +450,12 @@ export async function GET() {
       env.CONFIANCE_PROJECT_ROOT || process.cwd(),
       "proofs",
     );
-    const files = await readdir(proofFolder).catch(() => []);
+    const files = await recordNames(proofFolder);
     for (const file of files
       .filter((file) => /^0x[0-9a-f]{64}\.json$/i.test(file))
       .slice(-10)) {
       try {
-        const proof: unknown = JSON.parse(
-          await readFile(join(proofFolder, file), "utf8"),
-        );
+        const proof: unknown = await readRecord(join(proofFolder, file));
         if (
           !proof ||
           typeof proof !== "object" ||

@@ -116,8 +116,7 @@ financial authority. Multiple hosts require shared coordination before deploymen
 ## Web application routes
 
 The public `/` landing page explains the product and routes its calls to action
-into `/app/overview`. The app sidebar separates Overview, Account, Agent, Policy,
-Milestone, Activity, Security and Connections. Each route renders its own relevant
+into `/app/overview`. The app sidebar separates Overview, Account, Agent, Activity and Settings. Each route renders its own relevant
 controls. A persistent app layout retains the in-memory Mera signing session
 across client navigation; sign-out, expiry or leaving that layout ends it.
 
@@ -128,3 +127,9 @@ It never substitutes a verified condition for the one actually authorized by the
 session. CRE's recorded onchain verification remains the payment authority even
 when the agent's separate GitHub lookup is unavailable; the agent reports lookup
 failure honestly and deterministic payment checks still require the exact condition.
+
+The app now has five destinations. Agent includes the separate wallet, identity,
+permissions and revocation; test transactions are collapsed under Test permissions.
+Overview includes milestone verification. Settings holds CRE and Cleanverse setup.
+Legacy policy/security/milestone/connections URLs redirect to these destinations.
+The persistent app layout continues to retain the in-memory owner session.

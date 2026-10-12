@@ -1,12 +1,18 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { appPages, isAppSection } from "../../../lib/navigation";
+import { notFound, redirect } from "next/navigation";
+import {
+  appPages,
+  isAppSection,
+  legacyAppRoute,
+} from "../../../lib/navigation";
 export default async function AppPage({
   params,
 }: {
   params: Promise<{ section: string }>;
 }) {
   const { section } = await params;
+  const previous = legacyAppRoute(section);
+  if (previous) redirect(previous);
   if (!isAppSection(section)) notFound();
   const page = appPages[section];
   return (

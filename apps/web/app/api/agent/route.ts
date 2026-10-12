@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { relayBackend } from "../../../lib/backend";
+import { writeRecord } from "../../../../../packages/shared/storage";
 import { join } from "node:path";
 import { PrivyClient } from "@privy-io/node";
 import { isAddress, getAddress } from "viem";
@@ -12,6 +13,8 @@ import { attacks, runAttack } from "../../../../../agent/diagnostic";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 export async function POST(request: Request) {
+  const relay = await relayBackend(request);
+  if (relay) return relay;
   try {
     const owner = await requireOwner(request);
     const env = await runtimeEnv();
@@ -38,11 +41,10 @@ export async function POST(request: Request) {
         env.CONFIANCE_PROJECT_ROOT || process.cwd(),
         "deployments",
       );
-      await mkdir(folder, { recursive: true });
-      await writeFile(
-        join(folder, "agent-wallet.json"),
-        JSON.stringify({ id: wallet.id, address: getAddress(wallet.address) }),
-      );
+      await writeRecord(join(folder, "agent-wallet.json"), {
+        id: wallet.id,
+        address: getAddress(wallet.address),
+      });
       return publicResponse({ id: wallet.id, address: wallet.address });
     }
     if (action === "identity")

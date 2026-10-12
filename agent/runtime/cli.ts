@@ -1,3 +1,4 @@
+import { closeStorage } from "../../packages/shared/storage.js";
 import { json } from "../../packages/shared/config.js";
 import { runConfiguredPayroll } from "./service.js";
 import { loadRuntimeEnv } from "../config.js";
@@ -15,4 +16,6 @@ try {
     "Payroll runtime unavailable. Check the ignored .env and preflight report. No successful payment is claimed.",
   );
   process.exitCode = 1;
+} finally {
+  await closeStorage();
 }

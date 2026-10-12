@@ -18,6 +18,9 @@ test("unconfigured dashboard presents missing state without fabricated balances"
   await expect(
     page.getByRole("heading", { name: "Payroll Agent", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "App navigation" }).getByRole("link"),
+  ).toHaveCount(5);
   await expect(page.getByText("Setup required", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Run Payroll Agent" }),
@@ -37,13 +40,23 @@ test("unconfigured dashboard presents missing state without fabricated balances"
   await expect(
     page.getByRole("button", { name: "Create passkey" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Set the boundaries." }),
-  ).toHaveCount(0);
-  await page.getByRole("link", { name: "Policy", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Permissions" })).toHaveCount(
+    0,
+  );
+  await page.getByRole("link", { name: "Agent", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Authorize session", exact: true }),
   ).toBeDisabled();
+  const diagnostics = page.locator("#test-permissions");
+  await expect(diagnostics).not.toHaveAttribute("open");
+  await page.goto("/app/security");
+  await expect(page).toHaveURL(/\/app\/agent#test-permissions$/);
+  await expect(diagnostics).toHaveAttribute("open", "");
+  await page.goto("/app/connections");
+  await expect(page).toHaveURL(/\/app\/settings$/);
+  await expect(
+    page.getByRole("heading", { name: "Integration settings" }),
+  ).toBeVisible();
 });
 test("mutation endpoints reject unauthenticated and foreign-origin calls", async ({
   request,
@@ -52,6 +65,11 @@ test("mutation endpoints reject unauthenticated and foreign-origin calls", async
     headers: { Origin: "http://localhost:3021" },
   });
   expect(missing.status()).toBe(409);
+  const registration = await request.post("/api/cleanverse", {
+    headers: { Origin: "http://localhost:3021" },
+    data: { action: "register", signature: "0x" },
+  });
+  expect(registration.status()).toBe(409);
   const foreign = await request.post("/api/auth?action=challenge", {
     headers: { Origin: "https://attacker.example" },
   });
@@ -91,9 +109,9 @@ test("mobile dashboard stays within the viewport", async ({ page }) => {
     path: "proofs/screenshots/dashboard-mobile.png",
     fullPage: true,
   });
-  await page.getByRole("link", { name: "Policy", exact: true }).click();
+  await page.getByRole("link", { name: "Agent", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Set the boundaries." }),
+    page.getByRole("heading", { name: "Permissions" }),
   ).toBeVisible();
   expect(
     await page.evaluate(

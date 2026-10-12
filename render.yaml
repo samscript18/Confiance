@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: confiance-backend
+    runtime: node
+    plan: 1c-2g
+    buildCommand: npm ci && npm run build
+    startCommand: npm run backend:start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: confiance-db
+      - key: CONFIANCE_STORAGE_NAMESPACE
+        sync: false
+      - key: CONFIANCE_PROXY_SECRET
+        sync: false
+      - key: WEB_ORIGIN
+        sync: false
+      - key: MONAD_CHAIN_ID
+        value: 10143
+      - key: MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: CONFIANCE_OWNER
+        sync: false
+      - key: CONFIANCE_ADDRESS
+        sync: false
+      - key: PRIVY_APP_ID
+        sync: false
+      - key: PRIVY_APP_SECRET
+        sync: false
+      - key: LLM_PROVIDER
+        value: vertex
+      - key: VERTEX_PROJECT_ID
+        sync: false
+      - key: VERTEX_LOCATION
+        value: global
+      - key: LLM_MODEL
+        sync: false
+      - key: VERTEX_CREDENTIALS_JSON
+        sync: false

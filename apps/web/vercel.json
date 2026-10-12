@@ -1,0 +1,8 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd ../.. && npm run build",
+  "functions": {
+    "app/api/agent/route.ts": { "maxDuration": 300 },
+    "app/api/task/route.ts": { "maxDuration": 60 }
+  }
+}

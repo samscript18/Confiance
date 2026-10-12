@@ -28,3 +28,10 @@ cre/workflows/milestone/dist/
 cre/workflows/milestone/binary.wasm.br.b64
 test-results/
 playwright-report/
+
+deployments/payroll-task.json
+deployments/monitoring.json
+deployments/worker-status.json
+deployments/payroll-lease.json
+deployments/cleanverse-registration.json
+deployments/hosting.json

@@ -5,9 +5,13 @@ if (process.env.CRE_MONAD_TESTNET_WRITE_CONFIRMED !== "true")
   throw new Error(
     "Confirm actual Monad testnet production-write support and forwarder in the authenticated CRE directory first.",
   );
-const repo = required(process.env, "GITHUB_REPO");
-const pr = Number(required(process.env, "GITHUB_PR_NUMBER"));
-if (!validGithubRepo(repo) || !Number.isSafeInteger(pr) || pr <= 0)
+const tasksUrl = process.env.CRE_TASKS_URL;
+const repo = tasksUrl ? "" : required(process.env, "GITHUB_REPO");
+const pr = tasksUrl ? 0 : Number(required(process.env, "GITHUB_PR_NUMBER"));
+if (
+  !tasksUrl &&
+  (!validGithubRepo(repo) || !Number.isSafeInteger(pr) || pr <= 0)
+)
   throw new Error("Invalid GitHub milestone.");
 const receiver = address(process.env, "CONFIANCE_ADDRESS");
 await mkdir("cre/workflows/milestone", { recursive: true });
@@ -15,6 +19,7 @@ await writeFile(
   "cre/workflows/milestone/config.json",
   json({
     schedule: "0 */1 * * * *",
+    ...(tasksUrl ? { tasksUrl } : {}),
     repo,
     pr,
     receiver,

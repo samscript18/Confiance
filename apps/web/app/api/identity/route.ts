@@ -1,9 +1,12 @@
+import { relayBackend } from "../../../lib/backend";
 import { address } from "../../../../../packages/shared/config";
 import { confianceAbi } from "../../../../../packages/shared/contracts";
 import { checkedClient, publicResponse } from "../../../lib/server";
 import { runtimeEnv } from "../../../lib/settings";
 export const runtime = "nodejs";
-export async function GET() {
+export async function GET(request: Request) {
+  const relay = await relayBackend(request);
+  if (relay) return relay;
   try {
     const env = await runtimeEnv();
     const agent = address(env, "AGENT_ADDRESS");

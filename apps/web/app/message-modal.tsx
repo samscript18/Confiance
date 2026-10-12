@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef } from "react";
 import type { Feedback } from "../lib/feedback";
 import { monadTestnet } from "../../../packages/shared/chain";
+import { ConfianceMark } from "./logo";
 
 export function MessageModal({
   message,
@@ -60,15 +61,22 @@ export function MessageModal({
       >
         <span aria-hidden="true">×</span>
       </button>
-      <div className="message-modal-icon" aria-hidden="true">
-        {tone === "success" ? "✓" : tone === "info" ? "i" : "!"}
+
+      <div className="message-modal-heading-icons" aria-hidden="true">
+        <ConfianceMark size={32} />
+        <div className="message-modal-icon" aria-hidden="true">
+          {tone === "success" ? "✓" : tone === "info" ? "i" : "!"}
+        </div>
       </div>
+
       <p className="eyebrow">CONFIANCE</p>
       <h2 id={titleId}>{title}</h2>
       <p id={descriptionId} className="message-modal-description">
         {message}
       </p>
+
       {nextStep && <p className="message-modal-next">{nextStep}</p>}
+
       {transactionHash && /^0x[0-9a-f]{64}$/i.test(transactionHash) && (
         <a
           className="message-modal-proof"
@@ -76,9 +84,10 @@ export function MessageModal({
           target="_blank"
           rel="noreferrer"
         >
-          View transaction ↗
+          View verified transaction on Monad Explorer ↗
         </a>
       )}
+
       <button className="message-modal-dismiss" onClick={onDismiss}>
         Got it
       </button>

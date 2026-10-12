@@ -83,8 +83,7 @@ keys stay in process memory; the proof file contains public evidence only.
 
 Start the web application with `npm run dev`, then open **http://localhost:3000**.
 The public landing page has four navigation items and detailed product guidance.
-Choose **Open app** for `/app/overview`; the sidebar separates account, agent,
-policy, milestone, activity, security and connections. Without configuration the
+Choose **Open app** for `/app/overview`; the sidebar separates account, agent, activity and settings. Without configuration the
 app shows setup requirements and empty live values. It does
 not simulate a session, payment, wallet or balance. `npm run build` creates the
 Next.js production build. Run `npm run start --workspace @confiance/web` to serve it.

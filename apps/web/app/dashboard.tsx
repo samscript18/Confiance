@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { appPages, isAppSection } from "../lib/navigation";
+import CleanverseRegistration from "./cleanverse-registration";
 import {
   createPublicClient,
   createWalletClient,
@@ -51,6 +52,7 @@ import {
   payrollFeedback,
   type Feedback,
 } from "../lib/feedback";
+import { ConfianceLogo } from "./logo";
 
 const explorer = monadTestnet.blockExplorers.default.url;
 const empty: DashboardState = {
@@ -86,6 +88,16 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const segment = pathname.split("/")[2] || "overview";
   const section = isAppSection(segment) ? segment : "overview";
+  useEffect(() => {
+    const revealTests = () => {
+      if (location.hash !== "#test-permissions") return;
+      const element = document.getElementById("test-permissions");
+      if (element instanceof HTMLDetailsElement) element.open = true;
+    };
+    revealTests();
+    window.addEventListener("hashchange", revealTests);
+    return () => window.removeEventListener("hashchange", revealTests);
+  }, [section]);
   const [state, setState] = useState(empty);
   const [owner, setOwner] = useState<Address>();
   const [hasPasskey, setHasPasskey] = useState(false);
@@ -100,6 +112,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [createdToken, setCreatedToken] = useState<Address>();
   const [recipient, setRecipient] = useState("");
   const [limit, setLimit] = useState("50");
+  const [paymentAmount, setPaymentAmount] = useState("30");
+  const [amountEdited, setAmountEdited] = useState(false);
+  const [taskPolicyHash, setTaskPolicyHash] = useState<Hex>();
   const [repo, setRepo] = useState("");
   const [pr, setPr] = useState("");
   const [fund, setFund] = useState("100");
@@ -150,6 +165,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   }, []);
   useEffect(() => {
     if (state.account) setAccount(state.account);
+    if (state.workerTranscript?.length && !busy)
+      setTranscript(state.workerTranscript);
+    if (!amountEdited) setPaymentAmount(state.taskAmount);
     if (state.taskAsset || state.asset)
       setAsset((current) => current || state.taskAsset || state.asset || "");
     if (state.recipient)
@@ -164,7 +182,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       setCommitment(
         identityCommitment(state.registry, BigInt(state.identity.id)),
       );
-  }, [state]);
+  }, [state, amountEdited, busy]);
   useEffect(() => {
     const setup = state.reporterSetup;
     if (setup && !reporterEdited) {
@@ -384,7 +402,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       complianceAdapter: zeroAddress,
       requiredCondition: keccak256(stringToHex(`github:${repo}:${Number(pr)}`)),
     };
-    await send(
+    const approvedReceipt = await send(
       account,
       encodeFunctionData({
         abi: confianceAbi,
@@ -392,6 +410,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         args: [agent, policy],
       }),
     );
+    setTaskPolicyHash(approvedReceipt.transactionHash);
+    await saveTask(approvedReceipt.transactionHash);
     setNotice(
       update
         ? {
@@ -405,6 +425,32 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
             nextStep: "Review its allowance and milestone status in Overview.",
           },
     );
+  }
+  async function saveTask(receiptHash = taskPolicyHash) {
+    if (!receiptHash) throw new Error("Approve the task policy first.");
+    await api("/api/task", {
+      action: "save",
+      repo,
+      pr: Number(pr),
+      asset,
+      recipient,
+      amount: paymentAmount,
+      policyHash: receiptHash,
+    });
+    setNotice({
+      title: "Payroll task saved",
+      message:
+        "Your task is stored with its confirmed owner-approved rules. Start monitoring when you want the agent to observe this milestone.",
+    });
+  }
+  async function monitoring(enabled: boolean) {
+    await api("/api/task", { action: "monitor", enabled });
+    setNotice({
+      title: enabled ? "Monitoring enabled" : "Monitoring paused",
+      message: enabled
+        ? "The hosted worker will inspect this task independently. Payment still requires the verified milestone and your onchain permission."
+        : "Future observation cycles are paused. A payment already submitted can still confirm; revoke the session to remove spending authority.",
+    });
   }
   async function funding() {
     if (!account || !isAddress(asset))
@@ -623,8 +669,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-frame">
       <aside className="app-sidebar">
-        <Link className="brand" href="/">
-          C<span>CONFIANCE</span>
+        <Link className="brand" href="/" aria-label="Confiance home">
+          <ConfianceLogo size={32} />
         </Link>
         <p className="sidebar-eyebrow">YOUR WORKSPACE</p>
         <nav aria-label="App navigation">
@@ -640,13 +686,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               </span>
               {key === "account"
                 ? "Account"
-                : key === "policy"
-                  ? "Policy"
-                  : key === "agent"
-                    ? "Agent"
-                    : key === "security"
-                      ? "Security"
-                      : page.title}
+                : key === "agent"
+                  ? "Agent"
+                  : page.title}
             </Link>
           ))}
         </nav>
@@ -659,7 +701,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
           <Link href="/#how-it-works">How Confiance works ↗</Link>
         </div>
       </aside>
-      <main className="app-main">
+      <main className={`app-main app-page-${section}`}>
         <header className="app-topbar">
           <span>Workspace / {appPages[section].title}</span>
           <Link href="/">Back to website ↗</Link>
@@ -769,82 +811,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
           </a>
         )}
         {children}
-        {section === "milestone" && (
-          <section className="panel milestone-page">
-            <p className="eyebrow">WORK BEFORE PAYMENT</p>
-            <h2>
-              {state.taskMilestone?.verified
-                ? "Milestone verified"
-                : "Waiting for verification"}
-            </h2>
-            {milestoneMismatch && (
-              <p className="setup-status">
-                Your session refers to a different milestone. Open Policy, use
-                the configured payroll milestone, and save the rules before the
-                agent can pay.
-              </p>
-            )}
-            <p className="subtle">
-              {session?.verified
-                ? "The required condition is verified onchain. Payroll Agent can request payment within its active spending rules."
-                : "Merging the pull request is the first step. Confiance must receive verification from the authorized reporting service before the agent can pay."}
-            </p>
-            <div className="milestone-facts">
-              <div>
-                <small>GitHub milestone</small>
-                <strong>
-                  {state.github
-                    ? `PR #${state.github.pr} · ${state.github.merged ? "Merged" : state.github.state}`
-                    : repo && pr
-                      ? `${repo} · PR #${pr}`
-                      : "Not configured"}
-                </strong>
-              </div>
-              <div>
-                <small>Payment condition</small>
-                <strong>
-                  {milestoneMismatch
-                    ? "Policy update needed"
-                    : session?.verified
-                      ? "Verified onchain ✓"
-                      : session
-                        ? "Not verified"
-                        : "Authorize a session first"}
-                </strong>
-              </div>
-              <div>
-                <small>Configured milestone verification</small>
-                <strong>
-                  {state.taskMilestone?.verified
-                    ? "Verified onchain ✓"
-                    : "Waiting for report"}
-                </strong>
-              </div>
-            </div>
-            <div className="button-row">
-              {repo && pr && (
-                <a
-                  className="landing-button light"
-                  href={`https://github.com/${repo}/pull/${pr}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View pull request ↗
-                </a>
-              )}
-              <Link className="landing-button light" href="/app/connections">
-                Check verification service ↗
-              </Link>
-              <Link className="landing-button dark" href="/app/agent">
-                Open Payroll Agent ↗
-              </Link>
-            </div>
-          </section>
-        )}
         <>
-          {(section === "overview" ||
-            section === "agent" ||
-            section === "policy") && (
+          {(section === "overview" || section === "agent") && (
             <section className="dashboard-grid">
               {(section === "overview" || section === "agent") && (
                 <article className="agent-card">
@@ -908,13 +876,48 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                   >
                     Run Payroll Agent <span>↗</span>
                   </ActionButton>
+                  {section === "agent" && (
+                    <div className="monitoring-panel">
+                      <p className="eyebrow">AUTONOMOUS MONITORING</p>
+                      <p>
+                        {state.monitoring?.enabled
+                          ? "Monitoring is enabled"
+                          : "Monitoring is paused"}
+                      </p>
+                      <p className="footnote">
+                        {state.worker &&
+                        Date.now() - Date.parse(state.worker.heartbeat) < 300000
+                          ? `Worker: ${state.worker.status.replaceAll("_", " ")}`
+                          : "No recent worker heartbeat. The backend worker must be running before autonomous observation is available."}
+                      </p>
+                      <ActionButton
+                        pending={busy === "Changing monitoring"}
+                        pendingLabel="Updating monitoring…"
+                        disabled={
+                          disabled ||
+                          !owner ||
+                          !state.savedTask ||
+                          (!state.monitoring?.enabled && !actions.run.enabled)
+                        }
+                        onClick={() =>
+                          void act("Changing monitoring", () =>
+                            monitoring(!state.monitoring?.enabled),
+                          )
+                        }
+                      >
+                        {state.monitoring?.enabled
+                          ? "Pause monitoring"
+                          : "Start monitoring"}
+                      </ActionButton>
+                    </div>
+                  )}
                   <small className="footnote">
                     {actions.run.reason ||
                       "Runs the LLM with the agent’s Privy signer. It checks the milestone and policy before requesting payment; no owner payment signature."}
                   </small>
                 </article>
               )}
-              {(section === "overview" || section === "policy") && (
+              {(section === "overview" || section === "agent") && (
                 <article className="authority-card">
                   <div className="section-title">
                     <p className="eyebrow">AUTHORIZED SPENDING</p>
@@ -996,9 +999,79 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               )}
             </section>
           )}
-          {(section === "activity" ||
-            section === "security" ||
-            section === "policy") && (
+          {section === "overview" && (
+            <section className="panel milestone-page" id="milestone">
+              <p className="eyebrow">WORK BEFORE PAYMENT</p>
+              <h2>
+                {state.taskMilestone?.verified
+                  ? "Milestone verified"
+                  : "Waiting for verification"}
+              </h2>
+              {milestoneMismatch && (
+                <p className="setup-status">
+                  Your session refers to a different milestone. Open Agent →
+                  Permissions, use the configured payroll milestone, and save
+                  the rules before the agent can pay.
+                </p>
+              )}
+              <p className="subtle">
+                {session?.verified
+                  ? "The milestone is verified onchain. Payment still requires an active session and enough remaining allowance."
+                  : "Merging the pull request is the first step. Confiance must receive verification from the authorized reporting service before the agent can pay."}
+              </p>
+              <div className="milestone-facts">
+                <div>
+                  <small>GitHub milestone</small>
+                  <strong>
+                    {state.github
+                      ? `PR #${state.github.pr} · ${state.github.merged ? "Merged" : state.github.state}`
+                      : repo && pr
+                        ? `${repo} · PR #${pr}`
+                        : "Not configured"}
+                  </strong>
+                </div>
+                <div>
+                  <small>Payment condition</small>
+                  <strong>
+                    {milestoneMismatch
+                      ? "Policy update needed"
+                      : session?.verified
+                        ? "Verified onchain ✓"
+                        : session
+                          ? "Not verified"
+                          : "Authorize a session first"}
+                  </strong>
+                </div>
+                <div>
+                  <small>Configured milestone verification</small>
+                  <strong>
+                    {state.taskMilestone?.verified
+                      ? "Verified onchain ✓"
+                      : "Waiting for report"}
+                  </strong>
+                </div>
+              </div>
+              <div className="button-row">
+                {repo && pr && (
+                  <a
+                    className="landing-button light"
+                    href={`https://github.com/${repo}/pull/${pr}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View pull request ↗
+                  </a>
+                )}
+                <Link className="landing-button light" href="/app/settings">
+                  Check verification service ↗
+                </Link>
+                <Link className="landing-button dark" href="/app/agent">
+                  Open Payroll Agent ↗
+                </Link>
+              </div>
+            </section>
+          )}
+          {section === "activity" && (
             <section className="lower-grid">
               {section === "activity" && (
                 <article className="panel">
@@ -1074,143 +1147,6 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                   ))}
                 </article>
               )}
-              {(section === "security" || section === "policy") && (
-                <article className="panel boundary">
-                  <p className="eyebrow">THE AUTHORITY BOUNDARY</p>
-                  <h3>
-                    The key still exists.
-                    <br />
-                    <span>The authority does not.</span>
-                  </h3>
-                  <p>
-                    Revoke the session. The same agent wallet can keep its key,
-                    but Confiance stops its next request.
-                  </p>
-                  <ActionButton
-                    pending={busy === "Revoking session"}
-                    pendingLabel={actionCopy("Revoking session").pending}
-                    className="danger"
-                    disabled={disabled || !actions.revoke.enabled}
-                    onClick={() =>
-                      void act("Revoking session", async () => {
-                        if (!account || !agent) throw new Error("No session.");
-                        await send(
-                          account,
-                          encodeFunctionData({
-                            abi: confianceAbi,
-                            functionName: "revokeSession",
-                            args: [agent],
-                          }),
-                        );
-                        setNotice({
-                          title: "Payroll Agent’s permission is revoked",
-                          message:
-                            "The agent can no longer spend from your Confiance account. Its wallet still exists, but its permission is gone.",
-                          nextStep:
-                            "Use Retry after revocation to demonstrate that its next payment is blocked.",
-                        });
-                      })
-                    }
-                  >
-                    {actions.revoke.label}
-                  </ActionButton>
-                  <p className="footnote">
-                    {actions.revoke.reason ||
-                      "Revocation takes effect onchain. The agent keeps its wallet but loses permission to spend."}
-                  </p>
-                </article>
-              )}
-            </section>
-          )}
-          {section === "security" && (
-            <section className="panel transcript">
-              <div className="section-title">
-                <h3>Test the boundaries</h3>
-                <span>Deterministic security demo · agent signer</span>
-              </div>
-              <p className="footnote">
-                These controls submit real rejected transactions using Privy.
-                They are security diagnostics, separate from the LLM’s
-                decisions. Each operation costs agent testnet gas.
-              </p>
-              <div className="button-row">
-                <ActionButton
-                  pending={busy === "Testing spending limit"}
-                  pendingLabel={actionCopy("Testing spending limit").pending}
-                  disabled={disabled || !actions.limit.enabled}
-                  title={actions.limit.reason}
-                  onClick={() =>
-                    void act("Testing spending limit", () =>
-                      attack("attack-limit"),
-                    )
-                  }
-                >
-                  Attempt 500 tokens
-                </ActionButton>
-                <ActionButton
-                  pending={busy === "Testing milestone condition"}
-                  pendingLabel={
-                    actionCopy("Testing milestone condition").pending
-                  }
-                  disabled={disabled || !actions.condition.enabled}
-                  title={actions.condition.reason}
-                  onClick={() =>
-                    void act("Testing milestone condition", () =>
-                      attack("attack-condition"),
-                    )
-                  }
-                >
-                  Attempt before verification
-                </ActionButton>
-                <ActionButton
-                  pending={busy === "Testing recipient rule"}
-                  pendingLabel={actionCopy("Testing recipient rule").pending}
-                  disabled={disabled || !actions.recipient.enabled}
-                  title={actions.recipient.reason}
-                  onClick={() =>
-                    void act("Testing recipient rule", () =>
-                      attack("attack-recipient"),
-                    )
-                  }
-                >
-                  Attempt wrong recipient
-                </ActionButton>
-                <ActionButton
-                  pending={busy === "Retrying with revoked key"}
-                  pendingLabel={actionCopy("Retrying with revoked key").pending}
-                  disabled={disabled || !actions.revoked.enabled}
-                  title={actions.revoked.reason}
-                  onClick={() =>
-                    void act("Retrying with revoked key", () =>
-                      attack("attack-revoked"),
-                    )
-                  }
-                >
-                  Retry after revocation
-                </ActionButton>
-              </div>
-              {diagnosticHints.map((hint) => (
-                <p key={hint} className="footnote">
-                  {hint}
-                </p>
-              ))}
-              {attackProof && (
-                <div className="notice">
-                  <strong>Payment blocked</strong>
-                  <p>{blockedPayment(attackProof.reason).message}</p>
-                  <p className="footnote">
-                    Confirmed failed transaction · block {attackProof.block}.
-                    The reason was checked before submission.
-                  </p>
-                  <a
-                    href={`${explorer}/tx/${attackProof.hash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View real agent transaction ↗ {short(attackProof.hash)}
-                  </a>
-                </div>
-              )}
             </section>
           )}
           {section === "agent" && transcript.length > 0 && (
@@ -1261,137 +1197,160 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               ))}
             </section>
           )}
-          {["account", "agent", "policy", "connections"].includes(section) && (
-            <section className="setup-grid">
+          {["account", "agent", "settings"].includes(section) && (
+            <section
+              className={`setup-grid ${section === "agent" ? "agent-settings-grid" : ""}`}
+            >
               {section === "account" && (
-                <article className="panel">
-                  <p className="eyebrow">01 · OWNER</p>
-                  <h2>Your account, your authority.</h2>
-                  <p>
-                    {owner
-                      ? "You are signed in with your owner passkey. You can manage the account and the agent’s authority."
-                      : hasPasskey || state.account
-                        ? "Sign in with your existing owner passkey. Signing sessions last ten minutes; your account and policy stay onchain after sign-out."
-                        : "Create a Mera passkey on this domain, or sign in with an existing passkey. A PRF-capable authenticator is required."}
-                  </p>
-                  {owner ? (
-                    <p className="setup-status">✓ Owner signed in</p>
-                  ) : (
-                    <div className="button-row">
-                      {!hasPasskey && !state.account && (
+                <>
+                  <article className="panel">
+                    <p className="eyebrow">01 · OWNER</p>
+                    <h2>Your account, your authority.</h2>
+                    <p>
+                      {owner
+                        ? "You are signed in with your owner passkey. You can manage the account and the agent’s authority."
+                        : hasPasskey || state.account
+                          ? "Sign in with your existing owner passkey. Signing sessions last ten minutes; your account and policy stay onchain after sign-out."
+                          : "Create a Mera passkey on this domain, or sign in with an existing passkey. A PRF-capable authenticator is required."}
+                    </p>
+                    {owner ? (
+                      <p className="setup-status">✓ Owner signed in</p>
+                    ) : (
+                      <div className="button-row">
+                        {!hasPasskey && !state.account && (
+                          <ActionButton
+                            pending={busy === "Creating owner"}
+                            pendingLabel={actionCopy("Creating owner").pending}
+                            className="primary"
+                            disabled={disabled}
+                            onClick={() =>
+                              void act("Creating owner", () =>
+                                authenticate(true),
+                              )
+                            }
+                          >
+                            Create passkey
+                          </ActionButton>
+                        )}
                         <ActionButton
-                          pending={busy === "Creating owner"}
-                          pendingLabel={actionCopy("Creating owner").pending}
-                          className="primary"
+                          pending={busy === "Signing in"}
+                          pendingLabel={actionCopy("Signing in").pending}
                           disabled={disabled}
                           onClick={() =>
-                            void act("Creating owner", () => authenticate(true))
+                            void act("Signing in", () => authenticate(false))
                           }
                         >
-                          Create passkey
+                          Sign in
                         </ActionButton>
-                      )}
-                      <ActionButton
-                        pending={busy === "Signing in"}
-                        pendingLabel={actionCopy("Signing in").pending}
-                        disabled={disabled}
-                        onClick={() =>
-                          void act("Signing in", () => authenticate(false))
-                        }
-                      >
-                        Sign in
-                      </ActionButton>
-                    </div>
-                  )}
-                  <p className="footnote">
-                    Owner:{" "}
-                    <code>{owner || state.owner || "Not connected"}</code>
-                  </p>
-                  <p className="footnote">
-                    {state.account
-                      ? "Your Confiance account is deployed on Monad Testnet."
-                      : "Fund the owner with testnet MON before deploying. Sign in to approve deployment."}{" "}
-                    Keep the same domain: passkeys are scoped to it.
-                  </p>
-                  <ActionButton
-                    pending={busy === "Deploying Confiance"}
-                    pendingLabel={actionCopy("Deploying Confiance").pending}
-                    disabled={
-                      disabled ||
-                      !owner ||
-                      Boolean(account) ||
-                      Boolean(state.error)
-                    }
-                    onClick={() => void act("Deploying Confiance", deploy)}
-                  >
-                    {account ? "Account deployed" : "Deploy Confiance"}
-                  </ActionButton>
-                  <p className="footnote">
-                    Account: <code>{account || "Not deployed"}</code>
-                  </p>
-                  <ActionButton
-                    pending={busy === "Deploying test token"}
-                    pendingLabel={actionCopy("Deploying test token").pending}
-                    disabled={
-                      disabled ||
-                      !owner ||
-                      !account ||
-                      tokenConfigured ||
-                      Boolean(state.error)
-                    }
-                    onClick={() => void act("Deploying test token", testToken)}
-                  >
-                    {tokenConfigured
-                      ? "Payment token configured"
-                      : "Deploy & fund CTT test token"}
-                  </ActionButton>
-                  <p className="footnote">
-                    {tokenConfigured
-                      ? "Use the policy form below to fund the configured token. Deploying another token does not change an existing session."
-                      : "This creates a new test token and mints 1,000 units to Confiance. Sign in and deploy the account first."}{" "}
-                    Test tokens do not enforce A-Pass. Cleanverse enrollment and
-                    a compliant transfer remain pending.
-                  </p>
-                  <label>
-                    Token to fund
-                    <input
-                      value={asset}
-                      onChange={(e) => setAsset(e.target.value)}
-                      placeholder="0x…"
-                    />
-                  </label>{" "}
-                  <label>
-                    Fund treasury · token units
-                    <input
-                      value={fund}
-                      onChange={(e) => setFund(e.target.value)}
-                      inputMode="decimal"
-                    />
-                  </label>
-                  <ActionButton
-                    pending={busy === "Funding treasury"}
-                    pendingLabel={actionCopy("Funding treasury").pending}
-                    disabled={
-                      disabled ||
-                      !owner ||
-                      !account ||
-                      !isAddress(asset) ||
-                      !/^\d+(\.\d+)?$/.test(fund) ||
-                      !/[1-9]/.test(fund) ||
-                      Boolean(state.error)
-                    }
-                    onClick={() => void act("Funding treasury", funding)}
-                  >
-                    Transfer tokens to Confiance
-                  </ActionButton>
-                  <p className="footnote">
-                    {!owner
-                      ? "Sign in to transfer tokens from your owner wallet."
-                      : !account
-                        ? "Deploy Confiance before funding it."
-                        : "Transfers the selected token from your owner wallet. Enter an amount you hold; this does not change session authority."}
-                  </p>
-                </article>
+                      </div>
+                    )}
+                    <p className="footnote">
+                      Owner:{" "}
+                      <code>{owner || state.owner || "Not connected"}</code>
+                    </p>
+                  </article>
+                  <article className="panel account-deployment">
+                    <p className="eyebrow">02 · SMART ACCOUNT</p>
+                    <h2>Your Confiance account</h2>
+                    <p className="footnote">
+                      {state.account
+                        ? "Your Confiance account is deployed on Monad Testnet."
+                        : "Fund the owner with testnet MON before deploying. Sign in to approve deployment."}{" "}
+                      Keep the same domain: passkeys are scoped to it.
+                    </p>
+                    <ActionButton
+                      pending={busy === "Deploying Confiance"}
+                      pendingLabel={actionCopy("Deploying Confiance").pending}
+                      disabled={
+                        disabled ||
+                        !owner ||
+                        Boolean(account) ||
+                        Boolean(state.error)
+                      }
+                      onClick={() => void act("Deploying Confiance", deploy)}
+                    >
+                      {account ? "Account deployed" : "Deploy Confiance"}
+                    </ActionButton>
+                    <p className="footnote">
+                      Account: <code>{account || "Not deployed"}</code>
+                    </p>
+                  </article>
+                  <article className="panel policy-form funding-panel">
+                    <p className="eyebrow">03 · FUNDING</p>
+                    <h2>Add funds to your account</h2>
+                    <p>
+                      Prepare test tokens or transfer tokens you already hold.
+                      The owner and agent use testnet MON for transaction fees.
+                    </p>
+                    <ActionButton
+                      pending={busy === "Deploying test token"}
+                      pendingLabel={actionCopy("Deploying test token").pending}
+                      disabled={
+                        disabled ||
+                        !owner ||
+                        !account ||
+                        tokenConfigured ||
+                        Boolean(state.error)
+                      }
+                      onClick={() =>
+                        void act("Deploying test token", testToken)
+                      }
+                    >
+                      {tokenConfigured
+                        ? "Payment token configured"
+                        : "Deploy & fund CTT test token"}
+                    </ActionButton>
+                    <p className="footnote">
+                      {tokenConfigured
+                        ? "Use the funding form below to add the configured token. Deploying another token does not change an existing session."
+                        : "This creates a new test token and mints 1,000 units to Confiance. Sign in and deploy the account first."}{" "}
+                      Test tokens do not enforce A-Pass. Cleanverse enrollment
+                      and a compliant transfer remain pending.
+                    </p>
+                    <div className="funding-fields">
+                      {" "}
+                      <label>
+                        Token to fund
+                        <input
+                          value={asset}
+                          onChange={(e) => setAsset(e.target.value)}
+                          placeholder="0x…"
+                        />
+                      </label>
+                      <label>
+                        Fund treasury · token units
+                        <input
+                          value={fund}
+                          onChange={(e) => setFund(e.target.value)}
+                          inputMode="decimal"
+                        />
+                      </label>
+                    </div>{" "}
+                    <ActionButton
+                      pending={busy === "Funding treasury"}
+                      pendingLabel={actionCopy("Funding treasury").pending}
+                      disabled={
+                        disabled ||
+                        !owner ||
+                        !account ||
+                        !isAddress(asset) ||
+                        !/^\d+(\.\d+)?$/.test(fund) ||
+                        !/[1-9]/.test(fund) ||
+                        Boolean(state.error)
+                      }
+                      onClick={() => void act("Funding treasury", funding)}
+                    >
+                      Transfer tokens to Confiance
+                    </ActionButton>
+                    <p className="footnote">
+                      {!owner
+                        ? "Sign in to transfer tokens from your owner wallet."
+                        : !account
+                          ? "Deploy Confiance before funding it."
+                          : "Transfers the selected token from your owner wallet. Enter an amount you hold; this does not change session authority."}
+                    </p>
+                  </article>
+                </>
               )}
               {section === "agent" && (
                 <article className="panel">
@@ -1462,10 +1421,38 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                   </p>
                 </article>
               )}
-              {section === "policy" && (
-                <article className="panel policy-form">
-                  <p className="eyebrow">03 · POLICY</p>
-                  <h2>Set the boundaries.</h2>
+              {section === "agent" && (
+                <article className="panel policy-form" id="permissions">
+                  <p className="eyebrow">03 · PERMISSIONS</p>
+                  <h2>Permissions</h2>
+                  <p>
+                    Set the payment task and approve its financial rules. Task
+                    details are stored by Confiance; no server configuration
+                    edits are needed.
+                  </p>
+                  <label>
+                    Contractor payment · token units
+                    <input
+                      value={paymentAmount}
+                      onChange={(e) => {
+                        setAmountEdited(true);
+                        setPaymentAmount(e.target.value);
+                      }}
+                      inputMode="decimal"
+                    />
+                  </label>
+                  {taskPolicyHash && (
+                    <ActionButton
+                      pending={busy === "Saving payroll task"}
+                      pendingLabel="Saving task…"
+                      disabled={disabled || !owner}
+                      onClick={() =>
+                        void act("Saving payroll task", () => saveTask())
+                      }
+                    >
+                      Save task from approved policy
+                    </ActionButton>
+                  )}
                   {state.taskMilestone && (
                     <div className="policy-task-preset">
                       <p>
@@ -1576,10 +1563,10 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                   {session?.active && !session.expired && (
                     <p className="footnote">
                       A session is already active. To use a different token,
-                      revoke the session in Policy, then return here and
-                      authorize a new session. Saving policy changes keeps the
-                      current token and spending, and renews expiry to 24 hours
-                      from now.
+                      revoke the session under Agent → Permissions, then return
+                      here and authorize a new session. Saving policy changes
+                      keeps the current token and spending, and renews expiry to
+                      24 hours from now.
                     </p>
                   )}
                   {session && (!session.active || session.expired) && (
@@ -1588,105 +1575,264 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                       24 hours. Previous payments remain in history.
                     </p>
                   )}
+                  <div className="boundary permission-revoke">
+                    <p className="eyebrow">THE AUTHORITY BOUNDARY</p>
+                    <h3>
+                      The key still exists.
+                      <br />
+                      <span>The authority does not.</span>
+                    </h3>
+                    <p>
+                      Revoke the session. The same agent wallet can keep its
+                      key, but Confiance stops its next request.
+                    </p>
+                    <ActionButton
+                      pending={busy === "Revoking session"}
+                      pendingLabel={actionCopy("Revoking session").pending}
+                      className="danger"
+                      disabled={disabled || !actions.revoke.enabled}
+                      onClick={() =>
+                        void act("Revoking session", async () => {
+                          if (!account || !agent)
+                            throw new Error("No session.");
+                          await send(
+                            account,
+                            encodeFunctionData({
+                              abi: confianceAbi,
+                              functionName: "revokeSession",
+                              args: [agent],
+                            }),
+                          );
+                          setNotice({
+                            title: "Payroll Agent’s permission is revoked",
+                            message:
+                              "The agent can no longer spend from your Confiance account. Its wallet still exists, but its permission is gone.",
+                            nextStep:
+                              "Use Retry after revocation to demonstrate that its next payment is blocked.",
+                          });
+                        })
+                      }
+                    >
+                      {actions.revoke.label}
+                    </ActionButton>
+                    <p className="footnote">
+                      {actions.revoke.reason ||
+                        "Revocation takes effect onchain. The agent keeps its wallet but loses permission to spend."}
+                    </p>
+                  </div>
                 </article>
               )}
-              {section === "connections" && (
-                <article className="panel policy-form">
-                  <p className="eyebrow">04 · CONNECTIONS</p>
-                  <h2>Integration configuration</h2>
-                  {state.readiness.map((item) => (
-                    <div className="connection" key={item.name}>
-                      <span
-                        className={item.ready ? "ready-dot" : "missing-dot"}
-                      />
-                      <div>
-                        <strong>{item.name}</strong>
-                        <p>{item.detail}</p>
+              {section === "settings" && (
+                <div className="settings-sections">
+                  <article className="panel policy-form">
+                    <p className="eyebrow">04 · CONNECTIONS</p>
+                    <h2>Integration settings</h2>
+
+                    {state.readiness.map((item) => (
+                      <div className="connection" key={item.name}>
+                        <span
+                          className={item.ready ? "ready-dot" : "missing-dot"}
+                        />
+                        <div>
+                          <strong>{item.name}</strong>
+                          <p>{item.detail}</p>
+                        </div>
+                        <small>{item.ready ? "Configured" : "Required"}</small>
                       </div>
-                      <small>{item.ready ? "Configured" : "Required"}</small>
-                    </div>
-                  ))}
-                  {state.reporterSetup && (
-                    <p className="footnote">
-                      Loaded from configured deployment metadata. Review these
-                      values before approving with your owner passkey. They
-                      become authorized only after the transaction confirms
-                      onchain.
+                    ))}
+                  </article>
+                  <article className="panel policy-form reporter-panel">
+                    <p className="eyebrow">MILESTONE VERIFICATION</p>
+                    <h2>Authorized reporter</h2>
+                    <p>
+                      Choose which reporting service can verify the work before
+                      your agent pays.
                     </p>
-                  )}
-                  <label>
-                    Authorized CRE forwarder
-                    <input
-                      value={forwarder}
-                      onChange={(e) => {
-                        setReporterEdited(true);
-                        setForwarder(e.target.value);
-                      }}
-                      placeholder="Confirmed Monad testnet forwarder"
+                    {state.reporterSetup && (
+                      <p className="footnote">
+                        Loaded from configured deployment metadata. Review these
+                        values before approving with your owner passkey. They
+                        become authorized only after the transaction confirms
+                        onchain.
+                      </p>
+                    )}
+                    <label>
+                      Authorized CRE forwarder
+                      <input
+                        value={forwarder}
+                        onChange={(e) => {
+                          setReporterEdited(true);
+                          setForwarder(e.target.value);
+                        }}
+                        placeholder="Confirmed Monad testnet forwarder"
+                      />
+                    </label>
+                    <label>
+                      Deployed workflow ID
+                      <input
+                        value={workflowId}
+                        onChange={(e) => {
+                          setReporterEdited(true);
+                          setWorkflowId(e.target.value);
+                        }}
+                        placeholder="0x… (32 bytes)"
+                      />
+                    </label>
+                    <label>
+                      Workflow owner
+                      <input
+                        value={workflowOwner}
+                        onChange={(e) => {
+                          setReporterEdited(true);
+                          setWorkflowOwner(e.target.value);
+                        }}
+                        placeholder="0x…"
+                      />
+                    </label>
+                    <ActionButton
+                      pending={busy === "Authorizing CRE reporter"}
+                      pendingLabel={
+                        actionCopy("Authorizing CRE reporter").pending
+                      }
+                      disabled={
+                        disabled ||
+                        !owner ||
+                        !account ||
+                        !reporterValid ||
+                        reporterMatches ||
+                        !state.configured ||
+                        Boolean(state.error)
+                      }
+                      onClick={() =>
+                        void act("Authorizing CRE reporter", configureReporter)
+                      }
+                    >
+                      {reporterMatches
+                        ? "Reporter authorized"
+                        : reporterExists
+                          ? "Update CRE reporter"
+                          : "Authorize CRE reporter"}
+                    </ActionButton>
+                    <p className="footnote">
+                      {reporterMatches
+                        ? "These reporter settings already match the authorization onchain. No repeat approval is needed. CRE must still deliver the actual milestone report."
+                        : !owner
+                          ? "Sign in to approve reporter settings with the owner passkey."
+                          : !reporterValid
+                            ? "Enter a valid forwarder, deployed workflow ID and workflow owner."
+                            : "Approve these settings onchain. Changing them changes which CRE workflow can verify milestones."}
+                    </p>
+                  </article>
+                  <article className="panel policy-form compliance-panel">
+                    {" "}
+                    <CleanverseRegistration
+                      account={account}
+                      signedIn={Boolean(owner)}
+                      disabled={disabled}
                     />
-                  </label>
-                  <label>
-                    Deployed workflow ID
-                    <input
-                      value={workflowId}
-                      onChange={(e) => {
-                        setReporterEdited(true);
-                        setWorkflowId(e.target.value);
-                      }}
-                      placeholder="0x… (32 bytes)"
-                    />
-                  </label>
-                  <label>
-                    Workflow owner
-                    <input
-                      value={workflowOwner}
-                      onChange={(e) => {
-                        setReporterEdited(true);
-                        setWorkflowOwner(e.target.value);
-                      }}
-                      placeholder="0x…"
-                    />
-                  </label>
-                  <ActionButton
-                    pending={busy === "Authorizing CRE reporter"}
-                    pendingLabel={
-                      actionCopy("Authorizing CRE reporter").pending
-                    }
-                    disabled={
-                      disabled ||
-                      !owner ||
-                      !account ||
-                      !reporterValid ||
-                      reporterMatches ||
-                      !state.configured ||
-                      Boolean(state.error)
-                    }
-                    onClick={() =>
-                      void act("Authorizing CRE reporter", configureReporter)
-                    }
-                  >
-                    {reporterMatches
-                      ? "Reporter authorized"
-                      : reporterExists
-                        ? "Update CRE reporter"
-                        : "Authorize CRE reporter"}
-                  </ActionButton>
-                  <p className="footnote">
-                    {reporterMatches
-                      ? "These reporter settings already match the authorization onchain. No repeat approval is needed. CRE must still deliver the actual milestone report."
-                      : !owner
-                        ? "Sign in to approve reporter settings with the owner passkey."
-                        : !reporterValid
-                          ? "Enter a valid forwarder, deployed workflow ID and workflow owner."
-                          : "Approve these settings onchain. Changing them changes which CRE workflow can verify milestones."}
-                  </p>
-                </article>
+                  </article>
+                </div>
               )}
             </section>
           )}
         </>
+        {section === "agent" && (
+          <details
+            className="panel transcript permission-tests"
+            id="test-permissions"
+          >
+            <summary>Test permissions</summary>
+            <div className="section-title">
+              <h3>Test the boundaries</h3>
+              <span>Deterministic security demo · agent signer</span>
+            </div>
+            <p className="footnote">
+              These controls submit real rejected transactions using Privy. They
+              are security diagnostics, separate from the LLM’s decisions. Each
+              operation costs agent testnet gas.
+            </p>
+            <div className="button-row">
+              <ActionButton
+                pending={busy === "Testing spending limit"}
+                pendingLabel={actionCopy("Testing spending limit").pending}
+                disabled={disabled || !actions.limit.enabled}
+                title={actions.limit.reason}
+                onClick={() =>
+                  void act("Testing spending limit", () =>
+                    attack("attack-limit"),
+                  )
+                }
+              >
+                Attempt 500 tokens
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Testing milestone condition"}
+                pendingLabel={actionCopy("Testing milestone condition").pending}
+                disabled={disabled || !actions.condition.enabled}
+                title={actions.condition.reason}
+                onClick={() =>
+                  void act("Testing milestone condition", () =>
+                    attack("attack-condition"),
+                  )
+                }
+              >
+                Attempt before verification
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Testing recipient rule"}
+                pendingLabel={actionCopy("Testing recipient rule").pending}
+                disabled={disabled || !actions.recipient.enabled}
+                title={actions.recipient.reason}
+                onClick={() =>
+                  void act("Testing recipient rule", () =>
+                    attack("attack-recipient"),
+                  )
+                }
+              >
+                Attempt wrong recipient
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Retrying with revoked key"}
+                pendingLabel={actionCopy("Retrying with revoked key").pending}
+                disabled={disabled || !actions.revoked.enabled}
+                title={actions.revoked.reason}
+                onClick={() =>
+                  void act("Retrying with revoked key", () =>
+                    attack("attack-revoked"),
+                  )
+                }
+              >
+                Retry after revocation
+              </ActionButton>
+            </div>
+            {diagnosticHints.map((hint) => (
+              <p key={hint} className="footnote">
+                {hint}
+              </p>
+            ))}
+            {attackProof && (
+              <div className="notice">
+                <strong>Payment blocked</strong>
+                <p>{blockedPayment(attackProof.reason).message}</p>
+                <p className="footnote">
+                  Confirmed failed transaction · block {attackProof.block}. The
+                  reason was checked before submission.
+                </p>
+                <a
+                  href={`${explorer}/tx/${attackProof.hash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View real agent transaction ↗ {short(attackProof.hash)}
+                </a>
+              </div>
+            )}
+          </details>
+        )}
         <footer>
-          <span>CONFIANCE</span>
+          <Link href="/" aria-label="Confiance home">
+            <ConfianceLogo size={24} />
+          </Link>
           <p>Intelligence requests. Authority validates. Monad settles.</p>
           <a
             href="https://testnet.monadexplorer.com"

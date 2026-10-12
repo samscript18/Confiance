@@ -7,7 +7,7 @@ import {
   http,
   type Hex,
 } from "viem";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readRecord, writeRecord } from "../packages/shared/storage.js";
 import { join } from "node:path";
 import {
   identityAbi,
@@ -16,7 +16,6 @@ import {
 import {
   address,
   assertMonad,
-  json,
   required,
   rpcUrl,
   targetChain,
@@ -47,7 +46,9 @@ export async function registerIdentity(env: NodeJS.ProcessEnv) {
   );
   const path = join(folder, "identity.json");
   try {
-    const record: unknown = JSON.parse(await readFile(path, "utf8"));
+    const record: unknown = await readRecord(path);
+    if (record === undefined)
+      throw Object.assign(new Error("Missing record"), { code: "ENOENT" });
     if (
       record &&
       typeof record === "object" &&
@@ -214,8 +215,8 @@ export async function recordIdentity(env: NodeJS.ProcessEnv, hash: Hex) {
       block: receipt.blockNumber.toString(),
       chainId: 10143,
     };
-    await mkdir(folder, { recursive: true });
-    await writeFile(path, json(record));
+
+    await writeRecord(path, record);
     return record;
   }
   throw new Error("No matching registration event.");

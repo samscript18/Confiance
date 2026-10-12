@@ -20,8 +20,9 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
   reverted at block **70423405**; simulation identified the spending limit.
 - Direct GitHub inspection was rate-limited. The model reported that honestly;
   matching CRE-verified onchain evidence established milestone completion.
-- Public landing page is `/`; the app has separate Overview, Account, Agent,
-  Policy, Milestone, Activity, Security and Connections routes under `/app`.
+- Public landing page is `/`; the app has separate Overview, Account, Agent, Activity and Settings routes under `/app`.
+  Permissions and collapsed diagnostics live under Agent; milestone status is
+  on Overview. Old section URLs redirect to their new locations.
   Its persistent layout preserves the in-memory owner session between app pages.
 - Owner revoked the session at block **70424861**. The same Privy agent's
   30 CTT retry reverted at block **70425005**; simulation identified

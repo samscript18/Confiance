@@ -6,6 +6,7 @@ export interface Config {
   pr: number;
   receiver: `0x${string}`;
   productionWriteConfirmed: true;
+  tasksUrl?: string;
 }
 export function parseConfig(value: unknown): Config {
   if (!value || typeof value !== "object")
@@ -14,11 +15,12 @@ export function parseConfig(value: unknown): Config {
   if (
     typeof data.schedule !== "string" ||
     !data.schedule ||
-    typeof data.repo !== "string" ||
-    !validGithubRepo(data.repo) ||
-    typeof data.pr !== "number" ||
-    !Number.isSafeInteger(data.pr) ||
-    data.pr <= 0 ||
+    (!data.tasksUrl &&
+      (typeof data.repo !== "string" ||
+        !validGithubRepo(data.repo) ||
+        typeof data.pr !== "number" ||
+        !Number.isSafeInteger(data.pr) ||
+        data.pr <= 0)) ||
     typeof data.receiver !== "string" ||
     !isAddress(data.receiver) ||
     data.receiver === zeroAddress ||
@@ -27,12 +29,21 @@ export function parseConfig(value: unknown): Config {
     throw new Error(
       "Real GitHub, receiver and confirmed Monad testnet production reporting path required.",
     );
+  if (
+    data.tasksUrl !== undefined &&
+    (typeof data.tasksUrl !== "string" ||
+      new URL(data.tasksUrl).protocol !== "https:" ||
+      new URL(data.tasksUrl).username ||
+      new URL(data.tasksUrl).password)
+  )
+    throw new Error("Task discovery requires public HTTPS.");
   return {
     schedule: data.schedule,
-    repo: data.repo,
-    pr: data.pr,
+    repo: typeof data.repo === "string" ? data.repo : "",
+    pr: typeof data.pr === "number" ? data.pr : 0,
     receiver: getAddress(data.receiver),
     productionWriteConfirmed: true,
+    ...(typeof data.tasksUrl === "string" ? { tasksUrl: data.tasksUrl } : {}),
   };
 }
 export interface MergeEvidence {

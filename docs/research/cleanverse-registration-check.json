@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-12",
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "account": "0x952bbdDeCE639f678733F310890d15E28b213489",
+  "ownerSignatureLocallyVerified": true,
+  "statusQuery": {
+    "endpoint": "https://uatapi.cleanverse.com/api/cooperate/validator/is_register",
+    "httpStatus": 200,
+    "code": "0000",
+    "registered": false
+  },
+  "registrationRequest": {
+    "endpoint": "https://uatapi.cleanverse.com/api/cooperate/validator/register",
+    "method": "POST",
+    "httpStatus": 403,
+    "contentType": "text/plain;charset=UTF-8",
+    "cloudflareRay": "a49753fe3832ecea-LHR",
+    "challengeHeaderPresent": false,
+    "responseWasJson": false
+  },
+  "conclusion": "Read access succeeds. Exact owner-approved encrypted registration request is denied with HTTP 403. No provider API error code, registration receipt or issuance proof returned. Specific role, allowlist or gateway cause is unconfirmed."
+}

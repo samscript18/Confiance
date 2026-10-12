@@ -1,7 +1,8 @@
-import { readFile } from "node:fs/promises";
+import { readRecord } from "../packages/shared/storage.js";
 import { isAddress } from "viem";
 import { join } from "node:path";
 import { identityCommitment } from "../packages/shared/identity.js";
+import { readJob } from "./job.js";
 /** Supplements server configuration with public IDs written by verified setup operations. */
 export async function loadRuntimeEnv(
   input: NodeJS.ProcessEnv,
@@ -9,9 +10,11 @@ export async function loadRuntimeEnv(
   const env = { ...input };
   const root = env.CONFIANCE_PROJECT_ROOT || process.cwd();
   try {
-    const value: unknown = JSON.parse(
-      await readFile(join(root, "deployments/agent-wallet.json"), "utf8"),
+    const value: unknown = await readRecord(
+      join(root, "deployments/agent-wallet.json"),
     );
+    if (value === undefined)
+      throw Object.assign(new Error("Missing record"), { code: "ENOENT" });
     if (
       !value ||
       typeof value !== "object" ||
@@ -34,9 +37,11 @@ export async function loadRuntimeEnv(
       throw error;
   }
   try {
-    const value: unknown = JSON.parse(
-      await readFile(join(root, "deployments/identity.json"), "utf8"),
+    const value: unknown = await readRecord(
+      join(root, "deployments/identity.json"),
     );
+    if (value === undefined)
+      throw Object.assign(new Error("Missing record"), { code: "ENOENT" });
     if (
       !value ||
       typeof value !== "object" ||
@@ -76,6 +81,24 @@ export async function loadRuntimeEnv(
       error.code !== "ENOENT"
     )
       throw error;
+  }
+  const job = await readJob(env);
+  if (job) {
+    if (
+      env.CONFIANCE_ADDRESS &&
+      job.account.toLowerCase() !== env.CONFIANCE_ADDRESS.toLowerCase()
+    )
+      throw new Error("Stored payroll task belongs to another account.");
+    if (
+      env.AGENT_ADDRESS &&
+      job.agent.toLowerCase() !== env.AGENT_ADDRESS.toLowerCase()
+    )
+      throw new Error("Stored payroll task belongs to another signer.");
+    env.GITHUB_REPO = job.repo;
+    env.GITHUB_PR_NUMBER = String(job.pr);
+    env.PAYMENT_ASSET = job.asset;
+    env.PAYMENT_RECIPIENT = job.recipient;
+    env.PAYMENT_AMOUNT = job.amount;
   }
   return env;
 }

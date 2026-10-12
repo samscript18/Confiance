@@ -116,7 +116,7 @@ for `verith-ai` authentication. Vertex uses `LLM_PROVIDER=vertex`, project/locat
 and Google OAuth credentials; `LLM_BASE_URL`/`LLM_API_KEY` belong only to the optional
 chat-completions provider and are not sent to Vertex.
 
-On `/app/policy`, enter the same token, contractor and GitHub task, a total
+On `/app/agent#permissions`, enter the same token, contractor and GitHub task, a total
 budget of 50 token units, and authorize the 24-hour session. Mera signs agent
 registration/session setup. The contract enforces cumulative spending, nonce,
 generation, expiry, asset, exact recipient and milestone itself.
@@ -163,7 +163,7 @@ forwarder as the production reporting authority. Actual deployment/activation
 requires your CRE tenant access and the correct registry/signing configuration.
 
 Set CHAINLINK_CRE_FORWARDER, CHAINLINK_CRE_WORKFLOW_ID and CHAINLINK_CRE_WORKFLOW_OWNER
-from verified deployment metadata. On `/app/connections`, enter those same
+from verified deployment metadata. On `/app/settings`, enter those same
 values and choose **Authorize CRE reporter**. Mera signs that owner-only transaction.
 There is no endpoint for marking a milestone verified.
 
@@ -201,7 +201,7 @@ waits while the milestone is incomplete and can request payment once the real
 CRE condition is onchain. Owner sign-in/signing is not part of this payment path.
 For one cycle, use Run Payroll Agent in the dashboard or `npm run agent:run`.
 
-On `/app/security`, use **Attempt before verification** while the PR is open, merge
+On `/app/agent#test-permissions`, use **Attempt before verification** while the PR is open, merge
 the real PR, wait for CRE delivery and watch the agent settle the authorized payment.
 Then use **Attempt 500 tokens**, revoke with the owner and **Retry after revocation**.
 These attack controls are deterministic diagnostics using the same Privy agent.

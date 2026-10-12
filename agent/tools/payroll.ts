@@ -14,7 +14,6 @@ import { confianceAbi } from "../../packages/shared/contracts.js";
 import {
   address,
   assertMonad,
-  json,
   required,
   rpcUrl,
   targetChain,
@@ -22,7 +21,7 @@ import {
 import { contractError } from "../../packages/shared/errors.js";
 import { connectPrivy } from "../wallet/privy.js";
 import { checkGithub } from "./github.js";
-import { mkdir, writeFile } from "node:fs/promises";
+import { writeRecord, insertRecord } from "../../packages/shared/storage.js";
 import { join } from "node:path";
 import { payrollTaskId } from "../task.js";
 
@@ -55,7 +54,10 @@ export const toolDefinitions = toolNames.map((name) => ({
   },
 }));
 
-export async function createPayrollTools(env: NodeJS.ProcessEnv) {
+export async function createPayrollTools(
+  env: NodeJS.ProcessEnv,
+  assertHeld: () => Promise<void> = async () => {},
+) {
   assertMonad(Number(required(env, "MONAD_CHAIN_ID")));
   const client = createPublicClient({
     chain: targetChain,
@@ -230,30 +232,49 @@ export async function createPayrollTools(env: NodeJS.ProcessEnv) {
           args,
         });
         const id = `${targetChain.id}-${account}-${signer.address}-${state.generation}-${nonce}`;
+        await assertHeld();
+        const intentPath = join(
+          proofFolder,
+          `intent-${payrollTaskId(env)}.json`,
+        );
+        const intent = {
+          taskId: payrollTaskId(env),
+          account,
+          agent: signer.address,
+          data,
+          gas: String((gas * 110n + 99n) / 100n),
+          id,
+          generation: String(state.generation),
+          nonce: String(nonce),
+          amount: String(amount),
+          recipient,
+          asset,
+        };
+        if (!(await insertRecord(intentPath, intent)))
+          throw new Error(
+            "An earlier request exists for this task and needs reconciliation.",
+          );
+        await assertHeld();
         submittedHash = await signer.submitPayment(
           account,
           data,
           (gas * 110n + 99n) / 100n,
           id,
         );
-        await mkdir(proofFolder, { recursive: true });
-        await writeFile(
-          join(proofFolder, `${submittedHash}.json`),
-          json({
-            status: "submitted",
-            hash: submittedHash,
-            chainId: targetChain.id,
-            owner,
-            agent: signer.address,
-            account,
-            recipient,
-            asset,
-            amount,
-            nonce,
-            generation: state.generation,
-            taskId: payrollTaskId(env),
-          }),
-        );
+        await writeRecord(join(proofFolder, `${submittedHash}.json`), {
+          status: "submitted",
+          hash: submittedHash,
+          chainId: targetChain.id,
+          owner,
+          agent: signer.address,
+          account,
+          recipient,
+          asset,
+          amount,
+          nonce,
+          generation: state.generation,
+          taskId: payrollTaskId(env),
+        });
         const receipt = await client.waitForTransactionReceipt({
           hash: submittedHash,
           confirmations: 2,
@@ -311,10 +332,7 @@ export async function createPayrollTools(env: NodeJS.ProcessEnv) {
           amount: formatUnits(amount, decimals),
           explorer: `${targetChain.blockExplorers.default.url}/tx/${submittedHash}`,
         };
-        await writeFile(
-          join(proofFolder, `${submittedHash}.json`),
-          json(proof),
-        );
+        await writeRecord(join(proofFolder, `${submittedHash}.json`), proof);
         return proof;
       } catch (error) {
         return submittedHash

@@ -45,7 +45,7 @@ export function sessionActions(
         state.taskMilestone &&
         session.condition !== state.taskMilestone.condition,
     ) &&
-    "This session points to a different milestone. Open Policy, select the configured payroll milestone, and save the rules.";
+    "This session points to a different milestone. Open Agent → Permissions, select the configured payroll milestone, and save the rules.";
   const diagnostic = [
     owner,
     chain,

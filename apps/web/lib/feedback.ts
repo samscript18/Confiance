@@ -105,7 +105,7 @@ export function blockedPayment(
     ASSET_NOT_ALLOWED:
       "The agent tried to use a token outside its approved rules. The payment was stopped.",
     TASK_CONDITION_MISMATCH:
-      "The spending rules point to a different milestone from this payroll task. Review and save the configured milestone in Policy before trying again.",
+      "The spending rules point to a different milestone from this payroll task. Review and save the configured milestone under Agent → Permissions before trying again.",
     INVALID_NONCE:
       "This payment request was already used or is out of date. It cannot be used again.",
   };
@@ -215,7 +215,7 @@ export function payrollFeedback(
       message:
         "The agent’s session is linked to a different milestone from the configured payroll task.",
       nextStep:
-        "Open Policy, use the configured milestone, and save the rules.",
+        "Open Agent → Permissions, use the configured milestone, and save the rules.",
       tone: "info",
     };
   if (checks.get("check_payment_policy")?.conditionVerified === false)

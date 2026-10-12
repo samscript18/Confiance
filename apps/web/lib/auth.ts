@@ -5,6 +5,17 @@ import { verifyMessage, isAddress, isHex, getAddress } from "viem";
 import { checkedClient, configuredOwner } from "./server";
 import { confianceAbi } from "../../../packages/shared/contracts";
 import { address } from "../../../packages/shared/config";
+import { validProxySecret } from "./backend";
+import { database, mongoConfigured } from "../../../packages/shared/storage";
+import { createHash } from "node:crypto";
+interface AuthDocument {
+  _id: string;
+  message?: string;
+  owner?: string;
+  expires: number;
+}
+const authKey = (kind: string, token: string) =>
+  `${process.env.CONFIANCE_STORAGE_NAMESPACE || "confiance-local"}:${kind}:${createHash("sha256").update(token).digest("hex")}`;
 
 type Challenge = { message: string; expires: number };
 type Login = { owner: string; expires: number };
@@ -23,11 +34,12 @@ export function sameOrigin(request: Request) {
   const expected = process.env.WEB_ORIGIN || "http://localhost:3000";
   if (
     request.headers.get("origin") !== expected ||
-    new URL(request.url).origin !== expected
+    (new URL(request.url).origin !== expected &&
+      !validProxySecret(request.headers.get("x-confiance-proxy")))
   )
     throw new Error("Origin rejected.");
 }
-export function challenge() {
+export async function challenge() {
   for (const [id, item] of auth.challenges)
     if (item.expires < Date.now()) auth.challenges.delete(id);
   if (auth.challenges.size >= 100)
@@ -36,6 +48,14 @@ export function challenge() {
   const expires = Date.now() + 5 * 60 * 1000;
   const message = `Confiance owner sign-in\nOrigin: ${process.env.WEB_ORIGIN || "http://localhost:3000"}\nChain ID: 10143\nOwner: ${configuredOwner()}\nNonce: ${id}\nExpires: ${new Date(expires).toISOString()}\nThis authenticates dashboard access; it does not authorize a payment.`;
   auth.challenges.set(id, { message, expires });
+  if (mongoConfigured())
+    await (await database())
+      .collection<AuthDocument>("owner_auth")
+      .updateOne(
+        { _id: authKey("challenge", id) },
+        { $setOnInsert: { message, expires } },
+        { upsert: true },
+      );
   return { id, message };
 }
 export async function login(value: unknown) {
@@ -56,7 +76,16 @@ export async function login(value: unknown) {
     !isHex(signature)
   )
     throw new Error("Invalid sign-in.");
-  const item = auth.challenges.get(id);
+  const stored = mongoConfigured()
+    ? await (await database())
+        .collection<AuthDocument>("owner_auth")
+        .findOneAndDelete({ _id: authKey("challenge", id) })
+    : undefined;
+  const item = mongoConfigured()
+    ? stored?.message
+      ? { message: stored.message, expires: stored.expires }
+      : undefined
+    : auth.challenges.get(id);
   auth.challenges.delete(id);
   if (
     !item ||
@@ -76,6 +105,14 @@ export async function login(value: unknown) {
     owner: getAddress(owner),
     expires: Date.now() + 60 * 60 * 1000,
   });
+  if (mongoConfigured())
+    await (await database())
+      .collection<AuthDocument>("owner_auth")
+      .updateOne(
+        { _id: authKey("session", token) },
+        { $set: { owner: getAddress(owner), expires: Date.now() + 3600000 } },
+        { upsert: true },
+      );
   (await cookies()).set(cookieName, token, {
     httpOnly: true,
     sameSite: "strict",
@@ -87,7 +124,13 @@ export async function login(value: unknown) {
 export async function requireOwner(request: Request) {
   sameOrigin(request);
   const token = (await cookies()).get(cookieName)?.value;
-  const login = token ? auth.sessions.get(token) : undefined;
+  const login = token
+    ? mongoConfigured()
+      ? await (await database())
+          .collection<AuthDocument>("owner_auth")
+          .findOne({ _id: authKey("session", token) })
+      : auth.sessions.get(token)
+    : undefined;
   if (!login || login.expires < Date.now() || login.owner !== configuredOwner())
     throw new Error("Sign in as the configured owner.");
   if (process.env.CONFIANCE_ADDRESS) {
@@ -106,5 +149,9 @@ export async function logout() {
   const jar = await cookies();
   const token = jar.get(cookieName)?.value;
   if (token) auth.sessions.delete(token);
+  if (token && mongoConfigured())
+    await (await database())
+      .collection<AuthDocument>("owner_auth")
+      .deleteOne({ _id: authKey("session", token) });
   jar.delete(cookieName);
 }

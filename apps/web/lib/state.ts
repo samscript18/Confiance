@@ -50,6 +50,10 @@ export interface DashboardState {
   historySource: "Envio" | "Monad RPC" | "unavailable";
   readiness: { name: string; ready: boolean; detail: string }[];
   taskAmount: string;
+  savedTask?: boolean;
+  workerTranscript?: { kind: string; content: string; name?: string }[];
+  monitoring?: { enabled: boolean; updatedAt: string };
+  worker?: { status: string; heartbeat: string };
   rejections?: { hash: string; reason: string; block: string }[];
   reporter?: { forwarder: string; workflowId: string; workflowOwner: string };
   reporterSetup?: {

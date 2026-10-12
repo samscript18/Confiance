@@ -10,6 +10,9 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120000,
     env: {
+      MONGODB_URI: "",
+      CONFIANCE_BACKEND_URL: "",
+      CONFIANCE_ALLOW_FILE_STORAGE: "true",
       CONFIANCE_OWNER: "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
       CONFIANCE_ADDRESS: "",
       WEB_ORIGIN: "http://localhost:3021",

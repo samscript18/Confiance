@@ -37,7 +37,12 @@
     "indexer:typecheck": "npm run indexer:codegen && tsc --noEmit -p indexer/tsconfig.json",
     "indexer:start": "envio --directory indexer start",
     "agent:watch": "tsx --env-file-if-exists=.env agent/runtime/watch.ts",
-    "cre:setup": "node node_modules/bun/install.js"
+    "cre:setup": "node node_modules/bun/install.js",
+    "storage:migrate": "tsx --env-file-if-exists=.env scripts/migrate-storage.ts",
+    "backend:start": "node --env-file-if-exists=.env scripts/start-backend.mjs",
+    "agent:worker": "tsx --env-file-if-exists=.env agent/runtime/worker.ts",
+    "test:mongo": "tsx --env-file-if-exists=.env scripts/test-mongo.ts",
+    "test:hosted": "tsx --env-file-if-exists=.env scripts/test-hosted-flow.ts"
   },
   "dependencies": {
     "@category-labs/mera": "0.2.0",
@@ -47,6 +52,7 @@
     "@scure/bip32": "2.4.0",
     "@scure/bip39": "2.4.0",
     "google-auth-library": "11.0.0",
+    "mongodb": "7.7.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",

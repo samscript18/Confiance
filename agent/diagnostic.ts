@@ -1,11 +1,11 @@
-import { mkdir, open, unlink, writeFile } from "node:fs/promises";
+import { writeRecord } from "../packages/shared/storage.js";
+import { acquirePayrollLease } from "../packages/shared/lease.js";
 import { join } from "node:path";
 import { createPublicClient, encodeFunctionData, erc20Abi, http } from "viem";
 import { confianceAbi } from "../packages/shared/contracts.js";
 import {
   address,
   assertMonad,
-  json,
   rpcUrl,
   targetChain,
 } from "../packages/shared/config.js";
@@ -23,11 +23,7 @@ export async function runAttack(
   mode: keyof typeof attacks,
 ) {
   const folder = join(env.CONFIANCE_PROJECT_ROOT || process.cwd(), "proofs");
-  await mkdir(folder, { recursive: true });
-  const path = join(folder, "payroll.lock");
-  const lock = await open(path, "wx").catch(() => {
-    throw new Error("Another agent operation is running.");
-  });
+  const lease = await acquirePayrollLease(env);
   try {
     const client = createPublicClient({
       chain: targetChain,
@@ -90,6 +86,7 @@ export async function runAttack(
       functionName: "executePayment",
       args,
     });
+    await lease.assertHeld();
     const hash = await signer.submitPayment(
       account,
       data,
@@ -97,16 +94,13 @@ export async function runAttack(
       `${mode}-${account}-${signer.address}-${session.generation}-${nonce}`,
     );
     const proofPath = join(folder, `${hash}.json`);
-    await writeFile(
-      proofPath,
-      json({
-        status: "submitted",
-        hash,
-        type: "deterministic security diagnostic",
-        account,
-        agent: signer.address,
-      }),
-    );
+    await writeRecord(proofPath, {
+      status: "submitted",
+      hash,
+      type: "deterministic security diagnostic",
+      account,
+      agent: signer.address,
+    });
     const receipt = await client.waitForTransactionReceipt({
       hash,
       confirmations: 2,
@@ -138,10 +132,9 @@ export async function runAttack(
       reasonSource: "pre-submission onchain simulation; receipt proves revert",
       explorer: `${targetChain.blockExplorers.default.url}/tx/${hash}`,
     };
-    await writeFile(proofPath, json(proof));
+    await writeRecord(proofPath, proof);
     return proof;
   } finally {
-    await lock.close();
-    await unlink(path);
+    await lease.release();
   }
 }
