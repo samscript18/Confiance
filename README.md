@@ -4,6 +4,28 @@ Confiance is an onchain execution firewall that lets AI agents act autonomously 
 
 **Give an AI agent a job without giving it your wallet.**
 
+**Working Monad testnet MVP:** a real Gemini agent has independently paid a
+contractor through its own Privy signer after Chainlink CRE verified a real GitHub
+merge. Confiance enforced the owner's 50 CTT session and rejected over-limit,
+replayed and revoked-key attempts. The latest payment ran on the Render worker.
+
+[Open the product](https://confiance-eta.vercel.app) ·
+[Evaluator guide](docs/JUDGE_GUIDE.md) ·
+[Verified receipts](docs/DEPLOYMENTS.md) ·
+[Three-minute demo](docs/DEMO.md)
+
+## Why Confiance
+
+An autonomous worker needs to act while its human is away. Requiring a human to
+sign every payment defeats that autonomy; handing over an unrestricted treasury
+key creates a much larger permission than the task needs. Confiance separates
+those concerns: the human defines permission once, the AI requests an action,
+and the smart account enforces the boundary on every payment.
+
+The first use case is contractor payroll after a GitHub milestone. The same
+authorization model can be extended to other bounded spending tasks, but this
+repository demonstrates payroll rather than claiming unbuilt applications.
+
 An unrestricted agent key can drain a treasury. Confiance lets a human establish
 bounded authority, an agent sign its own requests, and a contract enforce the
 budget, asset, recipient, expiry, milestone and revocation rules before settlement.
@@ -19,6 +41,19 @@ flowchart LR
 ```
 
 ## Current status
+
+### The proof
+
+| Step                  | Real result                                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Owner setup           | Mera owner approved a 50 CTT total session and exact milestone                                                                                                      |
+| Open milestone        | Render's Gemini worker checked all tools and withheld payment                                                                                                       |
+| Actual merge          | CRE reported PR #2 through the authorized forwarder                                                                                                                 |
+| Autonomous settlement | [30 CTT payment](https://testnet.monadexplorer.com/tx/0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c), agent sender, no owner payment signature |
+| Authority enforcement | Actual spending-limit, reused-nonce and same-key revocation reverts                                                                                                 |
+| Recovery              | Completed task recognized and monitoring paused; no duplicate submission                                                                                            |
+
+**Intelligence requests. Authority validates. Monad settles.**
 
 Public preview: **https://confiance-eta.vercel.app**.
 Owner console for this preview: **http://localhost:3050** (existing localhost passkey).
@@ -140,6 +175,8 @@ Published Privy, CRE and Envio declaration defects are repaired by version-check
 See [INTEGRATIONS.md](docs/INTEGRATIONS.md).
 
 ## Documentation
+
+Start with the [evaluator guide](docs/JUDGE_GUIDE.md) for the evidence and source-code review map.
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Security model](docs/SECURITY.md)

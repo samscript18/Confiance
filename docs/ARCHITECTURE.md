@@ -16,8 +16,10 @@ GitHub → CRE workflow → signed report → production forwarder → onReport
 Confiance events → Envio → read-side history
 ```
 
-Every arrow has an implemented integration boundary except the unconfirmed Cleanverse transfer adapter. Provider and testnet end-to-end proof remains pending; SDK compilation is not live proof.
-See INTEGRATIONS.md for the precise status.
+The owner, separate agent signer, autonomous payment, authorized CRE reports and
+Envio ingestion have real Monad testnet evidence. Cleanverse settlement remains
+blocked. See [DEPLOYMENTS.md](DEPLOYMENTS.md) for receipts and
+[LIVE_PROGRESS.md](LIVE_PROGRESS.md) for the current deployment boundaries.
 
 ## Session semantics
 
@@ -60,7 +62,7 @@ in Solidity tests proves receiver validation, not actual CRE reporting.
 ## Runtime
 
 The LLM gets six tools, all with no caller-supplied arguments. Task addresses,
-amount and asset come from server configuration and remain subject to onchain
+amount and asset come from owner-authenticated, receipt-bound MongoDB tasks and remain subject to onchain
 policy. The signer exposes only a fixed transaction submission helper. No tool
 can set policy, transfer ownership or change the milestone. Reads use the real
 RPC and GitHub API; failures remain unavailable, never positive defaults.
@@ -104,14 +106,37 @@ identity metadata as spending authority.
 60 seconds). It waits while GitHub or the onchain condition is incomplete. Once
 CRE delivery is confirmed, the agent can request the fixed payment independently.
 
-A filesystem lock serializes runtime and dashboard security-demo operations on
-one persistent host. Submitted hashes are written before waiting for receipts.
-Pending or interrupted successful transactions block another run until reviewed.
+MongoDB stores task records, monitoring state, durable payment intents, submitted
+hashes and completed receipts. A shared lease serializes worker, web runtime and
+diagnostics. A payment intent is stored before Privy submission. Its idempotency
+key binds chain, account, agent, policy generation and nonce. Recovery resubmits
+that same intent or checks its known receipt; it never guesses a new nonce.
+
 A completed task is keyed by account, contractor, asset and GitHub milestone,
-including across signer rotation/amount formatting changes. Recovery rechecks
-sender, target, calldata and matching execution events before marking it paid.
-This local deduplication is an operational guard; only the contract enforces
-financial authority. Multiple hosts require shared coordination before deployment.
+including across signer rotation and amount formatting changes. Recovery verifies
+sender, target, calldata and execution events before treating it as paid. This is
+an operational duplicate-payment guard; the contract independently enforces the
+budget and authorization. Database failure stops execution. The hosted backend
+does not fall back to ephemeral files. This MVP runs one supervised Render worker.
+
+```mermaid
+flowchart LR
+  Browser[Owner browser / Mera] --> Frontend[Vercel frontend]
+  Frontend -->|server-only proxy + owner cookie| Backend[Render API]
+  Backend --> Mongo[(MongoDB)]
+  Worker[Render Gemini worker] --> Mongo
+  Worker --> Tools[Fixed deterministic tools]
+  Tools --> Privy --> Account[Confiance on Monad]
+  CRE -->|fetch metadata and independently verify GitHub| Backend
+  CRE --> Forwarder --> Account
+  Account --> Envio[Envio HyperSync indexer]
+  Envio -->|GraphQL history| Backend
+```
+
+CRE's public task feed exposes only verification metadata. The workflow checks
+that metadata against the account's onchain session and independently verifies the
+GitHub merge. The feed cannot mark a condition verified. Owner policy changes
+still require the Mera signer; routine payments use only Privy's agent signer.
 
 ## Web application routes
 
@@ -133,3 +158,19 @@ permissions and revocation; test transactions are collapsed under Test permissio
 Overview includes milestone verification. Settings holds CRE and Cleanverse setup.
 Legacy policy/security/milestone/connections URLs redirect to these destinations.
 The persistent app layout continues to retain the in-memory owner session.
+
+## Workspace access and preview hosting
+
+The workspace state API requires a valid owner session before returning account,
+agent, budget, treasury, task or activity details. Signed-out responses contain
+bootstrap information only. Signing out or losing the in-memory signing session
+locks the UI immediately. Public blockchain events, the registry document, demo
+receipts and the limited CRE discovery endpoint remain independently public;
+workspace authentication does not make blockchain data confidential.
+
+For the current preview, the human explicitly retained a localhost passkey and
+owner console at port 3050. The hosted frontend directs owner actions there;
+Render runs observation independently. Passkeys are hostname-scoped and an owner
+onboarding ceremony on the Vercel domain has not been claimed. Free Render can
+sleep; free Envio development deployments expire after at most 30 days. These
+are deployment limits, not part of Confiance's onchain authorization model.

@@ -121,8 +121,8 @@ export async function login(value: unknown) {
     maxAge: 3600,
   });
 }
-export async function requireOwner(request: Request) {
-  sameOrigin(request);
+export async function requireOwner(request: Request, mutation = true) {
+  if (mutation) sameOrigin(request);
   const token = (await cookies()).get(cookieName)?.value;
   const login = token
     ? mongoConfigured()

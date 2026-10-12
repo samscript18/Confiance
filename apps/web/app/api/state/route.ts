@@ -5,6 +5,7 @@ import {
 } from "../../../../../packages/shared/storage";
 import { readJob, readMonitoring } from "../../../../../agent/job";
 import { relayBackend } from "../../../lib/backend";
+import { requireOwner } from "../../../lib/auth";
 import {
   erc20Abi,
   decodeEventLog,
@@ -40,6 +41,20 @@ export async function GET(request: Request) {
     readiness: [],
     taskAmount: process.env.PAYMENT_AMOUNT || "30",
   };
+  try {
+    await requireOwner(request, false);
+    state.authenticated = true;
+  } catch {
+    // Bootstrap only. The public CRE task feed remains a separate endpoint.
+    return publicResponse({
+      ...state,
+      taskAmount: "",
+      authenticated: false,
+      ...(process.env.OWNER_CONSOLE_URL
+        ? { ownerConsoleUrl: process.env.OWNER_CONSOLE_URL }
+        : {}),
+    });
+  }
   try {
     const env = await runtimeEnv();
     if (env.OWNER_CONSOLE_URL) {

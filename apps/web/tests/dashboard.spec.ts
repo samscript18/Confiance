@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { createSecp256k1SigningSession } from "@category-labs/mera";
 import { toViemAccount } from "@category-labs/mera/viem";
-test("unconfigured dashboard presents missing state without fabricated balances", async ({
+test("signed-out workspace hides account details across pages", async ({
   page,
+  request,
 }) => {
   await page.goto("/");
   await expect(
@@ -10,53 +11,37 @@ test("unconfigured dashboard presents missing state without fabricated balances"
       .getByRole("navigation", { name: "Website navigation" })
       .getByRole("link"),
   ).toHaveCount(4);
-  await page.screenshot({
-    path: "proofs/screenshots/landing-desktop.png",
-    fullPage: true,
-  });
   await page.getByRole("link", { name: "Open app ↗", exact: true }).click();
   await expect(
+    page.getByRole("heading", { name: "Sign in to your Confiance account" }),
+  ).toBeVisible();
+  await expect(
     page.getByRole("heading", { name: "Payroll Agent", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("navigation", { name: "App navigation" }).getByRole("link"),
-  ).toHaveCount(5);
-  await expect(page.getByText("Setup required", { exact: true })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Run Payroll Agent" }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole("heading", { name: "Your account, your authority." }),
   ).toHaveCount(0);
-  await page.getByRole("link", { name: "Activity", exact: true }).click();
-  await expect(
-    page.getByText("No confirmed activity to display."),
-  ).toBeVisible();
-  await page.screenshot({
-    path: "proofs/screenshots/dashboard-desktop.png",
-    fullPage: true,
-  });
-  await page.getByRole("link", { name: "Account", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Create passkey" }),
-  ).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Permissions" })).toHaveCount(
-    0,
-  );
-  await page.getByRole("link", { name: "Agent", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Authorize session", exact: true }),
-  ).toBeDisabled();
-  const diagnostics = page.locator("#test-permissions");
-  await expect(diagnostics).not.toHaveAttribute("open");
-  await page.goto("/app/security");
-  await expect(page).toHaveURL(/\/app\/agent#test-permissions$/);
-  await expect(diagnostics).toHaveAttribute("open", "");
-  await page.goto("/app/connections");
-  await expect(page).toHaveURL(/\/app\/settings$/);
-  await expect(
-    page.getByRole("heading", { name: "Integration settings" }),
-  ).toBeVisible();
+  const response = await request.get("/api/state");
+  const state = await response.json();
+  expect(state.authenticated).toBe(false);
+  for (const key of [
+    "owner",
+    "account",
+    "agent",
+    "balance",
+    "session",
+    "recipient",
+    "workerTranscript",
+    "rejections",
+  ])
+    expect(state[key]).toBeUndefined();
+  expect(state.events).toEqual([]);
+  for (const label of ["Account", "Agent", "Activity", "Settings"]) {
+    await page.getByRole("link", { name: label, exact: true }).click();
+    await expect(
+      page.getByRole("heading", { name: "Sign in to your Confiance account" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Permissions", exact: true }),
+    ).toHaveCount(0);
+  }
 });
 test("mutation endpoints reject unauthenticated and foreign-origin calls", async ({
   request,
@@ -98,7 +83,7 @@ test("mobile dashboard stays within the viewport", async ({ page }) => {
   });
   await page.goto("/app/overview");
   await expect(
-    page.getByRole("heading", { name: "Payroll Agent", exact: true }),
+    page.getByRole("heading", { name: "Sign in to your Confiance account" }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -109,9 +94,10 @@ test("mobile dashboard stays within the viewport", async ({ page }) => {
     path: "proofs/screenshots/dashboard-mobile.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
   await page.getByRole("link", { name: "Agent", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Permissions" }),
+    page.getByRole("heading", { name: "Sign in to your Confiance account" }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -146,11 +132,18 @@ test("owner authentication verifies a Mera signature and consumes the challenge"
     expect(login.status()).toBe(200);
     expect(login.headers()["set-cookie"]).toContain("HttpOnly");
     expect(login.headers()["set-cookie"]).toContain("SameSite=strict");
+    const authenticated = await request.get("/api/state");
+    expect((await authenticated.json()).authenticated).toBe(true);
     const replay = await request.post("/api/auth", {
       headers: { Origin: "http://localhost:3021" },
       data,
     });
     expect(replay.status()).toBe(401);
+    await request.post("/api/auth?action=logout", {
+      headers: { Origin: "http://localhost:3021" },
+    });
+    const signedOut = await request.get("/api/state");
+    expect((await signedOut.json()).authenticated).toBe(false);
   } finally {
     session.end();
   }

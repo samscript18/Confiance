@@ -1,5 +1,44 @@
 # Demo verification procedure
 
+## Three-minute presentation
+
+This demo has two real completed rehearsals. Use their recorded receipts when
+reviewing the existing proof; use a new actual PR for a fresh autonomous payment.
+Do not replay a paid milestone or imply historical receipts are new transactions.
+
+| Time      | Screen / action                                      | What the audience learns                                                        |
+| --------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 0:00–0:30 | Public landing, then owner sign-in at localhost:3050 | The human controls authority; signed-out workspaces hide financial details      |
+| 0:30–1:00 | Overview and Agent permissions                       | Separate owner/agent; 50 CTT total cap, asset, contractor, expiry and milestone |
+| 1:00–1:30 | Open PR waiting result, then CRE receipt             | Real AI waits; an external authorized report unlocks the exact condition        |
+| 1:30–2:00 | Successful 30 CTT receipt and Activity               | Agent signs payment without a human popup; 30 spent, 20 remaining               |
+| 2:00–2:30 | 500 CTT diagnostic receipt                           | The same signer cannot exceed its financial authority                           |
+| 2:30–3:00 | Revocation and same-key retry receipts               | The key still exists. The authority does not.                                   |
+
+Use [DEPLOYMENTS.md](DEPLOYMENTS.md) for exact hashes and checked events. The
+negative controls are explicitly labeled diagnostics, not fabricated AI intent.
+Keep Cleanverse's limitation visible: this rehearsal uses CTT and exact-recipient
+authorization, without an A-Pass compliance claim.
+
+## Repeat the autonomous hosted flow without editing configuration
+
+1. Start the configured local console on port 3050 and sign in with its existing
+   Mera passkey. The public Vercel preview directs owner actions to this console.
+2. Create a real GitHub PR and keep it open. In Agent, choose its repo/number,
+   actual token, contractor, 30-token payment and 50-token total budget.
+3. Approve the onchain policy once. Save the receipt-bound task and start monitoring.
+4. Confirm the agent observes the open PR and does not claim payment.
+5. Merge that real PR. CRE discovers the task from the public feed, independently
+   verifies the merge and reports through the owner-approved forwarder/workflow.
+6. Wait for the Render worker. Inspect the actual agent-signed payment receipt,
+   balances and spending; no owner payment approval is part of this step.
+7. Observe completed-task detection and monitoring pause. Use the same agent's
+   boundary diagnostics; owner revocation removes actual onchain permission.
+
+The worker depends on server credentials configured once by the operator. Task
+details are saved in MongoDB through the app. Free Render can sleep, so this
+preview does not promise a strict verification/payment deadline. See [HOSTING.md](HOSTING.md).
+
 ## Proven local core
 
 ```sh

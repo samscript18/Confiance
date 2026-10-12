@@ -2,6 +2,7 @@ export interface DashboardState {
   network: "Monad Testnet";
   chainId: 10143;
   configured: boolean;
+  authenticated?: boolean;
   error?: string;
   owner?: `0x${string}`;
   ownerConsoleUrl?: string;

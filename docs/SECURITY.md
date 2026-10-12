@@ -83,3 +83,37 @@ SDK declaration repairs are pinned, documented and runtime-neutral. They are
 not compiler-error suppression. Re-review them when changing dependency versions.
 The independently deployed Cleanverse asset, registry and Chainlink infrastructure
 remain external trust dependencies requiring live integration proofs.
+
+## Workspace privacy boundary
+
+`GET /api/state` verifies the owner cookie and its expiry before loading workspace
+records or returning financial details. Public visitors get only sign-in
+bootstrap state. The UI also requires the current in-memory owner signing session;
+expiry and sign-out hide the workspace and old transaction links immediately.
+Mutations additionally enforce the configured origin. The Vercel proxy forwards
+cookies with a server-only shared secret; that secret cannot grant owner authority.
+Auth challenges are consumed atomically and session tokens are hashed in MongoDB.
+
+This prevents accidental disclosure through the dashboard and its state endpoint.
+It is not blockchain confidentiality: addresses, transfers, ERC-8004 metadata and
+public Envio events can be observed directly onchain. CRE's public task-discovery
+endpoint intentionally exposes the minimum milestone metadata it needs. Neither
+that endpoint nor public indexer data can change authorization.
+
+## Verified defenses and assurance limits
+
+| Boundary          | Implementation                                         | Evidence                                               |
+| ----------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| Owner-only policy | Immutable owner and owner-only mutations               | Foundry tests and owner-signed session receipts        |
+| Bounded agent     | Asset, exact recipient, cumulative spending, expiry    | 30 CTT success and real 500 CTT revert                 |
+| Revocation        | Session status checked per execution                   | Same Privy key rejected after owner revocation         |
+| Replay            | Lifetime nonce and policy generation                   | Reused-nonce revert and unit/fuzz tests                |
+| Milestone         | Authorized forwarder/workflow and domain-bound reports | Two real CRE ConditionVerified receipts                |
+| Duplicate task    | Durable intents, Privy idempotency, shared Mongo lease | Concurrent database tests and worker already-paid stop |
+| UI access         | Owner-authenticated state reads and sign-out lock      | Browser/API authentication regression suite            |
+| Compliance        | Official adapter fails closed                          | Adapter tests only; live Cleanverse settlement blocked |
+
+Tests and testnet receipts establish specific demonstrated properties; they do
+not constitute an independent security audit or a guarantee against all attacks.
+The owner remains a trusted authority. Operator compromise can use the agent's
+remaining permission, but cannot enlarge it without the owner's signature.
