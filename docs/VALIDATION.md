@@ -2,6 +2,16 @@
 
 Verified 2026-10-08 against the current local source and pinned lockfile.
 
+Updated live checks on 2026-10-12 supersede the historical integration rows below:
+Confiance deployment and ERC-8004 mint are verified, Privy has submitted real setup
+transactions, and Envio RPC indexing is running and caught up. Vertex migration
+passes **17 unit tests**, strict typing, production build and **4 production-server
+browser tests**. Live Vertex OAuth/inference/tool execution now succeeds, and the
+corrected CRE workflow succeeds with an open-PR waiting result. Treasury funding,
+owner session/reporter approval, CRE onchain delivery and payroll payment remain outstanding.
+Cleanverse discovery now returns an internal-error code and the new docs are gated.
+See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) and [DEPLOYMENTS.md](DEPLOYMENTS.md).
+
 | Check                                                                      | Result                                                                        |
 | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | Clean `npm ci` including version-checked type repair                       | PASS                                                                          |

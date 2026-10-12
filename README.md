@@ -21,10 +21,12 @@ flowchart LR
 ## Current status
 
 **This is not a completed Monad MVP.** The starting repository contained only
-AGENTS.md. The core contract is implemented and locally verified. The owner has
-no provider accounts or funded signer yet, so live deployment and sponsor
-integration proofs remain outstanding. There are no Confiance Monad addresses
-or transaction hashes to report.
+AGENTS.md. Confiance is now deployed on Monad testnet, the funded Privy agent has
+minted ERC-8004 identity 2210, and Envio RPC indexing is running. Vertex AI support
+works for `verith-ai`, including a real waiting-state tool run; owner session/treasury setup,
+CRE delivery and the full autonomous payment proof remain outstanding.
+Verified addresses and receipts are in [DEPLOYMENTS.md](docs/DEPLOYMENTS.md), with
+current blockers in [LIVE_PROGRESS.md](docs/LIVE_PROGRESS.md).
 
 Implemented:
 

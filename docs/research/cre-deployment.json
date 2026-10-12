@@ -1,0 +1,26 @@
+{
+  "registry": "private",
+  "name": "confiance-github-milestone",
+  "workflowId": "0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74",
+  "workflowOwner": "0x1db255D03A90f194483fEc22A9a32965e98a521E",
+  "status": "Active",
+  "receiver": "0x952bbdDeCE639f678733F310890d15E28b213489",
+  "chainId": 10143,
+  "forwarder": "0xF8344CFd5c43616a4366C34E3EEE75af79a74482",
+  "binaryHash": "4b481bb32da99b49c20952259981ac9805505ed5c64430b51170edb9372fd13d",
+  "configHash": "94ca7c126b4bad464e63ef6e29e5df0d571a5667025af80975518fa6516ca56b",
+  "evidence": "Authenticated CRE CLI deployment response. Receiver has not authorized reporter; no onchain report/payment proof.",
+  "initialExecutionFailure": {
+    "executionId": "24ccb50274b0ba427be6d594678eafcc6b1b34a381f9bc83d641c3f7fcb50e57",
+    "reason": "DON HTTP capability rejected the custom User-Agent header; removed and workflow updated."
+  },
+  "executionProof": {
+    "executionId": "50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11",
+    "status": "SUCCESS",
+    "startedAt": "2026-10-12T11:29:01Z",
+    "finishedAt": "2026-10-12T11:29:04Z",
+    "nodeCount": 10,
+    "log": "GitHub PR state: open; no condition report generated.",
+    "limitation": "Offchain waiting-state verification only. Owner reporter authorization and merged-PR onchain delivery are unproven."
+  }
+}

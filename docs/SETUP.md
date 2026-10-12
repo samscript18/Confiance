@@ -1,8 +1,8 @@
 # Live setup and reproducible demo
 
-Provider credentials and an owner address are configured locally. The Privy agent
-wallet has been created, but is unfunded. Confiance deployment and the full payment
-flow remain unverified. See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) for current operations
+Provider credentials and an owner address are configured locally. Confiance is
+deployed, the Privy agent is funded and ERC-8004 identity 2210 is minted. The full
+payment flow remains unverified. See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) for current operations
 and blockers; the instructions below describe the complete setup sequence.
 Keep secrets in ignored `.env`, never in chat or source control.
 
@@ -110,6 +110,11 @@ GITHUB_TOKEN alone does not configure a DON secret.
 Set an HTTPS LLM_BASE_URL, LLM_API_KEY and tool-capable LLM_MODEL for a provider
 using the documented chat-completions function-tool protocol. Example API base:
 `https://api.mistral.ai/v1`. No fallback model or unpaid mock response is used.
+
+The current selected provider is Gemini on Vertex AI. Follow [VERTEX.md](VERTEX.md)
+for `verith-ai` authentication. Vertex uses `LLM_PROVIDER=vertex`, project/location,
+and Google OAuth credentials; `LLM_BASE_URL`/`LLM_API_KEY` belong only to the optional
+chat-completions provider and are not sent to Vertex.
 
 In the policy form, enter the same token, contractor and GitHub task, a total
 budget of 50 token units, and authorize the 24-hour session. Mera signs agent

@@ -31,9 +31,13 @@ the required Vertex AI permissions (typically Vertex AI User). Choose one auth p
    JSON in a server-side secret/environment. Do not commit it. This matches the
    optional JSON credential approach used in verith-be.
 
-The project ID is not an authentication credential. No ADC file or configured
-Google credential was found here, and the live Vertex readiness run failed at
-authentication. Gemini inference/model access is therefore still unverified.
+The project ID is not an authentication credential. Initial authentication failed
+before credentials were configured. On 2026-10-12, the configured inline
+service-account JSON authenticated successfully: the real Gemini 3.8 Flash agent
+called GitHub, policy, session, recipient and balance tools, then declined payment
+because PR #1 is open, no session exists and the treasury is empty. This proves a
+real inference/tool loop, not a settled payment. The optional credential-file path
+does not exist locally; the configured inline JSON is the working auth source.
 
 The Google OAuth library refreshes tokens; no short-lived access token is stored
 in `.env`. The runtime preserves opaque thought signatures across function turns,

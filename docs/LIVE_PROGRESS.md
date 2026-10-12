@@ -1,6 +1,47 @@
 # Live setup progress
 
-Verified 2026-10-12. No payment or project deployment is claimed.
+Verified 2026-10-12. No autonomous payment is claimed.
+
+## Current status (supersedes earlier attempts below)
+
+- Confiance deployed and receipt/bytecode/owner verified on Monad testnet:
+  `0x952bbdDeCE639f678733F310890d15E28b213489`, block **70364758**.
+  [Deployment transaction](https://testnet.monadexplorer.com/tx/0x4c36aab404ca0b2e3b887096127e9e7a63ce66cdbfa84cec8623d4c4bbf55179).
+- Privy paid deployment gas; immutable ownership remains the configured human
+  `0x33fD00741137E0c7EA5cbAF143DAE846AedbcDF5`. Deployment grants no agent session.
+  Owner passkey authentication and policy signatures remain required.
+- ERC-8004 identity **2210** minted by the actual Privy agent at block **70362555**.
+  [Mint transaction](https://testnet.monadexplorer.com/tx/0x20ce4773903a37466857b395e5c1d902e57c391a47066e647b15279bb1ac7d0d).
+  Original receipt reconciled; sender, calldata, event, ownership and wallet binding verified.
+  A case-sensitive address comparison had prevented local recording. It is fixed;
+  existing identities require receipt reconciliation before another mint attempt.
+- Agent received 10 MON before these operations; gas funding is no longer blocked.
+- Vertex selected: `verith-ai`, `global`, `gemini-3.8-flash`. Configured service-account
+  JSON now authenticates successfully. A real agent run called GitHub, policy,
+  session, recipient and balance tools, then declined payment: PR #1 is open,
+  session absent, recipient not authorized and treasury empty. See [VERTEX.md](VERTEX.md).
+  There is no Mistral fallback when Vertex is selected.
+- Envio schema migrated, Activity GraphQL query works, and RPC-only indexing finished
+  backfill through block **70366351** and reported ready. No Confiance activity
+  events exist yet because no session/report/payment was submitted.
+- CRE workflow is deployed to the verified private registry and **Active**:
+  ID `0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74`,
+  owner `0x1db255D03A90f194483fEc22A9a32965e98a521E`. Actual CLI deployment metadata
+  is in [research/cre-deployment.json](research/cre-deployment.json) and local `.env`.
+  Owner reporter authorization and real onchain delivery remain pending.
+- The corrected workflow now succeeds on the DON. Execution
+  `50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11` succeeded;
+  logs from all ten nodes state `GitHub PR state: open; no condition report generated.`
+  This is actual offchain verification; no onchain report receipt exists yet.
+- Configured treasury CTT balance is **0**. Owner funding, registration, session
+  creation and reporter authorization remain outstanding.
+- Cleanverse docs require an invitation code. The supplied list lacks the actual
+  Google Drive URLs. Sandbox discovery returns **0002**, `Internal server error`,
+  for GET and documented POST. No API key was committed or guessed into undocumented
+  headers. Smart-account enrollment, ABI and compliant-transfer proof remain unresolved.
+- Updated code: **17 unit tests**, strict typing and production build pass.
+
+## Earlier setup attempts
 
 ## Completed operations
 
