@@ -12,8 +12,8 @@ ENVIO_MONAD_RPC_URL and run `npm run indexer:start` with the documented Envio
 database environment. Point ENVIO_GRAPHQL_URL at the actual GraphQL endpoint.
 
 Local Envio ingestion has been verified against the real Confiance account.
-The hosted backend currently uses checked Monad receipts/RPC while cloud indexing
-is being provisioned. Reverted transactions
+The hosted backend reads Envio Cloud history and reconciles current authority
+against Monad. Reverted transactions
 have no logs: the dashboard verifies saved failed receipts independently and labels
 simulation-derived reasons rather than manufacturing PaymentRejected events.
 
@@ -31,7 +31,9 @@ Deploy branch `dev`, indexer directory `indexer`, config file `config.cloud.yaml
 development tier and public GraphQL access. Cloud config uses Envio's default
 Monad testnet HyperSync source; public-RPC backfill hit HTTP 429 limits. The
 cloud config and committed ABI derive from the verified
-Confiance deployment at block 70364758; neither contains provider credentials.
+original Confiance deployment at block 70364758, with the verified live-owner
+account added at block 70494094. The original start block retains both accounts'
+history; neither configuration contains provider credentials.
 This directory has its own exact-pinned package manifest and declaration repair,
 so the cloud build does not import files outside its upload boundary.
 

@@ -16,6 +16,14 @@ setup. Treasury funding, agent/session authorization and CRE reporter approval
 must be established on this account before its first autonomous payment.
 The historical payments below belong to the original account.
 
+Hosted cutover is active on Vercel and Render. The replacement CRE workflow is
+`0x0040547646dcd6b590f75960671640368de8850e86b27cce7fad71ef922ac46f`,
+with its configuration pinned to the new receiver. Owner reporter approval and
+new-account delivery remain pending. Envio deployment `647f4f0` is synced and
+promoted with both addresses; its actual GraphQL endpoint is
+`https://indexer.dev.hyperindex.xyz/a7c50be/v1/graphql`. The endpoint returned all
+17 original-account events after cutover. No new-account payment is claimed yet.
+
 ## Hosted PR #2 rehearsal
 
 Frontend: https://confiance-eta.vercel.app
