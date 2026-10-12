@@ -28,8 +28,9 @@ The Development tier is free and limited to a maximum 30-day deployment lifetime
 see the current official pricing/billing documentation before production use.
 
 Deploy branch `dev`, indexer directory `indexer`, config file `config.cloud.yaml`,
-development tier and public GraphQL access. Set `ENVIO_MONAD_RPC_URL` to the actual
-Monad testnet RPC. The cloud config and committed ABI derive from the verified
+development tier and public GraphQL access. Cloud config uses Envio's default
+Monad testnet HyperSync source; public-RPC backfill hit HTTP 429 limits. The
+cloud config and committed ABI derive from the verified
 Confiance deployment at block 70364758; neither contains provider credentials.
 This directory has its own exact-pinned package manifest and declaration repair,
 so the cloud build does not import files outside its upload boundary.

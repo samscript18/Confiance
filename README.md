@@ -20,6 +20,13 @@ flowchart LR
 
 ## Current status
 
+Public preview: **https://confiance-eta.vercel.app**.
+Owner console for this preview: **http://localhost:3050** (existing localhost passkey).
+The Render-hosted Gemini worker paid another real 30 CTT after PR #2 was merged and
+the task-discovery CRE workflow verified it. MongoDB stores tasks, monitoring,
+execution intents and receipts. Task setup and Start/Pause monitoring work in the
+app without editing environment variables. See [HOSTING.md](docs/HOSTING.md).
+
 The core autonomous payment flow is proven on Monad testnet: the human approved
 its session, CRE verified the merged GitHub PR, and Vertex Gemini requested a
 30 CTT payment through a separate Privy signer without an owner payment signature.
@@ -110,19 +117,19 @@ required before a tool reports execution.
 
 ## Integrations and limitations
 
-| Integration   | Status                                                                                                      |
-| ------------- | ----------------------------------------------------------------------------------------------------------- |
-| Monad         | Public RPC verified as chain 10143; no funded Confiance deployment                                          |
-| Privy         | Server adapter implemented against SDK 0.35.0; no app or wallet provisioned                                 |
-| Mera          | Browser owner flow and real SDK signing implemented/tested; human passkey ceremony pending                  |
-| ERC-8004      | Agent-signed registration adapter implemented; registry code/version verified; no project identity minted   |
-| Chainlink CRE | GitHub workflow compiles to WASM; receiver tested; authenticated tenant/live delivery pending               |
-| Cleanverse    | Official sandbox Monad contracts have code; onchain eligibility ABI and smart-account enrollment unresolved |
-| Envio         | Typed handlers/schema/codegen implemented; live address/start block require a verified deployment           |
+| Integration   | Status                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Monad         | Real account deployment, two autonomous payments, limit/replay/revocation receipts verified                         |
+| Privy         | Real separate agent wallet signs payments; SDK 0.35.0                                                               |
+| Mera          | Existing localhost owner signs setup, policy and revocation; hosted domain owner intentionally deferred             |
+| ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                         |
+| Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                       |
+| Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked |
+| Envio         | Local ingestion verified; cloud deployment being verified against actual payment events                             |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**
 Mera belongs to the human owner and will not supply the agent key. Chainlink
-reporting remains disabled until a verified reporting path is configured.
+reporting is restricted to the owner-approved deployed workflow/forwarder.
 
 An EVM revert removes all logs, including rejection events. Successful execution
 and policy changes can be indexed; rejected attempts require separately labeled
