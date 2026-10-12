@@ -1,76 +1,92 @@
 {
   "registry": "private",
   "name": "confiance-github-milestone",
-  "workflowId": "0x000aa0784b0fb840ea903da674bf9964ec02a045037f7cb115ed4c2acd43b9ca",
+  "workflowId": "0x0040547646dcd6b590f75960671640368de8850e86b27cce7fad71ef922ac46f",
   "workflowOwner": "0x1db255D03A90f194483fEc22A9a32965e98a521E",
   "status": "Active",
-  "receiver": "0x952bbdDeCE639f678733F310890d15E28b213489",
+  "receiver": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
   "chainId": 10143,
   "forwarder": "0xF8344CFd5c43616a4366C34E3EEE75af79a74482",
   "binaryHash": "f93b416d0db7b31729968b7b40fdf307a1f7a910dfc90357054bb7fdfcbdbbeb",
-  "configHash": "9d163611aff34840b8840101c69af14531e5e17b642166df9c39716faa464d72",
+  "configHash": "1db871d837f357e23e7220b59627c95d18b7849271274e9ba2b3254ba4908704",
   "tasksUrl": "https://confiance-backend.onrender.com/api/task",
   "gasLimit": "500000",
-  "reporterApproval": "verified onchain",
-  "evidence": "Actual authenticated private registry deployment returned Active. Real non-broadcast simulation fetched the hosted endpoint and returned no_task. New task/report delivery is not yet proved.",
+  "reporterApproval": "pending live owner transaction",
+  "evidence": "Authenticated CRE deployment returned Active with the new receiver configuration. No report delivery to this account is claimed yet.",
   "previousDeployment": {
     "registry": "private",
     "name": "confiance-github-milestone",
-    "workflowId": "0x002de83854f367d591931bbd62aa30913140bd61330b59fe5df3c67a18b580f3",
+    "workflowId": "0x000aa0784b0fb840ea903da674bf9964ec02a045037f7cb115ed4c2acd43b9ca",
     "workflowOwner": "0x1db255D03A90f194483fEc22A9a32965e98a521E",
     "status": "Active",
     "receiver": "0x952bbdDeCE639f678733F310890d15E28b213489",
     "chainId": 10143,
     "forwarder": "0xF8344CFd5c43616a4366C34E3EEE75af79a74482",
-    "binaryHash": "56d8fe59f384cad44e4cfcb9e7bd1cf3494369e2dd12ac3c4a5bf662d975bbf5",
-    "configHash": "94ca7c126b4bad464e63ef6e29e5df0d571a5667025af80975518fa6516ca56b",
-    "evidence": "Owner approved the updated reporter; Monad receipt and ConditionVerified event independently verified.",
-    "initialExecutionFailure": {
-      "executionId": "24ccb50274b0ba427be6d594678eafcc6b1b34a381f9bc83d641c3f7fcb50e57",
-      "reason": "DON HTTP capability rejected the custom User-Agent header; removed and workflow updated."
-    },
+    "binaryHash": "f93b416d0db7b31729968b7b40fdf307a1f7a910dfc90357054bb7fdfcbdbbeb",
+    "configHash": "9d163611aff34840b8840101c69af14531e5e17b642166df9c39716faa464d72",
+    "tasksUrl": "https://confiance-backend.onrender.com/api/task",
+    "gasLimit": "500000",
+    "reporterApproval": "verified onchain",
+    "evidence": "Actual authenticated private registry deployment returned Active. Real non-broadcast simulation fetched the hosted endpoint and returned no_task. New task/report delivery is not yet proved.",
     "previousDeployment": {
-      "workflowId": "0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74",
-      "binaryHash": "4b481bb32da99b49c20952259981ac9805505ed5c64430b51170edb9372fd13d",
+      "registry": "private",
+      "name": "confiance-github-milestone",
+      "workflowId": "0x002de83854f367d591931bbd62aa30913140bd61330b59fe5df3c67a18b580f3",
+      "workflowOwner": "0x1db255D03A90f194483fEc22A9a32965e98a521E",
+      "status": "Active",
+      "receiver": "0x952bbdDeCE639f678733F310890d15E28b213489",
+      "chainId": 10143,
+      "forwarder": "0xF8344CFd5c43616a4366C34E3EEE75af79a74482",
+      "binaryHash": "56d8fe59f384cad44e4cfcb9e7bd1cf3494369e2dd12ac3c4a5bf662d975bbf5",
+      "configHash": "94ca7c126b4bad464e63ef6e29e5df0d571a5667025af80975518fa6516ca56b",
+      "evidence": "Owner approved the updated reporter; Monad receipt and ConditionVerified event independently verified.",
+      "initialExecutionFailure": {
+        "executionId": "24ccb50274b0ba427be6d594678eafcc6b1b34a381f9bc83d641c3f7fcb50e57",
+        "reason": "DON HTTP capability rejected the custom User-Agent header; removed and workflow updated."
+      },
+      "previousDeployment": {
+        "workflowId": "0x00b8e771656a028fd582a33fee292cac1a4eaca7fd47d84672c99d28631dac74",
+        "binaryHash": "4b481bb32da99b49c20952259981ac9805505ed5c64430b51170edb9372fd13d",
+        "executionProof": {
+          "executionId": "50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11",
+          "status": "SUCCESS",
+          "startedAt": "2026-10-12T11:29:01Z",
+          "finishedAt": "2026-10-12T11:29:04Z",
+          "nodeCount": 10,
+          "log": "GitHub PR state: open; no condition report generated.",
+          "limitation": "Offchain waiting-state verification only. Owner reporter authorization and merged-PR onchain delivery are unproven."
+        }
+      },
+      "gasLimit": "500000",
+      "reportingFailure": {
+        "executionId": "801fd2bb087786a8e800789194fc5b579c4a9753064b3d578aa528704c213301",
+        "error": "Gas limit 200000 below required minimum 200500; corrected to 500000."
+      },
       "executionProof": {
-        "executionId": "50b09c3568dd19be345a1a85d1dbbe994525c87ce2612983f636960cc4099b11",
+        "executionId": "8aea75e0-ed73-4d85-8999-94f4b5b17be5",
         "status": "SUCCESS",
-        "startedAt": "2026-10-12T11:29:01Z",
-        "finishedAt": "2026-10-12T11:29:04Z",
+        "startedAt": "2026-10-12T14:13:01Z",
+        "finishedAt": "2026-10-12T14:13:09Z",
         "nodeCount": 10,
-        "log": "GitHub PR state: open; no condition report generated.",
-        "limitation": "Offchain waiting-state verification only. Owner reporter authorization and merged-PR onchain delivery are unproven."
+        "transactionHash": "0x8fe3b6a5b5865b45f151713190126bee9c23591ea09fced1f47514ce481a7b9d",
+        "blockNumber": "70418309",
+        "condition": "0x14c3db02f83f16bf9877316660c667e6086184e84f648588cf372421e8a9b562",
+        "verification": "Successful Monad receipt and matching ConditionVerified event from Confiance, through the authorized forwarder."
       }
     },
-    "gasLimit": "500000",
-    "reportingFailure": {
-      "executionId": "801fd2bb087786a8e800789194fc5b579c4a9753064b3d578aa528704c213301",
-      "error": "Gas limit 200000 below required minimum 200500; corrected to 500000."
-    },
-    "executionProof": {
-      "executionId": "8aea75e0-ed73-4d85-8999-94f4b5b17be5",
+    "ownerApprovalVerification": "Matching forwarder, workflow ID and workflow owner read directly from Confiance on chain 10143.",
+    "offchainExecution": {
+      "id": "876f44dfb85b2bea6a290877d47fc5ae9b2c01b202fdcb8fe46181ae5491bb52",
+      "workflowId": "0x000aa0784b0fb840ea903da674bf9964ec02a045037f7cb115ed4c2acd43b9ca",
       "status": "SUCCESS",
-      "startedAt": "2026-10-12T14:13:01Z",
-      "finishedAt": "2026-10-12T14:13:09Z",
-      "nodeCount": 10,
-      "transactionHash": "0x8fe3b6a5b5865b45f151713190126bee9c23591ea09fced1f47514ce481a7b9d",
-      "blockNumber": "70418309",
-      "condition": "0x14c3db02f83f16bf9877316660c667e6086184e84f648588cf372421e8a9b562",
-      "verification": "Successful Monad receipt and matching ConditionVerified event from Confiance, through the authorized forwarder."
+      "limitation": "Empty feed execution; no task-fed condition report yet."
+    },
+    "taskExecutionProof": {
+      "transactionHash": "0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff",
+      "blockNumber": "70465820",
+      "condition": "0xa5bce51d3d3fadd3e5cbe037586b7d44766562ee16c0e25d27ba7e1fc6e11f6a",
+      "milestone": "samscript18/Confiance PR #2",
+      "verification": "Successful receipt sent to authorized CRE forwarder with matching Confiance ConditionVerified event."
     }
-  },
-  "ownerApprovalVerification": "Matching forwarder, workflow ID and workflow owner read directly from Confiance on chain 10143.",
-  "offchainExecution": {
-    "id": "876f44dfb85b2bea6a290877d47fc5ae9b2c01b202fdcb8fe46181ae5491bb52",
-    "workflowId": "0x000aa0784b0fb840ea903da674bf9964ec02a045037f7cb115ed4c2acd43b9ca",
-    "status": "SUCCESS",
-    "limitation": "Empty feed execution; no task-fed condition report yet."
-  },
-  "taskExecutionProof": {
-    "transactionHash": "0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff",
-    "blockNumber": "70465820",
-    "condition": "0xa5bce51d3d3fadd3e5cbe037586b7d44766562ee16c0e25d27ba7e1fc6e11f6a",
-    "milestone": "samscript18/Confiance PR #2",
-    "verification": "Successful receipt sent to authorized CRE forwarder with matching Confiance ConditionVerified event."
   }
 }
