@@ -26,6 +26,7 @@ import {
 } from "../../../packages/shared/contracts";
 import { identityCommitment } from "../../../packages/shared/identity";
 import { validGithubRepo } from "../../../packages/shared/github";
+import { parseReporterSettings } from "../../../packages/shared/reporter";
 import { parseExactAmount } from "../../../agent/tools/amount";
 import { contractError } from "../../../packages/shared/errors";
 import {
@@ -128,6 +129,14 @@ export default function Dashboard() {
         identityCommitment(state.registry, BigInt(state.identity.id)),
       );
   }, [state]);
+  useEffect(() => {
+    const setup = state.reporterSetup;
+    if (setup) {
+      setForwarder((current) => current || setup.forwarder);
+      setWorkflowId((current) => current || setup.workflowId);
+      setWorkflowOwner((current) => current || setup.workflowOwner);
+    }
+  }, [state.reporterSetup]);
   async function act(label: string, fn: () => Promise<void>) {
     if (busy) return;
     setBusy(label);
@@ -375,22 +384,21 @@ export default function Dashboard() {
     );
   }
   async function configureReporter() {
-    if (
-      !account ||
-      !isAddress(forwarder) ||
-      !isAddress(workflowOwner) ||
-      !isHex(workflowId) ||
-      workflowId.length !== 66
-    )
+    if (!account)
       throw new Error(
-        "Use the authenticated CRE directory and deployed workflow metadata.",
+        "Deploy or connect Confiance before authorizing its reporter.",
       );
+    const reporter = parseReporterSettings({
+      forwarder,
+      workflowId,
+      workflowOwner,
+    });
     await send(
       account,
       encodeFunctionData({
         abi: confianceAbi,
         functionName: "configureReporter",
-        args: [{ forwarder, workflowId, workflowOwner }],
+        args: [reporter],
       }),
     );
     setNotice(
@@ -1053,6 +1061,13 @@ export default function Dashboard() {
                 <small>{item.ready ? "Configured" : "Required"}</small>
               </div>
             ))}
+            {state.reporterSetup && (
+              <p className="footnote">
+                Loaded from configured deployment metadata. Review these values
+                before approving with your owner passkey. They become authorized
+                only after the transaction confirms onchain.
+              </p>
+            )}
             <label>
               Authorized CRE forwarder
               <input

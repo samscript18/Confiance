@@ -10,6 +10,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { isHex } from "viem";
 import type { DashboardState } from "../../../lib/state";
+import { parseReporterSettings } from "../../../../../packages/shared/reporter";
 export const runtime = "nodejs";
 export async function GET() {
   const state: DashboardState = {
@@ -23,6 +24,21 @@ export async function GET() {
   };
   try {
     const env = await runtimeEnv();
+    if (
+      env.CHAINLINK_CRE_FORWARDER &&
+      env.CHAINLINK_CRE_WORKFLOW_ID &&
+      env.CHAINLINK_CRE_WORKFLOW_OWNER
+    ) {
+      try {
+        state.reporterSetup = parseReporterSettings({
+          forwarder: env.CHAINLINK_CRE_FORWARDER,
+          workflowId: env.CHAINLINK_CRE_WORKFLOW_ID,
+          workflowOwner: env.CHAINLINK_CRE_WORKFLOW_OWNER,
+        });
+      } catch {
+        // Malformed setup metadata cannot become a signing suggestion.
+      }
+    }
     state.readiness = [
       {
         name: "Privy",
@@ -53,7 +69,8 @@ export async function GET() {
       {
         name: "Cleanverse",
         ready: false,
-        detail: "Smart-account enrollment and eligibility ABI unconfirmed",
+        detail:
+          "Validator documented; account/CVI enrollment and compliant transfer pending",
       },
       {
         name: "Envio",

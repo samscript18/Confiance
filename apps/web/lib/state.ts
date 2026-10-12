@@ -42,4 +42,9 @@ export interface DashboardState {
   taskAmount: string;
   rejections?: { hash: string; reason: string; block: string }[];
   reporter?: { forwarder: string; workflowId: string; workflowOwner: string };
+  reporterSetup?: {
+    forwarder: string;
+    workflowId: string;
+    workflowOwner: string;
+  };
 }
