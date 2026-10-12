@@ -688,9 +688,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const reporterExists = Boolean(
     state.reporter && state.reporter.forwarder !== zeroAddress,
   );
-  const tokenConfigured = Boolean(
-    createdToken || state.taskAsset || state.asset,
-  );
+  const sessionAssetLocked = Boolean(session?.active);
+  const testFundsCreated = Boolean(createdToken);
   const diagnosticHints = [
     ...new Set(
       [
@@ -1421,21 +1420,26 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                             disabled ||
                             !owner ||
                             !account ||
-                            tokenConfigured ||
+                            testFundsCreated ||
+                            sessionAssetLocked ||
                             Boolean(state.error)
                           }
                           onClick={() =>
                             void act("Deploying test token", testToken)
                           }
                         >
-                          {tokenConfigured
-                            ? "Payment token configured"
-                            : "Deploy & fund CTT test token"}
+                          {testFundsCreated
+                            ? "Test funds created"
+                            : sessionAssetLocked
+                              ? "Use your authorized token"
+                              : "Deploy & fund CTT test token"}
                         </ActionButton>
                         <p className="footnote">
-                          {tokenConfigured
-                            ? "Use the funding form below to add the configured token. Deploying another token does not change an existing session."
-                            : "This creates a new test token and mints 1,000 units to Confiance. Sign in and deploy the account first."}{" "}
+                          {testFundsCreated
+                            ? "1,000 CTT have been added to this account. Your new token is selected below and in the agent’s permission form."
+                            : sessionAssetLocked
+                              ? "Your current session uses an approved token. Add that token with the form below, or revoke the session before setting up a different test token."
+                              : "Create a fresh CTT test token and add 1,000 units directly to this account. Having a token address selected does not mean this account is funded."}{" "}
                           Test tokens do not enforce A-Pass. Cleanverse
                           enrollment and a compliant transfer remain pending.
                         </p>
