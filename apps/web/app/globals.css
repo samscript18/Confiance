@@ -496,6 +496,69 @@ footer > span {
   border-color: #ead1c5;
   color: #8a4735;
 }
+.message-modal {
+  position: fixed;
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 36px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 80px #14251b33;
+  overflow: auto;
+}
+.message-modal::backdrop {
+  background: #14251b80;
+  backdrop-filter: blur(5px);
+}
+.message-modal-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 25px;
+  font-weight: 400;
+  border-radius: 50%;
+}
+.message-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 24px;
+  background: var(--lime);
+  color: var(--green);
+  border-radius: 50%;
+  font-size: 25px;
+}
+.message-modal-error .message-modal-icon {
+  background: #ffe4d9;
+  color: #8a4735;
+}
+.message-modal h2 {
+  margin: 10px 0 16px;
+  font-size: 26px;
+}
+.message-modal-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.message-modal-dismiss {
+  margin-top: 28px;
+  width: 100%;
+  background: var(--green);
+  color: var(--white);
+}
+.message-modal-dismiss:hover {
+  background: #244a37;
+}
 .pending,
 .tx-link {
   font-size: 12px;

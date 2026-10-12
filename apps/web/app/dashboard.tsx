@@ -36,6 +36,7 @@ import {
   ownerError,
 } from "../lib/mera";
 import type { DashboardState } from "../lib/state";
+import { MessageModal } from "./message-modal";
 
 const explorer = monadTestnet.blockExplorers.default.url;
 const empty: DashboardState = {
@@ -75,6 +76,7 @@ export default function Dashboard() {
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
+  const [dismissedStateError, setDismissedStateError] = useState("");
   const [hash, setHash] = useState<Hex>();
   const [account, setAccount] = useState<Address>();
   const [asset, setAsset] = useState("");
@@ -485,13 +487,24 @@ export default function Dashboard() {
           )}
         </div>
       </div>
-      {(notice || error || state.error) && (
-        <div
-          role={error || state.error ? "alert" : "status"}
-          className={`notice ${error || state.error ? "error" : ""}`}
-        >
-          {error || state.error || notice}
-        </div>
+      {(error ||
+        (state.error !== dismissedStateError && state.error) ||
+        notice) && (
+        <MessageModal
+          message={
+            error ||
+            (state.error !== dismissedStateError && state.error) ||
+            notice
+          }
+          error={Boolean(
+            error || (state.error !== dismissedStateError && state.error),
+          )}
+          onDismiss={() => {
+            setNotice("");
+            setError("");
+            setDismissedStateError(state.error || "");
+          }}
+        />
       )}
       {busy && (
         <p className="pending" role="status">
