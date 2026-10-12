@@ -4,6 +4,7 @@ export interface DashboardState {
   configured: boolean;
   error?: string;
   owner?: `0x${string}`;
+  ownerConsoleUrl?: string;
   account?: `0x${string}`;
   agent?: `0x${string}`;
   asset?: `0x${string}`;

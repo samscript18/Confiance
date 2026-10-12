@@ -59,6 +59,12 @@ onboarding on that final domain and configure/deploy its matching immutable-owne
 account. This MVP is not a multi-tenant wallet platform; initial provider/owner
 configuration remains an operator responsibility.
 
+For this preview, the user explicitly selected the existing localhost owner.
+`OWNER_CONSOLE_URL=http://localhost:3050` makes the public app direct owner actions
+to that console instead of requesting an unusable hosted-domain passkey. The
+local console must be running for those owner actions. Agent observation and
+payment execution run on Render independently of the owner console.
+
 ## One-time CRE activation
 
 Set `CRE_TASKS_URL` to the Render service's public `/api/task` HTTPS endpoint,

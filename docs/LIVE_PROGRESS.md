@@ -24,9 +24,9 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
   Task-fed PR #2 delivery is proved by matching onchain event in transaction
   `0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff`,
   block 70465820. Previous PR #1 delivery remains proven.
-- Local owner controls are now at http://localhost:3050. The localhost passkey
-  cannot be assumed to work on the Vercel hostname. Hosted owner onboarding needs
-  a domain-matching passkey/account configuration before claiming the hosted demo.
+- Local owner controls are at http://localhost:3050. The user explicitly chose
+  to retain this owner for the preview. The public app links to the local owner
+  console. Owner authentication on the Vercel hostname is not claimed.
 - Envio works locally. Its configured endpoint is localhost, so cloud history
   currently uses Monad RPC and persisted receipts. A public Envio endpoint is
   still required. Vercel Git auto-deployment also needs a GitHub Login Connection.

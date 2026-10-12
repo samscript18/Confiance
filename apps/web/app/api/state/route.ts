@@ -42,6 +42,18 @@ export async function GET(request: Request) {
   };
   try {
     const env = await runtimeEnv();
+    if (env.OWNER_CONSOLE_URL) {
+      const consoleUrl = new URL(env.OWNER_CONSOLE_URL);
+      if (
+        !consoleUrl.username &&
+        !consoleUrl.password &&
+        (consoleUrl.protocol === "https:" ||
+          (consoleUrl.protocol === "http:" &&
+            ["localhost", "127.0.0.1"].includes(consoleUrl.hostname)))
+      ) {
+        state.ownerConsoleUrl = consoleUrl.origin;
+      }
+    }
     state.taskAmount = env.PAYMENT_AMOUNT || "30";
     const job = await readJob(env);
     state.savedTask = Boolean(job);

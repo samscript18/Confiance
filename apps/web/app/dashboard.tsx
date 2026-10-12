@@ -215,6 +215,10 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       setBusy("");
     }
   }
+  const remoteOwnerConsole =
+    state.ownerConsoleUrl &&
+    typeof window !== "undefined" &&
+    new URL(state.ownerConsoleUrl).origin !== window.location.origin;
   async function authenticate(create: boolean) {
     const address = await connectOwner(create);
     setHasPasskey(true);
@@ -754,6 +758,13 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               >
                 Sign out
               </ActionButton>
+            ) : remoteOwnerConsole ? (
+              <a
+                className="action-button"
+                href={`${state.ownerConsoleUrl}/app/account`}
+              >
+                Open owner console
+              </a>
             ) : (
               <ActionButton
                 pending={busy === "Signing in"}
@@ -1217,13 +1228,22 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                     <p className="eyebrow">01 · OWNER</p>
                     <h2>Your account, your authority.</h2>
                     <p>
-                      {owner
-                        ? "You are signed in with your owner passkey. You can manage the account and the agent’s authority."
-                        : hasPasskey || state.account
-                          ? "Sign in with your existing owner passkey. Signing sessions last ten minutes; your account and policy stay onchain after sign-out."
-                          : "Create a Mera passkey on this domain, or sign in with an existing passkey. A PRF-capable authenticator is required."}
+                      {remoteOwnerConsole
+                        ? "Owner controls use your localhost passkey for this preview. Open the owner console to fund the account, change permissions or revoke the agent."
+                        : owner
+                          ? "You are signed in with your owner passkey. You can manage the account and the agent’s authority."
+                          : hasPasskey || state.account
+                            ? "Sign in with your existing owner passkey. Signing sessions last ten minutes; your account and policy stay onchain after sign-out."
+                            : "Create a Mera passkey on this domain, or sign in with an existing passkey. A PRF-capable authenticator is required."}
                     </p>
-                    {owner ? (
+                    {remoteOwnerConsole ? (
+                      <a
+                        className="action-button primary"
+                        href={`${state.ownerConsoleUrl}/app/account`}
+                      >
+                        Open owner console
+                      </a>
+                    ) : owner ? (
                       <p className="setup-status">✓ Owner signed in</p>
                     ) : (
                       <div className="button-row">
