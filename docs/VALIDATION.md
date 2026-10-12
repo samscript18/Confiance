@@ -30,8 +30,8 @@ PR #2 payment's timeline.
 
 The live-domain owner subsequently deployed account
 `0xde4dfd84ed78c4c65d7670e22be1e002403f057f` at block **70494094**.
-Its deployment is verified and hosted services are connected; its funding,
-session/reporter approvals and first autonomous payment remain pending proof.
+Its deployment is verified and hosted services are connected; its CRE reporter approval is verified onchain. Funding,
+session approval and its first autonomous payment remain pending proof.
 
 Browser fixtures use an unfunded authentication key and unconfigured application;
 they cannot submit payments. Live proofs come from separate actual provider/chain

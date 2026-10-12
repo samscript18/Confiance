@@ -11,7 +11,7 @@
   "configHash": "1db871d837f357e23e7220b59627c95d18b7849271274e9ba2b3254ba4908704",
   "tasksUrl": "https://confiance-backend.onrender.com/api/task",
   "gasLimit": "500000",
-  "reporterApproval": "pending live owner transaction",
+  "reporterApproval": "verified matching reporter configuration onchain; new-account delivery remains unproved",
   "evidence": "Authenticated CRE deployment returned Active with the new receiver configuration. No report delivery to this account is claimed yet.",
   "previousDeployment": {
     "registry": "private",
@@ -88,5 +88,12 @@
       "milestone": "samscript18/Confiance PR #2",
       "verification": "Successful receipt sent to authorized CRE forwarder with matching Confiance ConditionVerified event."
     }
+  },
+  "reporterApprovalProof": {
+    "hash": "0xe52276fb4865668de0124f00aeb929f806585ca6ee401eb26edfbc8b47e10c0f",
+    "blockNumber": "70497008",
+    "owner": "0xaf00668625e038f43c302283aecd6ff90265e42f",
+    "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+    "verification": "Monad chain, successful receipt, owner sender, account target, configureReporter calldata and matching ReporterConfigured event checked."
   }
 }

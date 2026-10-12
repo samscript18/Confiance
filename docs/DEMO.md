@@ -25,7 +25,7 @@ not as later actions in the hosted PR #2 payment's timeline.
 
 The new live-domain account `0xde4dfd84ed78c4c65d7670e22be1e002403f057f`
 was deployed at block **70494094**. Hosted services are connected, but its
-funding, owner policy/reporter approvals and first autonomous payment must be
+funding, owner policy approval and first autonomous payment must be
 verified before claiming this account has completed the demo.
 
 ## Presentation screens

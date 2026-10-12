@@ -12,17 +12,23 @@ The live-domain passkey owner deployed this account. The receipt, chain,
 constructor calldata against the compiled artifact, deployer and immutable
 onchain owner were checked independently. Hosted configuration now points to
 this account, with a separate MongoDB namespace and monitoring disabled during
-setup. Treasury funding, agent/session authorization and CRE reporter approval
-must be established on this account before its first autonomous payment.
+setup. The matching CRE reporter is approved onchain. Treasury funding and
+agent/session authorization must be established before its first autonomous payment.
 The historical payments below belong to the original account.
 
 Hosted cutover is active on Vercel and Render. The replacement CRE workflow is
 `0x0040547646dcd6b590f75960671640368de8850e86b27cce7fad71ef922ac46f`,
-with its configuration pinned to the new receiver. Owner reporter approval and
-new-account delivery remain pending. Envio deployment `647f4f0` is synced and
+with its configuration pinned to the new receiver. Owner reporter approval is verified against current onchain state;
+new-account condition delivery remains pending. Envio deployment `647f4f0` is synced and
 promoted with both addresses; its actual GraphQL endpoint is
 `https://indexer.dev.hyperindex.xyz/a7c50be/v1/graphql`. The endpoint returned all
 17 original-account events after cutover. No new-account payment is claimed yet.
+
+[Live-owner reporter approval](https://testnet.monadexplorer.com/tx/0xe52276fb4865668de0124f00aeb929f806585ca6ee401eb26edfbc8b47e10c0f),
+block **70497008**: successful owner-signed `configureReporter` transaction and
+matching `ReporterConfigured` event checked independently. This approval grants
+the pinned workflow reporting authority; it is not a milestone-verification or
+payment receipt.
 
 ## Hosted PR #2 rehearsal
 
