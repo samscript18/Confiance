@@ -24,7 +24,7 @@ signers, funds Confiance with CTT, registers a local test identity and creates a
 This proves the local authorization firewall. It does not prove Monad,
 LLM/Privy/Mera, CRE, Cleanverse or ERC-8004 integration.
 
-## Required live demo — pending
+## Live demo procedure
 
 Do not present these steps as completed until their evidence is recorded.
 Follow SETUP.md and INTEGRATIONS.md first.
@@ -44,7 +44,8 @@ Follow SETUP.md and INTEGRATIONS.md first.
 A responsible payroll LLM should wait when the milestone is incomplete. The
 negative-attempt demo is an explicitly labeled deterministic diagnostic through
 the same agent signer, not a fabricated AI decision. CLI tooling is available
-as `npm run agent:diagnostic -- <amount> --submit`; its dashboard controls are implemented; real Monad proofs remain pending. Agent attempts never obtain an owner signature.
+as `npm run agent:diagnostic -- <amount> --submit`; its controls are on `/app/security`; verified Monad payment, CRE and limit
+proofs are recorded in DEPLOYMENTS.md. Agent attempts never obtain an owner signature.
 
 Use a genuine Cleanverse A-Token/A-Pass path only after its support is proven.
 Otherwise label the real test ERC-20 fallback without claiming compliance or
@@ -58,8 +59,10 @@ Execution success requires a matching event from Confiance. Failed receipts
 have no surviving events. Keep simulation reasons separate from receipt proof.
 No indexed event may be manufactured for a reverted transaction.
 
-The final live demo remains blocked on account provisioning, testnet funds and
-CRE access and the unconfirmed Cleanverse compliance path. The central thesis has not yet been proven on Monad.
+The agent has autonomously paid 30 CTT on Monad and the 500 CTT limit diagnostic
+has reverted. The remaining live scenes are owner revocation/same-key retry and
+a legitimate Cleanverse compliant payment. Do not delete the paid task receipt
+or run the same milestone again as a new task to manufacture another payment.
 
 **The key still exists. The authority does not.**
 
@@ -67,8 +70,10 @@ CRE access and the unconfirmed Cleanverse compliance path. The central thesis ha
 
 ## Dashboard and autonomous worker
 
-Use Account & policy to create/sign in with Mera, deploy/fund Confiance, connect
-the Privy wallet, register its ERC-8004 identity and authorize the session.
+Open the landing page and choose Open app. Use `/app/account` for Mera and
+funding, `/app/agent` for the Privy wallet and ERC-8004 identity, and `/app/policy`
+for owner-authorized spending rules. `/app/milestone` shows onchain verification;
+`/app/activity` shows real events.
 Authorize the actual CRE forwarder/workflow identity in Connections. Start
 `npm run agent:watch` before merging the PR. The worker retries without owner
 payment signing and stops once the verified task receipt is recovered.

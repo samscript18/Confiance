@@ -1,4 +1,12 @@
-import { erc20Abi, formatUnits, zeroAddress, zeroHash } from "viem";
+import {
+  erc20Abi,
+  formatUnits,
+  zeroAddress,
+  zeroHash,
+  keccak256,
+  stringToHex,
+} from "viem";
+import { validGithubRepo } from "../../../../../packages/shared/github";
 import { confianceAbi } from "../../../../../packages/shared/contracts";
 import { identityAbi } from "../../../../../packages/shared/identity";
 import { address } from "../../../../../packages/shared/config";
@@ -24,6 +32,24 @@ export async function GET() {
   };
   try {
     const env = await runtimeEnv();
+    if (
+      env.GITHUB_REPO &&
+      validGithubRepo(env.GITHUB_REPO) &&
+      env.GITHUB_PR_NUMBER &&
+      /^\d+$/.test(env.GITHUB_PR_NUMBER) &&
+      Number.isSafeInteger(Number(env.GITHUB_PR_NUMBER)) &&
+      Number(env.GITHUB_PR_NUMBER) > 0
+    ) {
+      state.taskMilestone = {
+        repo: env.GITHUB_REPO,
+        pr: Number(env.GITHUB_PR_NUMBER),
+        condition: keccak256(
+          stringToHex(
+            `github:${env.GITHUB_REPO}:${Number(env.GITHUB_PR_NUMBER)}`,
+          ),
+        ),
+      };
+    }
     state.setupCapabilities = {
       privy: Boolean(env.PRIVY_APP_ID && env.PRIVY_APP_SECRET),
       identity: Boolean(env.ERC8004_IDENTITY_REGISTRY && env.ERC8004_AGENT_URI),
@@ -42,6 +68,43 @@ export async function GET() {
       } catch {
         // Malformed setup metadata cannot become a signing suggestion.
       }
+    }
+    try {
+      const record: unknown = JSON.parse(
+        await readFile(
+          join(
+            env.CONFIANCE_PROJECT_ROOT || process.cwd(),
+            "docs/research/cre-deployment.json",
+          ),
+          "utf8",
+        ),
+      );
+      if (
+        record &&
+        typeof record === "object" &&
+        "receiver" in record &&
+        typeof record.receiver === "string" &&
+        record.receiver.toLowerCase() ===
+          env.CONFIANCE_ADDRESS?.toLowerCase() &&
+        "chainId" in record &&
+        record.chainId === 10143 &&
+        "status" in record &&
+        record.status === "Active" &&
+        "forwarder" in record &&
+        typeof record.forwarder === "string" &&
+        "workflowId" in record &&
+        typeof record.workflowId === "string" &&
+        "workflowOwner" in record &&
+        typeof record.workflowOwner === "string"
+      ) {
+        state.reporterSetup = parseReporterSettings({
+          forwarder: record.forwarder,
+          workflowId: record.workflowId,
+          workflowOwner: record.workflowOwner,
+        });
+      }
+    } catch {
+      /* Missing deployment evidence leaves explicit environment settings in use. */
     }
     state.readiness = [
       {
@@ -184,6 +247,20 @@ export async function GET() {
           adapter: session.policy.complianceAdapter,
         };
       }
+    }
+    if (state.taskMilestone) {
+      state.taskMilestone.verified = await client.readContract({
+        address: state.account,
+        abi: confianceAbi,
+        functionName: "verifiedConditions",
+        args: [
+          keccak256(
+            stringToHex(
+              `github:${state.taskMilestone.repo}:${state.taskMilestone.pr}`,
+            ),
+          ),
+        ],
+      });
     }
     if (state.registry && env.ERC8004_AGENT_ID) {
       const id = BigInt(env.ERC8004_AGENT_ID);

@@ -1,4 +1,4 @@
-import Dashboard from "./dashboard";
+import Landing from "./landing";
 export default function Page() {
-  return <Dashboard />;
+  return <Landing />;
 }

@@ -6,6 +6,16 @@ test("unconfigured dashboard presents missing state without fabricated balances"
 }) => {
   await page.goto("/");
   await expect(
+    page
+      .getByRole("navigation", { name: "Website navigation" })
+      .getByRole("link"),
+  ).toHaveCount(4);
+  await page.screenshot({
+    path: "proofs/screenshots/landing-desktop.png",
+    fullPage: true,
+  });
+  await page.getByRole("link", { name: "Open app ↗", exact: true }).click();
+  await expect(
     page.getByRole("heading", { name: "Payroll Agent", exact: true }),
   ).toBeVisible();
   await expect(page.getByText("Setup required", { exact: true })).toBeVisible();
@@ -13,16 +23,24 @@ test("unconfigured dashboard presents missing state without fabricated balances"
     page.getByRole("button", { name: "Run Payroll Agent" }),
   ).toBeDisabled();
   await expect(
+    page.getByRole("heading", { name: "Your account, your authority." }),
+  ).toHaveCount(0);
+  await page.getByRole("link", { name: "Activity", exact: true }).click();
+  await expect(
     page.getByText("No confirmed activity to display."),
   ).toBeVisible();
   await page.screenshot({
     path: "proofs/screenshots/dashboard-desktop.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Account & policy" }).click();
+  await page.getByRole("link", { name: "Account", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Create passkey" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Set the boundaries." }),
+  ).toHaveCount(0);
+  await page.getByRole("link", { name: "Policy", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Authorize session", exact: true }),
   ).toBeDisabled();
@@ -51,6 +69,16 @@ test("mutation endpoints reject unauthenticated and foreign-origin calls", async
 test("mobile dashboard stays within the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "proofs/screenshots/landing-mobile.png",
+    fullPage: true,
+  });
+  await page.goto("/app/overview");
   await expect(
     page.getByRole("heading", { name: "Payroll Agent", exact: true }),
   ).toBeVisible();
@@ -63,7 +91,7 @@ test("mobile dashboard stays within the viewport", async ({ page }) => {
     path: "proofs/screenshots/dashboard-mobile.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Account & policy" }).click();
+  await page.getByRole("link", { name: "Policy", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Set the boundaries." }),
   ).toBeVisible();

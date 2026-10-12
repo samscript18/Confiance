@@ -39,6 +39,13 @@ export function sessionActions(
         state.taskAsset.toLowerCase() !== state.asset.toLowerCase(),
     ) &&
     "The configured payment token differs from the session token. Revoke and authorize a session for the funded token, or correct payment configuration.";
+  const milestoneMismatch =
+    Boolean(
+      session &&
+        state.taskMilestone &&
+        session.condition !== state.taskMilestone.condition,
+    ) &&
+    "This session points to a different milestone. Open Policy, select the configured payroll milestone, and save the rules.";
   const diagnostic = [
     owner,
     chain,
@@ -85,6 +92,7 @@ export function sessionActions(
       wallet,
       !live && "Authorize an active, unexpired session first.",
       mismatch,
+      milestoneMismatch,
       !state.readiness.find((item) => item.name === "AI runtime")?.ready &&
         "Configure the LLM provider before running the agent.",
     ),

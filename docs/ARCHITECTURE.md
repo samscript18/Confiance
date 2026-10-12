@@ -112,3 +112,19 @@ including across signer rotation/amount formatting changes. Recovery rechecks
 sender, target, calldata and matching execution events before marking it paid.
 This local deduplication is an operational guard; only the contract enforces
 financial authority. Multiple hosts require shared coordination before deployment.
+
+## Web application routes
+
+The public `/` landing page explains the product and routes its calls to action
+into `/app/overview`. The app sidebar separates Overview, Account, Agent, Policy,
+Milestone, Activity, Security and Connections. Each route renders its own relevant
+controls. A persistent app layout retains the in-memory Mera signing session
+across client navigation; sign-out, expiry or leaving that layout ends it.
+
+Task configuration and session authorization are distinct. The dashboard reads
+both the configured task condition and the session condition from their actual
+sources, shows a mismatch explicitly, and asks the owner to save corrected rules.
+It never substitutes a verified condition for the one actually authorized by the
+session. CRE's recorded onchain verification remains the payment authority even
+when the agent's separate GitHub lookup is unavailable; the agent reports lookup
+failure honestly and deterministic payment checks still require the exact condition.

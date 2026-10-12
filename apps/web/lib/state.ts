@@ -32,6 +32,12 @@ export interface DashboardState {
     adapter: string;
   };
   github?: { repo: string; pr: number; state: string; merged: boolean };
+  taskMilestone?: {
+    repo: string;
+    pr: number;
+    condition: string;
+    verified?: boolean;
+  };
   events: {
     id: string;
     kind: string;

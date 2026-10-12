@@ -22,7 +22,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Open **http://localhost:3000**. `WEB_ORIGIN` must match the browser origin exactly.
+Open **http://localhost:3000**, then choose **Open app**. `WEB_ORIGIN` must match the browser origin exactly.
 Use HTTPS when hosting. NEXT_PUBLIC_MONAD_RPC_URL is public browser configuration;
 never place a private RPC API key there. Server credentials have no NEXT_PUBLIC prefix.
 
@@ -33,7 +33,7 @@ Supported authenticators need WebAuthn PRF. Chrome local-profile passkeys can
 create successfully but fail to return PRF; use a supported Google Password
 Manager, iCloud Keychain or 1Password combination and test it with the human.
 
-In **Account & policy**, choose **Create passkey** once. Copy the displayed public
+In **Account**, choose **Create passkey** once. Copy the displayed public
 owner address into CONFIANCE_OWNER in `.env`, restart the app, then use **Sign in**.
 Returning visits should sign in, not create another passkey. Only credential
 metadata is persisted. Keys stay in memory and the signing session expires after
@@ -116,7 +116,7 @@ for `verith-ai` authentication. Vertex uses `LLM_PROVIDER=vertex`, project/locat
 and Google OAuth credentials; `LLM_BASE_URL`/`LLM_API_KEY` belong only to the optional
 chat-completions provider and are not sent to Vertex.
 
-In the policy form, enter the same token, contractor and GitHub task, a total
+On `/app/policy`, enter the same token, contractor and GitHub task, a total
 budget of 50 token units, and authorize the 24-hour session. Mera signs agent
 registration/session setup. The contract enforces cumulative spending, nonce,
 generation, expiry, asset, exact recipient and milestone itself.
@@ -129,7 +129,8 @@ no official Cleanverse adapter ABI/enrollment path has yet been confirmed.
 ## 5. Chainlink CRE
 
 Install/authenticate the CRE CLI. `cre workflow supported-chains --output json`
-currently failed with a tenant-refresh 403 for this environment. Authenticate your
+previously failed with a tenant-refresh 403. Authentication and real Monad
+report delivery now work for this project. For a fresh setup, authenticate your
 own account and confirm **Monad testnet production writes** and its actual
 forwarder. A published chain selector is not tenant deployment authorization.
 
@@ -162,7 +163,7 @@ forwarder as the production reporting authority. Actual deployment/activation
 requires your CRE tenant access and the correct registry/signing configuration.
 
 Set CHAINLINK_CRE_FORWARDER, CHAINLINK_CRE_WORKFLOW_ID and CHAINLINK_CRE_WORKFLOW_OWNER
-from verified deployment metadata. In dashboard **Connections**, enter those same
+from verified deployment metadata. On `/app/connections`, enter those same
 values and choose **Authorize CRE reporter**. Mera signs that owner-only transaction.
 There is no endpoint for marking a milestone verified.
 
@@ -200,7 +201,7 @@ waits while the milestone is incomplete and can request payment once the real
 CRE condition is onchain. Owner sign-in/signing is not part of this payment path.
 For one cycle, use Run Payroll Agent in the dashboard or `npm run agent:run`.
 
-Use the dashboard's **Attempt before verification** while the PR is open, merge
+On `/app/security`, use **Attempt before verification** while the PR is open, merge
 the real PR, wait for CRE delivery and watch the agent settle the authorized payment.
 Then use **Attempt 500 tokens**, revoke with the owner and **Retry after revocation**.
 These attack controls are deterministic diagnostics using the same Privy agent.
@@ -236,5 +237,6 @@ No fake A-Pass checker or invented transfer adapter is installed. Obtain officia
 confirmation and then prove a direct compliant Confiance transfer to an eligible
 recipient before enabling that claim. See INTEGRATIONS.md for the exact evidence.
 
-The full live MVP remains incomplete until the human/passkey, Privy signer, real
-LLM, Monad payments, CRE delivery and Envio history are exercised and recorded.
+The core payment and CRE proofs are recorded. The live revoked-key retry and
+Cleanverse compliant settlement remain outstanding. New task/session policies
+must use the same exact milestone as the deployed CRE workflow.

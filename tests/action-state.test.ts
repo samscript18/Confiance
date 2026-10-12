@@ -98,3 +98,16 @@ test("diagnostics stop advertising tests whose required state is absent", () => 
   for (const action of Object.values(sessionActions(state, true, true, token)))
     assert.equal(action.enabled, false);
 });
+test("a verified task cannot override a session bound to a different milestone", () => {
+  const state = ready();
+  state.taskMilestone = {
+    repo: "acme/payroll",
+    pr: 1,
+    condition: `0x${"cd".repeat(32)}`,
+    verified: true,
+  };
+  const actions = sessionActions(state, true, true, token);
+  assert.equal(actions.run.enabled, false);
+  assert.match(actions.run.reason, /different milestone/);
+  assert.equal(actions.update.enabled, true);
+});

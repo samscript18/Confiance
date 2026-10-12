@@ -20,11 +20,13 @@ flowchart LR
 
 ## Current status
 
-**This is not a completed Monad MVP.** The starting repository contained only
-AGENTS.md. Confiance is now deployed on Monad testnet, the funded Privy agent has
-minted ERC-8004 identity 2210, and Envio RPC indexing is running. Vertex AI support
-works for `verith-ai`, including a real waiting-state tool run; owner session/treasury setup,
-CRE delivery and the full autonomous payment proof remain outstanding.
+The core autonomous payment flow is proven on Monad testnet: the human approved
+its session, CRE verified the merged GitHub PR, and Vertex Gemini requested a
+30 CTT payment through a separate Privy signer without an owner payment signature.
+Confiance recorded 30 spent of a 50-token budget and rejected a 500-token attempt.
+ERC-8004 identity 2210 is minted and Envio indexing is live.
+The complete requested MVP still needs the live revoked-key demonstration and
+Cleanverse enrollment/issuance and compliant-transfer proof.
 Verified addresses and receipts are in [DEPLOYMENTS.md](docs/DEPLOYMENTS.md), with
 current blockers in [LIVE_PROGRESS.md](docs/LIVE_PROGRESS.md).
 
@@ -35,11 +37,11 @@ Implemented:
   persistent nonces, policy generations, and safe ERC-20 execution.
 - CRE-compatible receiver, disabled until the owner pins a contract forwarder,
   workflow ID and workflow owner. Domain-bound condition reports and ERC165 support.
-- 49 Solidity tests, including 512 fuzz runs and adversarial token tests.
+- 59 Solidity tests, including 512 fuzz runs and adversarial token tests.
 - Local signed-transaction smoke test: 30 CTT executes; 500 CTT, replay and
   same-key payment after revocation produce real reverted local receipts.
 - TypeScript payroll runtime with six fixed tools and a server-side Privy
-  adapter. Provider connection and live execution are **not yet verified**.
+  adapter. Live Vertex reasoning, Privy signing and payment receipts are verified.
 - Monad-only deployment script, receipt/build verification and secret-safe preflight.
 - Next.js dashboard with Mera owner onboarding, deployment, funding, session creation/update and revocation.
 - Authenticated server orchestration, Privy wallet provisioning, autonomous polling, durable execution lock and receipt-backed task deduplication.
@@ -49,7 +51,9 @@ Implemented:
 
 The local test token is **CTT, not USD, a stablecoin, or a Cleanverse A-Token**.
 Only test fixtures use mock compliance or reporting. No final UI consumes fixtures.
-The integration code is implemented. Real passkey ceremonies, provider signing, registry minting, CRE delivery and indexing still require live verification. Cleanverse remains isolated behind the contract adapter interface because enrollment and eligibility ABI are unconfirmed.
+Real owner policy approval, provider signing, registry minting, CRE delivery and
+autonomous payment are now verified. The official Cleanverse validator adapter is
+tested but undeployed; Confiance enrollment and compliant settlement remain unproven.
 
 ## Run locally
 
@@ -77,7 +81,10 @@ keys stay in process memory; the proof file contains public evidence only.
 `proofs/local-smoke.json` is explicitly local and cannot be verified on a Monad explorer.
 
 Start the web application with `npm run dev`, then open **http://localhost:3000**.
-Without configuration it shows setup requirements and empty live values. It does
+The public landing page has four navigation items and detailed product guidance.
+Choose **Open app** for `/app/overview`; the sidebar separates account, agent,
+policy, milestone, activity, security and connections. Without configuration the
+app shows setup requirements and empty live values. It does
 not simulate a session, payment, wallet or balance. `npm run build` creates the
 Next.js production build. Run `npm run start --workspace @confiance/web` to serve it.
 
@@ -134,4 +141,3 @@ See [INTEGRATIONS.md](docs/INTEGRATIONS.md).
 - [Deployment status](docs/DEPLOYMENTS.md)
 - [Validation results](docs/VALIDATION.md)
 - [Inspection and implementation plan](docs/IMPLEMENTATION_PLAN.md)
-

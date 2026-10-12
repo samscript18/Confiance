@@ -7,8 +7,9 @@ verified 2026-10-12: Privy wallet provisioning and public metadata hosting now w
 CRE login/deploy access and tenant directory now work. Confiance deployment and
 identity 2210 mint are verified, the agent is funded and Envio RPC indexing is live.
 Vertex authentication and a real tool-using agent run now work. Owner agent registration
-and a 50-token session are onchain and indexed by Envio. Report/payment delivery remain
-unproven. The newly supplied Cleanverse invitation opened the docs; the developer API
+and a 50-token session are onchain and indexed by Envio. CRE report delivery and a 30 CTT autonomous Gemini/Privy payment are now verified
+on Monad; see DEPLOYMENTS.md. A 500 CTT request reverted. Live revocation proof
+remains outstanding. The newly supplied Cleanverse invitation opened the docs; the developer API
 registration query succeeds. The official CVI validator ABI and contract-vault route
 are now documented in [CLEANVERSE.md](CLEANVERSE.md). A tested adapter exists but is
 not deployed: Confiance enrollment, CVI issuance and a compliant transfer are pending.

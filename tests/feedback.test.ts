@@ -91,3 +91,14 @@ test("each pending action communicates what is happening", () => {
     actionCopy("Funding treasury").errorTitle,
   );
 });
+test("task verification and session milestone mismatch produce a correction message", () => {
+  const result = payrollFeedback([
+    tool("check_payment_policy", {
+      requiredCondition: "a",
+      expectedCondition: "b",
+      conditionVerified: false,
+    }),
+  ]);
+  assert.equal(result.title, "The payment rules need updating");
+  assert.equal(result.tone, "info");
+});
