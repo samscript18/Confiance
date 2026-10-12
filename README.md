@@ -135,4 +135,3 @@ See [INTEGRATIONS.md](docs/INTEGRATIONS.md).
 - [Validation results](docs/VALIDATION.md)
 - [Inspection and implementation plan](docs/IMPLEMENTATION_PLAN.md)
 
-**The key still exists. The authority does not.**
