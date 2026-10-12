@@ -4,6 +4,27 @@ Verified 2026-10-12. No autonomous payment is claimed.
 
 ## Current status (supersedes earlier attempts below)
 
+Latest milestone-blocking proof:
+
+- Verified [agent transaction](https://testnet.monadexplorer.com/tx/0x5c60648fe19780c2fef291a1364116eaf0842e7ebab2c7eef8ca8c7887b001d9)
+  reverted on chain 10143 at block **70411140**. Sender is the Privy agent,
+  target is the deployed Confiance account, and decoded `executePayment` requests
+  **30 CTT**, nonce 0, generation **2**, with the newly funded token
+  `0xaBC746C3C77C73160ACEB419349C6980De4567BE` and the approved contractor.
+  The supplied CLI diagnostic records pre-submission `CONDITION_NOT_VERIFIED`.
+  Receipt status and exact calldata were independently checked; the reason comes
+  from the diagnostic simulation. This is not an autonomous LLM payment proof.
+- This supersedes the earlier generation-1 token mismatch below. The remaining
+  payment demonstration needs merged-PR CRE delivery, then a confirmed LLM-requested
+  payment, spending-limit rejection, and revoked-key rejection.
+- Dashboard actions have individual loading labels and spinners. Confirmation
+  dialogs describe the specific action and next step without environment variable
+  names or CLI commands. Agent-result feedback distinguishes verified settlement,
+  pending submission, previously paid tasks, and blocked requests. Model prose
+  cannot produce a successful-payment modal.
+- Current validation: **29 unit tests**, strict typechecks, lint, and production
+  build pass. The new UI changes have not had interactive browser verification.
+
 Latest checks at 12:33 UTC:
 
 - Owner registered the agent in [this transaction](https://testnet.monadexplorer.com/tx/0x0e3083f5b11cfc265a8a74c8d257453813925a8f9a463ac836208ee95dd83990)

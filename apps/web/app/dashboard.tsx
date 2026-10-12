@@ -41,6 +41,13 @@ import {
 import { sessionActions } from "../lib/action-state";
 import type { DashboardState } from "../lib/state";
 import { MessageModal } from "./message-modal";
+import { ActionButton } from "./action-button";
+import {
+  actionCopy,
+  blockedPayment,
+  payrollFeedback,
+  type Feedback,
+} from "../lib/feedback";
 
 const explorer = monadTestnet.blockExplorers.default.url;
 const empty: DashboardState = {
@@ -63,9 +70,7 @@ async function api(path: string, body?: unknown): Promise<unknown> {
   const result: unknown = await response.json();
   if (!response.ok)
     throw new Error(
-      result && typeof result === "object" && "error" in result
-        ? String(result.error)
-        : "Request unavailable.",
+      "We couldn’t complete this request. Check that you’re signed in and connected, then try again. If a payment is still pending, wait for its result first.",
     );
   return result;
 }
@@ -79,7 +84,8 @@ export default function Dashboard() {
   const [owner, setOwner] = useState<Address>();
   const [hasPasskey, setHasPasskey] = useState(false);
   const [busy, setBusy] = useState("");
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<Feedback>();
+  const [errorTitle, setErrorTitle] = useState("Connection needs attention");
   const [error, setError] = useState("");
   const [dismissedStateError, setDismissedStateError] = useState("");
   const [hash, setHash] = useState<Hex>();
@@ -112,7 +118,10 @@ export default function Dashboard() {
       const data = (await response.json()) as DashboardState;
       setState(data);
     } catch {
-      setError("Cannot retrieve current chain state.");
+      setErrorTitle("Your account couldn’t refresh");
+      setError(
+        "We couldn’t load the latest account information. Check your connection and try again.",
+      );
     }
   }, []);
   useEffect(() => {
@@ -162,11 +171,12 @@ export default function Dashboard() {
     if (busy) return;
     setBusy(label);
     setError("");
-    setNotice("");
+    setNotice(undefined);
     try {
       await fn();
       await refresh();
     } catch (e) {
+      setErrorTitle(actionCopy(label).errorTitle);
       if (label === "Signing in" || label === "Creating owner") {
         disconnectOwner();
         setOwner(undefined);
@@ -186,9 +196,13 @@ export default function Dashboard() {
     setHasPasskey(true);
     if (!state.owner) {
       setOwner(address);
-      setNotice(
-        `Owner created: ${address}. Add CONFIANCE_OWNER=${address} to the ignored .env and restart the app, then sign in.`,
-      );
+      setNotice({
+        title: "Your passkey is ready",
+        message:
+          "Your owner account is ready to connect. Its address is shown in the account section.",
+        nextStep: "Finish connecting your account before setting up payments.",
+        tone: "info",
+      });
       return;
     }
     if (address.toLowerCase() !== state.owner.toLowerCase())
@@ -204,9 +218,11 @@ export default function Dashboard() {
     });
     await api("/api/auth", { id: challenge.id, owner: address, signature });
     setOwner(address);
-    setNotice(
-      "Owner authenticated. Agent payments use its separate Privy signer.",
-    );
+    setNotice({
+      title: "Welcome back",
+      message:
+        "You’re signed in. You can now manage your account and Payroll Agent’s permissions.",
+    });
   }
   function clients() {
     const rpc =
@@ -255,27 +271,39 @@ export default function Dashboard() {
     if (!receipt.contractAddress)
       throw new Error("No deployed address in receipt.");
     setAccount(receipt.contractAddress);
-    setNotice(
-      `Deployed ${receipt.contractAddress}. Run npm run record:deployment -- ${receipt.transactionHash}, then set CONFIANCE_ADDRESS and CONFIANCE_DEPLOYMENT_BLOCK in .env and restart.`,
-    );
+    setNotice({
+      title: "Your Confiance account is created",
+      message:
+        "Your account has been created on Monad Testnet. Its address is shown below.",
+      nextStep:
+        "Finish connecting it to this app, then add funds and set up Payroll Agent.",
+      transactionHash: receipt.transactionHash,
+    });
   }
   async function provision() {
     const result = object(await api("/api/agent?action=wallet"));
     if (typeof result.address !== "string" || !isAddress(result.address))
       throw new Error("Invalid agent address.");
     setAgent(result.address);
-    setNotice(
-      "Privy agent wallet connected. Fund this address with testnet MON for gas.",
-    );
+    setNotice({
+      title: "The agent’s wallet is ready",
+      message: "Payroll Agent now has its own wallet, separate from yours.",
+      nextStep:
+        "Add testnet MON to the agent wallet for transaction fees, then register its identity.",
+    });
   }
   async function identity() {
     const result = object(await api("/api/agent?action=identity"));
     if (typeof result.commitment !== "string" || !isHex(result.commitment))
       throw new Error("Identity proof missing.");
     setCommitment(result.commitment);
-    setNotice(
-      `ERC-8004 identity ${String(result.id)} registered by the agent. Its verified address is the wallet binding.`,
-    );
+    setNotice({
+      title: "Payroll Agent is registered",
+      message:
+        "The agent’s identity is recorded on Monad Testnet and linked to its wallet.",
+      nextStep:
+        "Choose who it can pay, how much it can spend, and the milestone it must wait for.",
+    });
   }
   async function authorize(update = false) {
     if (
@@ -359,7 +387,17 @@ export default function Dashboard() {
       }),
     );
     setNotice(
-      "Owner-authorized policy confirmed: total session budget, 24 hours, pinned recipient and GitHub milestone. No Cleanverse compliance is claimed. Match PAYMENT_ASSET, PAYMENT_RECIPIENT and GITHUB_REPO/PR in .env.",
+      update
+        ? {
+            title: "Your spending rules are updated",
+            message: `Payroll Agent can spend up to ${limit} token units in total. Previous spending still counts, and permission lasts another 24 hours.`,
+            nextStep: "Review the updated rules in Overview.",
+          }
+        : {
+            title: "Payroll Agent is authorized",
+            message: `You’ve given Payroll Agent a total allowance of ${limit} token units for 24 hours. It can pay your approved contractor once the required milestone is verified.`,
+            nextStep: "Review its allowance and milestone status in Overview.",
+          },
     );
   }
   async function funding() {
@@ -390,7 +428,10 @@ export default function Dashboard() {
         args: [account, amount],
       }),
     );
-    setNotice("Treasury funding confirmed on Monad Testnet.");
+    setNotice({
+      title: "Funds added",
+      message: `${fund} token units have been added to your Confiance account. Payroll Agent can use them within the rules you approved.`,
+    });
   }
   async function testToken() {
     if (!account) throw new Error("Deploy Confiance first.");
@@ -406,9 +447,14 @@ export default function Dashboard() {
       throw new Error("Token deployment not confirmed.");
     setAsset(receipt.contractAddress);
     setCreatedToken(receipt.contractAddress);
-    setNotice(
-      `CTT deployed and 1,000 test tokens minted to Confiance. Set PAYMENT_ASSET=${receipt.contractAddress}. CTT is a test token, not dollars or Cleanverse.`,
-    );
+    setNotice({
+      title: "Your test funds are ready",
+      message:
+        "1,000 CTT test tokens have been added to Confiance. You can use them to demonstrate the payment flow.",
+      nextStep:
+        "Connect this token to your payment setup, then authorize the agent’s spending rules.",
+      transactionHash: receipt.transactionHash,
+    });
   }
   async function run() {
     const result = object(await api("/api/agent?action=run"));
@@ -425,9 +471,7 @@ export default function Dashboard() {
       };
     });
     setTranscript(items);
-    setNotice(
-      "Agent run finished. Tool results below distinguish confirmed execution, blocked requests and pending submissions.",
-    );
+    setNotice(payrollFeedback(items));
   }
   async function attack(mode: string) {
     const result = object(await api(`/api/agent?action=${mode}`));
@@ -444,9 +488,7 @@ export default function Dashboard() {
       reason: result.reason,
       block: result.block,
     });
-    setNotice(
-      "The agent signed the request. Confiance reverted it on Monad Testnet.",
-    );
+    setNotice(blockedPayment(result.reason, result.hash));
   }
   async function configureReporter() {
     if (!account)
@@ -466,9 +508,13 @@ export default function Dashboard() {
         args: [reporter],
       }),
     );
-    setNotice(
-      "Authorized CRE reporter pinned onchain. Only matching reports can verify the milestone.",
-    );
+    setNotice({
+      title: "Milestone verification is enabled",
+      message:
+        "You’ve approved the service that checks the contractor’s milestone. The agent can pay only after that check confirms completion.",
+      nextStep:
+        "Complete the GitHub milestone, then wait for its status to show Verified.",
+    });
   }
   const session = state.session;
   const status = !session
@@ -611,25 +657,34 @@ export default function Dashboard() {
             </strong>
           </div>
           {owner ? (
-            <button
+            <ActionButton
+              pending={busy === "Signing out"}
+              pendingLabel={actionCopy("Signing out").pending}
               disabled={disabled}
               onClick={() =>
                 void act("Signing out", async () => {
                   disconnectOwner();
                   setOwner(undefined);
                   await api("/api/auth?action=logout");
+                  setNotice({
+                    title: "You’re signed out",
+                    message:
+                      "Your owner signing session has ended. Sign in again whenever you need to manage the account.",
+                  });
                 })
               }
             >
               Sign out
-            </button>
+            </ActionButton>
           ) : (
-            <button
+            <ActionButton
+              pending={busy === "Signing in"}
+              pendingLabel={actionCopy("Signing in").pending}
               disabled={disabled}
               onClick={() => void act("Signing in", () => authenticate(false))}
             >
               Sign in
-            </button>
+            </ActionButton>
           )}
         </div>
       </div>
@@ -637,16 +692,34 @@ export default function Dashboard() {
         (state.error !== dismissedStateError && state.error) ||
         notice) && (
         <MessageModal
+          title={
+            error
+              ? errorTitle
+              : state.error !== dismissedStateError && state.error
+                ? "Connection needs attention"
+                : notice?.title || ""
+          }
           message={
             error ||
-            (state.error !== dismissedStateError && state.error) ||
-            notice
+            (state.error !== dismissedStateError && state.error
+              ? "We couldn’t refresh your account. Check your connection and try again."
+              : "") ||
+            notice?.message ||
+            ""
           }
-          error={Boolean(
-            error || (state.error !== dismissedStateError && state.error),
-          )}
+          tone={
+            error || (state.error !== dismissedStateError && state.error)
+              ? "error"
+              : notice?.tone || "success"
+          }
+          {...(!error && !state.error && notice?.nextStep
+            ? { nextStep: notice.nextStep }
+            : {})}
+          {...(!error && !state.error && notice?.transactionHash
+            ? { transactionHash: notice.transactionHash }
+            : {})}
           onDismiss={() => {
-            setNotice("");
+            setNotice(undefined);
             setError("");
             setDismissedStateError(state.error || "");
           }}
@@ -654,7 +727,7 @@ export default function Dashboard() {
       )}
       {busy && (
         <p className="pending" role="status">
-          {busy}… Waiting for the provider or confirmed chain result.
+          {actionCopy(busy).pending} Please keep this page open.
         </p>
       )}
       {hash && (
@@ -716,13 +789,15 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <button
+              <ActionButton
+                pending={busy === "Running Payroll Agent"}
+                pendingLabel={actionCopy("Running Payroll Agent").pending}
                 className="primary full"
                 disabled={disabled || !actions.run.enabled}
                 onClick={() => void act("Running Payroll Agent", run)}
               >
                 Run Payroll Agent <span>↗</span>
-              </button>
+              </ActionButton>
               <small className="footnote">
                 {actions.run.reason ||
                   "Runs the LLM with the agent’s Privy signer. It checks the milestone and policy before requesting payment; no owner payment signature."}
@@ -869,7 +944,7 @@ export default function Dashboard() {
                   <span className="event-icon">×</span>
                   <div>
                     <strong>Payment reverted</strong>
-                    <small>{item.reason} · pre-submission simulation</small>
+                    <small>{blockedPayment(item.reason).message}</small>
                     <small>Verified receipt · block {item.block}</small>
                   </div>
                   <span>↗</span>
@@ -887,7 +962,9 @@ export default function Dashboard() {
                 Revoke the session. The same agent wallet can keep its key, but
                 Confiance stops its next request.
               </p>
-              <button
+              <ActionButton
+                pending={busy === "Revoking session"}
+                pendingLabel={actionCopy("Revoking session").pending}
                 className="danger"
                 disabled={disabled || !actions.revoke.enabled}
                 onClick={() =>
@@ -901,14 +978,18 @@ export default function Dashboard() {
                         args: [agent],
                       }),
                     );
-                    setNotice(
-                      "Session revoked onchain. Use Retry after revocation to prove the same agent key no longer has authority.",
-                    );
+                    setNotice({
+                      title: "Payroll Agent’s permission is revoked",
+                      message:
+                        "The agent can no longer spend from your Confiance account. Its wallet still exists, but its permission is gone.",
+                      nextStep:
+                        "Use Retry after revocation to demonstrate that its next payment is blocked.",
+                    });
                   })
                 }
               >
                 {actions.revoke.label}
-              </button>
+              </ActionButton>
               <p className="footnote">
                 {actions.revoke.reason ||
                   "Revocation takes effect onchain. The agent keeps its wallet but loses permission to spend."}
@@ -926,7 +1007,9 @@ export default function Dashboard() {
               operation costs agent testnet gas.
             </p>
             <div className="button-row">
-              <button
+              <ActionButton
+                pending={busy === "Testing spending limit"}
+                pendingLabel={actionCopy("Testing spending limit").pending}
                 disabled={disabled || !actions.limit.enabled}
                 title={actions.limit.reason}
                 onClick={() =>
@@ -936,8 +1019,10 @@ export default function Dashboard() {
                 }
               >
                 Attempt 500 tokens
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Testing milestone condition"}
+                pendingLabel={actionCopy("Testing milestone condition").pending}
                 disabled={disabled || !actions.condition.enabled}
                 title={actions.condition.reason}
                 onClick={() =>
@@ -947,8 +1032,10 @@ export default function Dashboard() {
                 }
               >
                 Attempt before verification
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Testing recipient rule"}
+                pendingLabel={actionCopy("Testing recipient rule").pending}
                 disabled={disabled || !actions.recipient.enabled}
                 title={actions.recipient.reason}
                 onClick={() =>
@@ -958,8 +1045,10 @@ export default function Dashboard() {
                 }
               >
                 Attempt wrong recipient
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Retrying with revoked key"}
+                pendingLabel={actionCopy("Retrying with revoked key").pending}
                 disabled={disabled || !actions.revoked.enabled}
                 title={actions.revoked.reason}
                 onClick={() =>
@@ -969,7 +1058,7 @@ export default function Dashboard() {
                 }
               >
                 Retry after revocation
-              </button>
+              </ActionButton>
             </div>
             {diagnosticHints.map((hint) => (
               <p key={hint} className="footnote">
@@ -978,10 +1067,11 @@ export default function Dashboard() {
             ))}
             {attackProof && (
               <div className="notice">
-                <strong>REVERTED · {attackProof.reason}</strong>
-                <p>
-                  Receipt confirms revert in block {attackProof.block}. Reason
-                  comes from the pre-submission onchain simulation.
+                <strong>Payment blocked</strong>
+                <p>{blockedPayment(attackProof.reason).message}</p>
+                <p className="footnote">
+                  Confirmed failed transaction · block {attackProof.block}. The
+                  reason was checked before submission.
                 </p>
                 <a
                   href={`${explorer}/tx/${attackProof.hash}`}
@@ -1052,7 +1142,9 @@ export default function Dashboard() {
             ) : (
               <div className="button-row">
                 {!hasPasskey && !state.account && (
-                  <button
+                  <ActionButton
+                    pending={busy === "Creating owner"}
+                    pendingLabel={actionCopy("Creating owner").pending}
                     className="primary"
                     disabled={disabled}
                     onClick={() =>
@@ -1060,16 +1152,18 @@ export default function Dashboard() {
                     }
                   >
                     Create passkey
-                  </button>
+                  </ActionButton>
                 )}
-                <button
+                <ActionButton
+                  pending={busy === "Signing in"}
+                  pendingLabel={actionCopy("Signing in").pending}
                   disabled={disabled}
                   onClick={() =>
                     void act("Signing in", () => authenticate(false))
                   }
                 >
                   Sign in
-                </button>
+                </ActionButton>
               </div>
             )}
             <p className="footnote">
@@ -1081,18 +1175,22 @@ export default function Dashboard() {
                 : "Fund the owner with testnet MON before deploying. Sign in to approve deployment."}{" "}
               Keep the same domain: passkeys are scoped to it.
             </p>
-            <button
+            <ActionButton
+              pending={busy === "Deploying Confiance"}
+              pendingLabel={actionCopy("Deploying Confiance").pending}
               disabled={
                 disabled || !owner || Boolean(account) || Boolean(state.error)
               }
               onClick={() => void act("Deploying Confiance", deploy)}
             >
               {account ? "Account deployed" : "Deploy Confiance"}
-            </button>
+            </ActionButton>
             <p className="footnote">
               Account: <code>{account || "Not deployed"}</code>
             </p>
-            <button
+            <ActionButton
+              pending={busy === "Deploying test token"}
+              pendingLabel={actionCopy("Deploying test token").pending}
               disabled={
                 disabled ||
                 !owner ||
@@ -1105,7 +1203,7 @@ export default function Dashboard() {
               {tokenConfigured
                 ? "Payment token configured"
                 : "Deploy & fund CTT test token"}
-            </button>
+            </ActionButton>
             <p className="footnote">
               {tokenConfigured
                 ? "Use the policy form below to fund the configured token. Deploying another token does not change an existing session."
@@ -1121,7 +1219,9 @@ export default function Dashboard() {
               Privy provides the agent wallet. Confiance determines what that
               wallet is allowed to spend.
             </p>
-            <button
+            <ActionButton
+              pending={busy === "Connecting Privy wallet"}
+              pendingLabel={actionCopy("Connecting Privy wallet").pending}
               className="primary"
               disabled={
                 disabled ||
@@ -1137,7 +1237,7 @@ export default function Dashboard() {
                 : agent
                   ? "Connect Privy agent wallet"
                   : "Create Privy agent wallet"}
-            </button>
+            </ActionButton>
             <p className="footnote">
               Agent: <code>{agent || "Not connected"}</code>
             </p>
@@ -1150,7 +1250,9 @@ export default function Dashboard() {
                   : "Sign in to create or verify the agent wallet."}{" "}
               The agent needs testnet MON for transaction fees.
             </p>
-            <button
+            <ActionButton
+              pending={busy === "Registering ERC-8004 identity"}
+              pendingLabel={actionCopy("Registering ERC-8004 identity").pending}
               disabled={
                 disabled ||
                 !owner ||
@@ -1166,7 +1268,7 @@ export default function Dashboard() {
               {identityRegistered
                 ? `Identity registered · #${state.identity?.id}`
                 : "Register ERC-8004 identity"}
-            </button>
+            </ActionButton>
             <p className="footnote">
               {identityRegistered
                 ? "The registry confirms this identity belongs to the connected agent wallet. No new registration is needed."
@@ -1230,7 +1332,9 @@ export default function Dashboard() {
               exact owner-pinned address.
             </p>
             <div className="button-row">
-              <button
+              <ActionButton
+                pending={busy === "Authorizing session"}
+                pendingLabel={actionCopy("Authorizing session").pending}
                 className="primary"
                 disabled={disabled || !actions.create.enabled}
                 onClick={() =>
@@ -1238,15 +1342,17 @@ export default function Dashboard() {
                 }
               >
                 {actions.create.label}
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
+                pending={busy === "Updating policy"}
+                pendingLabel={actionCopy("Updating policy").pending}
                 disabled={disabled || !actions.update.enabled}
                 onClick={() =>
                   void act("Updating policy", () => authorize(true))
                 }
               >
                 {actions.update.label}
-              </button>
+              </ActionButton>
             </div>
             {(actions.create.reason || actions.update.reason) && (
               <p className="footnote">
@@ -1278,7 +1384,9 @@ export default function Dashboard() {
                 inputMode="decimal"
               />
             </label>
-            <button
+            <ActionButton
+              pending={busy === "Funding treasury"}
+              pendingLabel={actionCopy("Funding treasury").pending}
               disabled={
                 disabled ||
                 !owner ||
@@ -1291,7 +1399,7 @@ export default function Dashboard() {
               onClick={() => void act("Funding treasury", funding)}
             >
               Transfer tokens to Confiance
-            </button>
+            </ActionButton>
             <p className="footnote">
               {!owner
                 ? "Sign in to transfer tokens from your owner wallet."
@@ -1344,7 +1452,9 @@ export default function Dashboard() {
                 placeholder="0x…"
               />
             </label>
-            <button
+            <ActionButton
+              pending={busy === "Authorizing CRE reporter"}
+              pendingLabel={actionCopy("Authorizing CRE reporter").pending}
               disabled={
                 disabled ||
                 !owner ||
@@ -1363,7 +1473,7 @@ export default function Dashboard() {
                 : reporterExists
                   ? "Update CRE reporter"
                   : "Authorize CRE reporter"}
-            </button>
+            </ActionButton>
             <p className="footnote">
               {reporterMatches
                 ? "These reporter settings already match the authorization onchain. No repeat approval is needed. CRE must still deliver the actual milestone report."

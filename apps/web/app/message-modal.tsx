@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
+import type { Feedback } from "../lib/feedback";
+import { monadTestnet } from "../../../packages/shared/chain";
 
 export function MessageModal({
   message,
-  error,
+  title,
+  nextStep,
+  transactionHash,
+  tone = "success",
   onDismiss,
-}: {
-  message: string;
-  error: boolean;
+}: Feedback & {
   onDismiss: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -30,7 +33,7 @@ export function MessageModal({
   return (
     <dialog
       ref={dialog}
-      className={`message-modal ${error ? "message-modal-error" : ""}`}
+      className={`message-modal message-modal-${tone}`}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onCancel={(event) => {
@@ -58,15 +61,24 @@ export function MessageModal({
         <span aria-hidden="true">×</span>
       </button>
       <div className="message-modal-icon" aria-hidden="true">
-        {error ? "!" : "✓"}
+        {tone === "success" ? "✓" : tone === "info" ? "i" : "!"}
       </div>
       <p className="eyebrow">CONFIANCE</p>
-      <h2 id={titleId}>
-        {error ? "Action needs attention" : "Update received"}
-      </h2>
+      <h2 id={titleId}>{title}</h2>
       <p id={descriptionId} className="message-modal-description">
         {message}
       </p>
+      {nextStep && <p className="message-modal-next">{nextStep}</p>}
+      {transactionHash && /^0x[0-9a-f]{64}$/i.test(transactionHash) && (
+        <a
+          className="message-modal-proof"
+          href={`${monadTestnet.blockExplorers.default.url}/tx/${transactionHash}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          View transaction ↗
+        </a>
+      )}
       <button className="message-modal-dismiss" onClick={onDismiss}>
         Got it
       </button>

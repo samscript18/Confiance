@@ -353,10 +353,23 @@ export async function GET() {
           tx.to?.toLowerCase() !== state.account.toLowerCase()
         )
           continue;
-        const reason =
+        let reason =
           "reason" in proof && typeof proof.reason === "string"
             ? proof.reason
             : "Reason unavailable";
+        if (
+          reason === "Reason unavailable" &&
+          "preSubmissionSimulation" in proof
+        ) {
+          const simulation = proof.preSubmissionSimulation;
+          if (
+            simulation &&
+            typeof simulation === "object" &&
+            "code" in simulation &&
+            typeof simulation.code === "string"
+          )
+            reason = simulation.code;
+        }
         state.rejections.push({
           hash,
           reason,
