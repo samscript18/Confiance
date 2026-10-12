@@ -1,0 +1,11 @@
+node_modules/
+apps/web/.next/
+contracts/out/
+contracts/cache/
+cre/workflows/milestone/dist/
+cre/workflows/milestone/config.json
+indexer/.envio/
+indexer/abis/
+indexer/config.yaml
+proofs/
+deployments/

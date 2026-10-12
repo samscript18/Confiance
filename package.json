@@ -1,0 +1,74 @@
+{
+  "name": "confiance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "contracts:build": "forge build --root contracts",
+    "contracts:test": "forge test --root contracts -vv",
+    "contracts:fmt": "forge fmt --root contracts",
+    "abi": "tsx scripts/generate-abi.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p cre/workflows/milestone/tsconfig.json",
+    "lint": "prettier --check agent scripts packages tests docs .github apps/web/app apps/web/lib apps/web/tests apps/web/*.json apps/web/*.ts apps/web/*.mjs cre indexer/src indexer/*.yaml indexer/*.json indexer/*.graphql README.md package.json tsconfig.json",
+    "format": "prettier --write agent scripts packages tests docs .github apps/web/app apps/web/lib apps/web/tests apps/web/*.json apps/web/*.ts apps/web/*.mjs cre indexer/src indexer/*.yaml indexer/*.json indexer/*.graphql README.md package.json tsconfig.json",
+    "test": "tsx --test tests/*.test.ts",
+    "test:local": "tsx scripts/local-smoke.ts",
+    "preflight": "tsx --env-file-if-exists=.env scripts/preflight.ts",
+    "agent:run": "tsx --env-file-if-exists=.env agent/runtime/cli.ts",
+    "agent:wallet": "tsx --env-file-if-exists=.env scripts/create-agent-wallet.ts",
+    "postinstall": "node scripts/repair-privy-types.mjs && node scripts/repair-integration-types.mjs",
+    "build": "npm run typecheck && npm run build --workspace @confiance/web",
+    "record:deployment": "tsx --env-file-if-exists=.env scripts/record-deployment.ts",
+    "discover:cleanverse": "tsx scripts/discover-cleanverse.ts",
+    "agent:diagnostic": "tsx --env-file-if-exists=.env scripts/agent-diagnostic.ts",
+    "dev": "npm run dev --workspace @confiance/web",
+    "test:web": "playwright test --config apps/web/playwright.config.ts",
+    "agent:identity": "tsx --env-file-if-exists=.env scripts/register-identity.ts",
+    "cre:configure": "tsx --env-file-if-exists=.env scripts/configure-cre.ts",
+    "cre:build": "bun x cre-compile cre/workflows/milestone/workflow.ts cre/workflows/milestone/dist/workflow.wasm",
+    "indexer:configure": "tsx --env-file-if-exists=.env scripts/configure-indexer.ts",
+    "indexer:codegen": "node --import tsx scripts/prepare-indexer-types.ts && envio --directory indexer --config config.codegen.yaml codegen",
+    "indexer:typecheck": "npm run indexer:codegen && tsc --noEmit -p indexer/tsconfig.json",
+    "indexer:start": "envio --directory indexer start",
+    "agent:watch": "tsx --env-file-if-exists=.env agent/runtime/watch.ts",
+    "cre:setup": "node node_modules/bun/install.js"
+  },
+  "dependencies": {
+    "@category-labs/mera": "0.2.0",
+    "@chainlink/cre-sdk": "1.23.0",
+    "@openzeppelin/contracts": "5.6.1",
+    "@privy-io/node": "0.35.0",
+    "@scure/bip32": "2.4.0",
+    "@scure/bip39": "2.4.0",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1",
+    "viem": "2.57.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/bun": "1.3.8",
+    "@types/node": "24.10.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "bun": "1.4.2",
+    "envio": "3.14.0",
+    "prettier": "3.6.2",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "envio": {
+      "express": "4.22.3"
+    },
+    "body-parser": "1.20.8",
+    "ws": "8.21.0"
+  }
+}
