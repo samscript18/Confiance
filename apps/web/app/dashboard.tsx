@@ -709,12 +709,27 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         </Link>
         <button
           className="mobile-navigation-toggle"
+          aria-label={navigationOpen ? "Close menu" : "Menu"}
           aria-expanded={navigationOpen}
           aria-controls="workspace-navigation"
           onClick={() => setNavigationOpen((open) => !open)}
         >
-          {navigationOpen ? "Close menu" : "Menu"}
-          <span aria-hidden="true">{navigationOpen ? "×" : "☰"}</span>
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            {navigationOpen ? (
+              <path d="m6 6 12 12M6 18 18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
         <p className="sidebar-eyebrow">YOUR WORKSPACE</p>
         <nav
