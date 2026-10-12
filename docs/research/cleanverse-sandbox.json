@@ -1,0 +1,42 @@
+{
+  "source": "https://uatapi.cleanverse.com/api/skills/query_chain_config",
+  "observedAt": "2026-10-08T10:17:30.139Z",
+  "chainId": 10143,
+  "apass": {
+    "address": "0xbA82D189540CaC9DC6FF46B6837CaC1BFdEC58B9",
+    "hasCode": true
+  },
+  "policy": {
+    "address": "0x36489bE45fa84f70a0c2BDB11D824Be608CB12Dd",
+    "hasCode": true
+  },
+  "tokens": [
+    {
+      "symbol": "ausdc",
+      "category": "atoken",
+      "decimals": 6,
+      "contract": {
+        "address": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+        "hasCode": true
+      },
+      "accessCore": {
+        "address": "0x8F118338a1fa41E7Fa86Be19A4e8B99Ed58A6EcC",
+        "hasCode": true
+      }
+    },
+    {
+      "symbol": "usdc",
+      "category": "token",
+      "decimals": 6,
+      "contract": {
+        "address": "0x534b2f3A21130d7a60830c2Df862319e593943A3",
+        "hasCode": true
+      },
+      "accessCore": {
+        "address": "0x8F118338a1fa41E7Fa86Be19A4e8B99Ed58A6EcC",
+        "hasCode": true
+      }
+    }
+  ],
+  "limitation": "Deployed code is not proof of ABI, smart-account enrollment, recipient eligibility, or compliance. No transfer attempted."
+}
