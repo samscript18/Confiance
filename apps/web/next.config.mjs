@@ -2,7 +2,9 @@ import nextEnv from "@next/env";
 const { loadEnvConfig } = nextEnv;
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../../", import.meta.url));
-loadEnvConfig(root);
+// Next already loaded the web directory; bypass its cache to load the monorepo root.
+// Inherited process variables (including isolated browser fixtures) retain precedence.
+loadEnvConfig(root, process.env.NODE_ENV !== "production", console, true);
 process.env.CONFIANCE_PROJECT_ROOT ||= root;
 export default {
   devIndicators: false,
