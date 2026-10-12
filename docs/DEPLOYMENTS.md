@@ -1,5 +1,21 @@
 # Deployments
 
+## Live-domain owner account — 2026-10-12
+
+- Network: Monad Testnet, chain **10143**.
+- Confiance: `0xde4dfd84ed78c4c65d7670e22be1e002403f057f`.
+- Owner: `0xaf00668625e038f43c302283aECd6fF90265E42F`.
+- Deployment block: **70494094**.
+- [Deployment transaction](https://testnet.monadexplorer.com/tx/0x155e532677844224c260412d433beb9fbd605f236e8a3e14a2f06b7cf3085938).
+
+The live-domain passkey owner deployed this account. The receipt, chain,
+constructor calldata against the compiled artifact, deployer and immutable
+onchain owner were checked independently. Hosted configuration now points to
+this account, with a separate MongoDB namespace and monitoring disabled during
+setup. Treasury funding, agent/session authorization and CRE reporter approval
+must be established on this account before its first autonomous payment.
+The historical payments below belong to the original account.
+
 ## Hosted PR #2 rehearsal
 
 Frontend: https://confiance-eta.vercel.app

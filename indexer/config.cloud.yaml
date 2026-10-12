@@ -22,4 +22,6 @@ chains:
     block_lag: 2
     contracts:
       - name: Confiance
-        address: "0x952bbdDeCE639f678733F310890d15E28b213489"
+        address:
+          - "0x952bbdDeCE639f678733F310890d15E28b213489"
+          - "0xde4dfd84ed78c4c65d7670e22be1e002403f057f"
