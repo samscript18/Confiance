@@ -17,7 +17,7 @@ Verified 2026-10-12 against the current source and pinned dependencies.
 | Vertex Gemini → Privy → Confiance           | PASS: autonomous 30 CTT payment, block 70422755; no owner payment signature                                                       |
 | 500 CTT request                             | PASS: same Privy signer transaction reverted; simulation identified SESSION_SPENDING_LIMIT                                        |
 | Reused nonce                                | PASS: same Privy signer transaction reverted, block 70423647; simulation identified INVALID_NONCE                                 |
-| Live same-key attempt after revocation      | Pending owner revocation                                                                                                          |
+| Live same-key attempt after revocation      | PASS: same Privy key reverted at block 70425005; session inactive and balances unchanged                                          |
 | Cleanverse compliant transfer               | Pending Confiance/recipient enrollment and issuance; adapter fixture tests are not live compliance proof                          |
 
 Exact chain receipts are recorded in [DEPLOYMENTS.md](DEPLOYMENTS.md).

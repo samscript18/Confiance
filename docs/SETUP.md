@@ -237,6 +237,7 @@ No fake A-Pass checker or invented transfer adapter is installed. Obtain officia
 confirmation and then prove a direct compliant Confiance transfer to an eligible
 recipient before enabling that claim. See INTEGRATIONS.md for the exact evidence.
 
-The core payment and CRE proofs are recorded. The live revoked-key retry and
-Cleanverse compliant settlement remain outstanding. New task/session policies
+The core payment, CRE, spending-limit, replay and same-key revocation proofs are
+recorded. The current session is revoked; authorize a fresh session only for a
+new intended task. Cleanverse compliant settlement remains outstanding. New task/session policies
 must use the same exact milestone as the deployed CRE workflow.

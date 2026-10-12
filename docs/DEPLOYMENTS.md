@@ -57,4 +57,15 @@ No owner signature was used for this payment.
 
 The spending-limit attack is a deterministic diagnostic using the same Privy
 signer, separate from the LLM payment proof. CTT is not USD or Cleanverse.
-Live revoked-key proof and compliant Cleanverse settlement remain outstanding.
+
+## Same-key revocation proof
+
+- [Owner revocation](https://testnet.monadexplorer.com/tx/0x7a69cbdbf6ccfd9bbcb13cab63bf22d2fad99f80e2829f338876fd42ba151237), block **70424861**; Envio indexed `SessionRevoked`.
+- [Same Privy key retries 30 CTT](https://testnet.monadexplorer.com/tx/0x24fe8cb25754b00cf5db257e443bd1d0c34eb85b4b4c0beb04ad2104913b4fa6), block **70425005**, reverted.
+- Pre-submission simulation identified `SESSION_REVOKED`. Verified sender,
+  target and exact calldata use the same agent, generation 3 and nonce 1.
+- Onchain session is inactive; cumulative spent remains 30 CTT and contractor
+  balance remains 30 CTT. No owner signature was used for the failed retry.
+
+The core autonomous-payment and authorization demonstration is proven on Monad.
+Cleanverse enrollment, issuance and compliant settlement remain outstanding.

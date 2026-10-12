@@ -23,9 +23,15 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 - Public landing page is `/`; the app has separate Overview, Account, Agent,
   Policy, Milestone, Activity, Security and Connections routes under `/app`.
   Its persistent layout preserves the in-memory owner session between app pages.
-- Remaining live proof: owner revocation followed by the same agent retry.
-  Cleanverse requires legitimate enrollment/issuance and compliant-transfer proof.
-  These limitations prevent declaring the full requested MVP complete.
+- Owner revoked the session at block **70424861**. The same Privy agent's
+  30 CTT retry reverted at block **70425005**; simulation identified
+  `SESSION_REVOKED`. Contractor balance and onchain spending stayed at 30 CTT.
+  The current session is revoked; renewed permission requires owner approval.
+- Core Monad execution, limit, replay and same-key revocation proofs are complete.
+  Cleanverse still requires legitimate enrollment/issuance and compliant-transfer
+  proof; the full compliance requirement is not complete.
+- Validation: **59 Solidity tests**, **31 unit tests**, **4 browser tests**,
+  strict typechecks, lint, CRE compilation and production build pass.
 
 See [DEPLOYMENTS.md](DEPLOYMENTS.md) for exact live receipts.
 

@@ -25,8 +25,9 @@ its session, CRE verified the merged GitHub PR, and Vertex Gemini requested a
 30 CTT payment through a separate Privy signer without an owner payment signature.
 Confiance recorded 30 spent of a 50-token budget and rejected a 500-token attempt.
 ERC-8004 identity 2210 is minted and Envio indexing is live.
-The complete requested MVP still needs the live revoked-key demonstration and
-Cleanverse enrollment/issuance and compliant-transfer proof.
+The same Privy key also failed after owner revocation, and reused nonce execution
+reverted. The complete compliance requirement still needs Cleanverse
+enrollment/issuance and compliant-transfer proof.
 Verified addresses and receipts are in [DEPLOYMENTS.md](docs/DEPLOYMENTS.md), with
 current blockers in [LIVE_PROGRESS.md](docs/LIVE_PROGRESS.md).
 

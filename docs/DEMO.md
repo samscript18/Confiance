@@ -60,8 +60,8 @@ have no surviving events. Keep simulation reasons separate from receipt proof.
 No indexed event may be manufactured for a reverted transaction.
 
 The agent has autonomously paid 30 CTT on Monad and the 500 CTT limit diagnostic
-has reverted. The remaining live scenes are owner revocation/same-key retry and
-a legitimate Cleanverse compliant payment. Do not delete the paid task receipt
+has reverted. The same-key retry after owner revocation and replay attempt also reverted.
+The remaining compliance scene needs a legitimate Cleanverse compliant payment. Do not delete the paid task receipt
 or run the same milestone again as a new task to manufacture another payment.
 
 **The key still exists. The authority does not.**
