@@ -1,0 +1,15 @@
+{
+  "organisation": "samscript18",
+  "indexer": "confiance",
+  "commit": "3212e18",
+  "tier": "development",
+  "chainId": 10143,
+  "source": "Monad testnet HyperSync",
+  "graphqlUrl": "https://indexer.dev.hyperindex.xyz/bce44db/v1/graphql",
+  "verifiedPayments": [
+    "0x6eaecc46d20f3513452cb4e0bf6e591c10a3f38285d3cdec9276260e8f46870c",
+    "0xa9d80f0c7087fe812b527737a440ce63e6801b6acb95e313126ab8ac3a03a5fe"
+  ],
+  "verification": "Public GraphQL returned PaymentExecuted records with matching chain, account, agent, asset, 30000000 amount and independently verified receipt blocks 70465941 and 70422755.",
+  "limitations": "Free Development tier: maximum 30-day deployment lifetime; no production uptime guarantee."
+}

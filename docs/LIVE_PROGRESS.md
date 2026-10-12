@@ -27,9 +27,11 @@ Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 - Local owner controls are at http://localhost:3050. The user explicitly chose
   to retain this owner for the preview. The public app links to the local owner
   console. Owner authentication on the Vercel hostname is not claimed.
-- Envio works locally. Its configured endpoint is localhost, so cloud history
-  currently uses Monad RPC and persisted receipts. A public Envio endpoint is
-  still required. Vercel Git auto-deployment also needs a GitHub Login Connection.
+- Envio Cloud indexes both verified 30 CTT payments using Monad testnet HyperSync.
+  Public endpoint: `https://indexer.dev.hyperindex.xyz/bce44db/v1/graphql`.
+  Matching hashes, blocks, chain, sender, token and account were checked.
+  Public-RPC backfill hit rate limits and was replaced by supported HyperSync.
+  Vercel Git auto-deployment still needs a GitHub Login Connection.
 - Latest verification: **59 Solidity**, **39 unit**, **14 Playwright** tests pass,
   plus live MongoDB and split-server authentication/restart tests. Strict types,
   formatting lint, production builds and actual CRE WASM simulation pass.

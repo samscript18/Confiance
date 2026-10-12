@@ -103,3 +103,9 @@ Vercel Git linking was rejected because its account has no GitHub Login Connecti
 The initial frontend uses a direct source upload. Connect GitHub in Vercel Settings
 to enable future automatic Git deployments. Render uses the `dev` branch, with
 automatic deploys disabled while the rollout is being checked.
+
+Hosted Envio GraphQL: `https://indexer.dev.hyperindex.xyz/bce44db/v1/graphql`.
+Its Monad testnet HyperSync ingestion was checked against both real payments.
+The free Envio Development deployment has a maximum 30-day lifetime; Render's
+free preview can sleep. These are preview hosting choices, not uptime guarantees.
+Public evidence is in [envio-cloud.json](research/envio-cloud.json).

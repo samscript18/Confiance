@@ -125,7 +125,7 @@ required before a tool reports execution.
 | ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                         |
 | Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                       |
 | Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked |
-| Envio         | Local ingestion verified; cloud deployment being verified against actual payment events                             |
+| Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                         |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**
 Mera belongs to the human owner and will not supply the agent key. Chainlink
