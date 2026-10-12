@@ -24,6 +24,10 @@ export async function GET() {
   };
   try {
     const env = await runtimeEnv();
+    state.setupCapabilities = {
+      privy: Boolean(env.PRIVY_APP_ID && env.PRIVY_APP_SECRET),
+      identity: Boolean(env.ERC8004_IDENTITY_REGISTRY && env.ERC8004_AGENT_URI),
+    };
     if (
       env.CHAINLINK_CRE_FORWARDER &&
       env.CHAINLINK_CRE_WORKFLOW_ID &&
@@ -80,14 +84,21 @@ export async function GET() {
     ];
     if (env.CONFIANCE_OWNER) state.owner = address(env, "CONFIANCE_OWNER");
     if (env.AGENT_ADDRESS) state.agent = address(env, "AGENT_ADDRESS");
-    if (env.PRIVY_APP_ID && env.PRIVY_APP_SECRET && env.PRIVY_AGENT_WALLET_ID)
+    if (env.PRIVY_APP_ID && env.PRIVY_APP_SECRET && env.PRIVY_AGENT_WALLET_ID) {
       state.agent = (await connectPrivy(env)).address;
+      state.agentWalletConnected = true;
+    }
     if (env.PAYMENT_ASSET) {
       state.asset = address(env, "PAYMENT_ASSET");
       state.taskAsset = state.asset;
     }
     if (env.PAYMENT_RECIPIENT)
       state.recipient = address(env, "PAYMENT_RECIPIENT");
+    if (env.DIAGNOSTIC_RECIPIENT && state.recipient) {
+      state.diagnosticRecipientConfigured =
+        address(env, "DIAGNOSTIC_RECIPIENT").toLowerCase() !==
+        state.recipient.toLowerCase();
+    }
     if (env.ERC8004_IDENTITY_REGISTRY)
       state.registry = address(env, "ERC8004_IDENTITY_REGISTRY");
     if (!env.CONFIANCE_ADDRESS) return publicResponse(state);

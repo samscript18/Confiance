@@ -14,6 +14,19 @@ import { BaseError } from "viem";
 
 let session: Secp256k1SigningSession | undefined;
 let timer: ReturnType<typeof setTimeout> | undefined;
+const sessionListeners = new Set<() => void>();
+export function subscribeOwnerSession(listener: () => void) {
+  sessionListeners.add(listener);
+  return () => {
+    sessionListeners.delete(listener);
+  };
+}
+export function ownerSessionActive() {
+  return Boolean(session);
+}
+export function hasOwnerCredential() {
+  return Boolean(knownCredential());
+}
 const credentialKey = "confiance.owner.credential.v1";
 function knownCredential(): PasskeyCredentialMetadata | undefined {
   const stored = localStorage.getItem(credentialKey);
@@ -32,6 +45,7 @@ export function disconnectOwner() {
   clearTimeout(timer);
   session?.end();
   session = undefined;
+  for (const listener of sessionListeners) listener();
 }
 export function ownerAccount() {
   if (!session) throw new Error("Sign in with your passkey again.");
