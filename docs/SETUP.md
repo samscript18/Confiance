@@ -1,7 +1,9 @@
 # Live setup and reproducible demo
 
-No provider accounts, credentials or funded owner/agent exist for this project.
-The code paths below are implemented; their live operations remain unverified.
+Provider credentials and an owner address are configured locally. The Privy agent
+wallet has been created, but is unfunded. Confiance deployment and the full payment
+flow remain unverified. See [LIVE_PROGRESS.md](LIVE_PROGRESS.md) for current operations
+and blockers; the instructions below describe the complete setup sequence.
 Keep secrets in ignored `.env`, never in chat or source control.
 
 For provider signup links, exact credential fields and tasks that require human

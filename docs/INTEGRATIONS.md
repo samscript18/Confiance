@@ -2,6 +2,12 @@
 
 Inspected 2026-10-08. No integration is complete merely because its SDK imports.
 
+The historical inspection below is supplemented by [LIVE_PROGRESS.md](LIVE_PROGRESS.md),
+verified 2026-10-12: Privy wallet provisioning and public metadata hosting now work;
+CRE login/deploy access and tenant directory now work. Agent gas is zero, actual
+LLM calls return 429, and Confiance deployment/identity mint/report delivery remain
+unproven. Cleanverse is deferred for the user-approved exact-recipient token fallback.
+
 ## Monad
 
 `cast chain-id --rpc-url https://testnet-rpc.monad.xyz` returned **10143**.

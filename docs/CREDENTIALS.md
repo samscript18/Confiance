@@ -4,6 +4,10 @@ Checked 2026-10-12. Secret values were not printed. The local `.env` is preserve
 restricted to owner read/write, and now includes the live-verified public ERC-8004
 registry. No Confiance deployment or project identity exists yet.
 
+Later in this setup session, Privy wallet creation and metadata publication succeeded,
+and CRE login/deploy access became available. Current results supersede the initial
+credential checklist below; see [LIVE_PROGRESS.md](LIVE_PROGRESS.md).
+
 ## What is ready
 
 - Monad public RPC: chain 10143 verified.
