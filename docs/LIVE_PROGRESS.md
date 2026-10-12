@@ -4,6 +4,30 @@ Verified 2026-10-12. No autonomous payment is claimed.
 
 ## Current status (supersedes earlier attempts below)
 
+Latest checks at 12:33 UTC:
+
+- Owner registered the agent in [this transaction](https://testnet.monadexplorer.com/tx/0x0e3083f5b11cfc265a8a74c8d257453813925a8f9a463ac836208ee95dd83990)
+  and created its [50-token session](https://testnet.monadexplorer.com/tx/0x2e903a7d82b31685d98199a6c70fdf0902018e96457243ea9ec2a7e4299e60d7).
+  Envio returns both actual events. The active session allows asset
+  `0x6dd95642C4AC91D0b5849DCF2Ad0201878E06FEF`, whose treasury balance is zero.
+- Local PAYMENT_ASSET now points to `0xaBC746C3C77C73160ACEB419349C6980De4567BE`.
+  Its Confiance balance is 1,000 six-decimal units, but the existing session
+  does not authorize that asset. No configuration was silently changed to bypass this.
+- A real Privy diagnostic [reverted on Monad](https://testnet.monadexplorer.com/tx/0x63dc5e7bc2ecfe888d41c6b757b8c98aff265a5e4d7ff26e8139c28286db824c)
+  at block 70398714. Pre-submission simulation returned ASSET_NOT_ALLOWED.
+  This is asset-restriction evidence, not milestone rejection or autonomous payment proof.
+- CRE reporter remains zero/unconfigured onchain. The dashboard now prefills its
+  three public settings from configuration and validates each field separately.
+  The human must still approve its actual owner-only authorization transaction.
+- Cleanverse invitation and sandbox read access work. The official validator exists
+  on Monad; Confiance is unregistered. See [CLEANVERSE.md](CLEANVERSE.md).
+  The adapter is isolated and undeployed; its ten tests do not prove live compliance.
+- Current checks: 59 Solidity tests (including 512 fuzz runs), 19 TypeScript tests,
+  and four existing browser tests pass. Strict typechecks and production build pass.
+
+The earlier setup evidence below remains historical where it describes absent sessions
+or an empty indexer timeline.
+
 - Confiance deployed and receipt/bytecode/owner verified on Monad testnet:
   `0x952bbdDeCE639f678733F310890d15E28b213489`, block **70364758**.
   [Deployment transaction](https://testnet.monadexplorer.com/tx/0x4c36aab404ca0b2e3b887096127e9e7a63ce66cdbfa84cec8623d4c4bbf55179).

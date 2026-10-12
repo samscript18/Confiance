@@ -224,6 +224,12 @@ Keep durable task receipts: deleting them removes the offchain duplicate-payment
 
 ## 8. Cleanverse limitation
 
+Update, 12 October: the supplied invitation opened the official docs and the developer
+API ID successfully queried sandbox registration. The validator ABI and a contract-vault
+route are now documented. An isolated adapter is implemented and tested, but no adapter
+is deployed. See [CLEANVERSE.md](CLEANVERSE.md) for the exact enrollment and proof steps;
+the earlier ABI-discovery limitation below has been superseded.
+
 The official sandbox Monad addresses have deployed code, but Confiance enrollment,
 smart-contract principals and the complete onchain eligibility ABI are unconfirmed.
 No fake A-Pass checker or invented transfer adapter is installed. Obtain official

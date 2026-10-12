@@ -6,9 +6,13 @@ The historical inspection below is supplemented by [LIVE_PROGRESS.md](LIVE_PROGR
 verified 2026-10-12: Privy wallet provisioning and public metadata hosting now work;
 CRE login/deploy access and tenant directory now work. Confiance deployment and
 identity 2210 mint are verified, the agent is funded and Envio RPC indexing is live.
-Vertex replaces Mistral but lacks Google credentials. Owner policy, treasury funding
-and report/payment delivery remain unproven. New Cleanverse docs require an invitation;
-the intended smart-account integration remains unconfirmed.
+Vertex authentication and a real tool-using agent run now work. Owner agent registration
+and a 50-token session are onchain and indexed by Envio. Report/payment delivery remain
+unproven. The newly supplied Cleanverse invitation opened the docs; the developer API
+registration query succeeds. The official CVI validator ABI and contract-vault route
+are now documented in [CLEANVERSE.md](CLEANVERSE.md). A tested adapter exists but is
+not deployed: Confiance enrollment, CVI issuance and a compliant transfer are pending.
+The historical sections below do not describe the current live configuration.
 
 ## Monad
 
