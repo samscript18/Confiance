@@ -78,6 +78,12 @@ const key = Buffer.alloc(32, 7).toString("base64");
 test("Cleanverse encryption follows the documented protocol and accepts unpadded base64", () => {
   const payload = { chain: "monad", contract_address: account.toLowerCase() };
   const encrypted = encryptCleanverse(payload, key.replace(/=+$/, ""));
+  // Independently generated with OpenSSL AES-256-CBC, a 32-byte 0x07 key,
+  // a zero IV and default PKCS#7 padding; no provider credentials involved.
+  assert.equal(
+    encrypted,
+    "lmaehvsKubb4SnJSBaLT+MpBxkXa9QcMvhokf8XYsNNVjnnB1iz+N6+OxmsCCpB43UM2C3Wm4sBlk6N2cygyY0ooyfruba4yqhqUZOQ7FuwdBkpPG2Lc80cTPnMHVfLD",
+  );
   const decipher = createDecipheriv(
     "aes-256-cbc",
     Buffer.from(key, "base64"),
@@ -128,6 +134,23 @@ test("Cleanverse client fixes the sandbox target and never sends its encryption 
     assert.equal(headers.get("api-id"), "fixture-app");
     assert.equal(headers.get("api-key"), null);
     assert.ok(!String(input?.body).includes("owner_signature"));
+    const envelope: unknown = JSON.parse(String(input?.body));
+    assert.ok(envelope && typeof envelope === "object");
+    assert.deepEqual(Object.keys(envelope), ["data"]);
+    assert.ok("data" in envelope && typeof envelope.data === "string");
+    const decipher = createDecipheriv(
+      "aes-256-cbc",
+      Buffer.from(key, "base64"),
+      Buffer.alloc(16),
+    );
+    const plaintext = Buffer.concat([
+      decipher.update(envelope.data, "base64"),
+      decipher.final(),
+    ]).toString("utf8");
+    assert.deepEqual(JSON.parse(plaintext), {
+      contract_address: account,
+      owner_signature: "fixture",
+    });
     return Response.json({
       code: "0000",
       data: {

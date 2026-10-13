@@ -6,17 +6,17 @@ operations are in [HOSTING.md](HOSTING.md) and [SETUP.md](SETUP.md).
 
 ## Integration status
 
-| Integration          | Responsibility                                               | Live evidence                                                                               | Boundary                                                                                 |
-| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Monad testnet        | Authorization and settlement, chain 10143                    | Account deployment, two real 30 CTT payments, reverted limit/replay/revocation transactions | Testnet only; not independently audited                                                  |
-| Mera 0.2.0           | Passkey-derived human owner signer                           | Human-approved policy, reporter and revocation transactions                                 | Existing localhost owner selected for preview; hosted passkey onboarding deferred        |
-| Privy Node 0.35.0    | Separate agent wallet and transaction signing                | Agent `0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D` submitted actual payments                | Server credentials required; Privy does not authorize treasury spending                  |
-| Vertex Gemini        | Decide whether to request payroll through fixed tools        | Real waiting-state observation and Render-hosted autonomous payment                         | Offchain reasoning; no arbitrary transaction calldata tools                              |
-| ERC-8004             | Agent identity and wallet binding                            | Identity 2210 in registry `0x8004A818BFB912233c491871b3d84c89A494BD9e`                      | Identity metadata does not grant financial authority                                     |
-| Chainlink CRE        | Independently verify actual GitHub merge and report onchain  | PR #1 and task-discovered PR #2 reports confirmed                                           | Owner-pinned forwarder and exact workflow identity; no backend verification switch       |
-| Envio 3.14.0         | Index and display historical events                          | Hosted GraphQL matched both payment hashes and blocks                                       | History is read-side data, never authorization                                           |
-| MongoDB 7.7.0 driver | Persist tasks, auth, intents, proofs and worker coordination | Real database CRUD, concurrent unique intents, leases and restart-safe login tests          | Onchain policy remains the final authority; database outage stops execution              |
-| Cleanverse           | Intended compliance eligibility and A-Token settlement       | Official docs/validator inspected and adapter tested                                        | Live registration returns HTTP 403; enrollment, issuance and compliant transfer unproved |
+| Integration          | Responsibility                                               | Live evidence                                                                               | Boundary                                                                                          |
+| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Monad testnet        | Authorization and settlement, chain 10143                    | Account deployment, two real 30 CTT payments, reverted limit/replay/revocation transactions | Testnet only; not independently audited                                                           |
+| Mera 0.2.0           | Passkey-derived human owner signer                           | Human-approved policy, reporter and revocation transactions                                 | Existing localhost owner selected for preview; hosted passkey onboarding deferred                 |
+| Privy Node 0.35.0    | Separate agent wallet and transaction signing                | Agent `0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D` submitted actual payments                | Server credentials required; Privy does not authorize treasury spending                           |
+| Vertex Gemini        | Decide whether to request payroll through fixed tools        | Real waiting-state observation and Render-hosted autonomous payment                         | Offchain reasoning; no arbitrary transaction calldata tools                                       |
+| ERC-8004             | Agent identity and wallet binding                            | Identity 2210 in registry `0x8004A818BFB912233c491871b3d84c89A494BD9e`                      | Identity metadata does not grant financial authority                                              |
+| Chainlink CRE        | Independently verify actual GitHub merge and report onchain  | PR #1 and task-discovered PR #2 reports confirmed                                           | Owner-pinned forwarder and exact workflow identity; no backend verification switch                |
+| Envio 3.14.0         | Index and display historical events                          | Hosted GraphQL matched both payment hashes and blocks                                       | History is read-side data, never authorization                                                    |
+| MongoDB 7.7.0 driver | Persist tasks, auth, intents, proofs and worker coordination | Real database CRUD, concurrent unique intents, leases and restart-safe login tests          | Onchain policy remains the final authority; database outage stops execution                       |
+| Cleanverse           | Intended compliance eligibility and A-Token settlement       | Official docs/validator inspected; adapter and encryption protocol tested                   | Provider reports request decryption failure; enrollment, issuance and compliant transfer unproved |
 
 ## Proven autonomous payment path
 
@@ -63,8 +63,20 @@ from checked receipts and clearly identified diagnostic simulations.
 
 Credentials and the documentation invitation were used for actual sandbox
 inspection. Registration status queries succeed, but owner-signed registration
-returns non-JSON HTTP 403. The evidence does not establish whether the cause is
-provider access policy, app configuration or gateway filtering. Do not guess.
+returned non-JSON HTTP 403. On 2026-10-13, Cleanverse support reported that
+request-data decryption failed. This supersedes guesses about registration roles
+or gateway filtering as the immediate explanation.
+
+The current [official encryption documentation](https://docs.cleanverse.com/api/encryption/)
+was retrieved again. The implementation uses its documented AES-256-CBC,
+PKCS#7-compatible padding, Base64-decoded 32-byte key, fixed zero IV and single
+`{"data":"<base64 ciphertext>"}` request envelope. Independent OpenSSL test
+vectors and decryption of the captured outgoing test request verify those
+bytes and the envelope. Local and hosted credential values match; neither
+secret value is published. These checks prove local protocol conformance, not
+successful provider-side decryption. Cleanverse must confirm the active
+sandbox `api-id`/encryption-key pairing or identify a difference in the received
+request. No registration retry with an invented owner signature is performed.
 
 The official CVI validator and contract-vault integration are documented in
 [CLEANVERSE.md](CLEANVERSE.md). The adapter has ten Solidity tests and remains
@@ -75,9 +87,9 @@ not prove settlement; eligibility and the real transfer must also be exercised.
 
 ## Operational and SDK limitations
 
-- The user selected a localhost owner console for this preview. The public app
-  links owner actions to port 3050. A passkey on another hostname is not assumed
-  to recover the same immutable-owner account.
+- The live domain now has its own passkey owner and a separately deployed
+  immutable-owner account. The original localhost account and its proofs are
+  preserved. Passkeys are not assumed to recover across hostnames.
 - Free Render can sleep. Free Envio development deployments have a maximum
   30-day lifetime. These preview choices do not provide production uptime.
 - Vercel Git linking requires a GitHub Login Connection; the initial deployment

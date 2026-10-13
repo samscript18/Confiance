@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-13",
+  "documentation": "https://docs.cleanverse.com/api/encryption/",
+  "algorithm": "AES-256-CBC",
+  "padding": "PKCS#7 (AES-compatible PKCS#5)",
+  "iv": "16 zero bytes",
+  "keyEncoding": "Base64-decoded, validated 32 bytes",
+  "wireEnvelope": "JSON object with one data field containing Base64 ciphertext",
+  "configuredKeyMatchesOfficialExample": true,
+  "configuredKeyLocalEnvelopeRoundtrip": true,
+  "localAndHostedCredentialsMatch": true,
+  "independentVector": "OpenSSL fixture-key regression test",
+  "providerAcceptedRegistration": false,
+  "limitation": "Offline fixture only. No registration request submitted, and no provider-side decryption claimed. Provider-confirmed active sandbox API-ID/key pairing remains to be established."
+}

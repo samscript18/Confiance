@@ -123,7 +123,7 @@ registration attempt still requires an explicit owner signature; no retry runs
 automatically. The modal's brand/status icons use actual CSS flex alignment rather
 than undefined utility classes, and the misleading security-audit label is removed.
 
-## Confirmed registration endpoint rejection
+## Historical registration endpoint rejection — 2026-10-12
 
 The owner supplied the actual signed request. Its signature independently verifies
 against the configured owner for the documented message. The sandbox status query
@@ -145,3 +145,40 @@ than collapsing it into a generic 409. The response body is never shown or logge
 A regression test covers the exact HTML/non-JSON 403 class and secret-safe handling.
 **37 unit tests**, strict types and the production build pass. Confiance remains
 unenrolled; registration writes are not automatically retried.
+
+## Provider decryption diagnosis — 2026-10-13
+
+Cleanverse support reports that request-data decryption failed and directs us to
+its [encryption specification](https://docs.cleanverse.com/api/encryption/).
+That diagnosis supersedes the earlier unconfirmed role/allowlist speculation.
+
+Rechecking the current documentation found no algorithm difference: our client
+Base64-decodes a 32-byte key, uses AES-256-CBC with PKCS#7 padding and 16 zero IV
+bytes, and sends a JSON object containing one Base64 `data` field. An independent
+OpenSSL fixture vector, decryption of the captured outgoing test envelope, and
+comparison with the official Node example all pass. Local and hosted credential
+values match. No key, plaintext registration signature or encrypted real request
+is published in [the audit](research/cleanverse-encryption-audit.json).
+
+The live account's read-only status query returned `0000` and `registered: false`.
+This establishes status-query access, not successful decryption or registration.
+We need Cleanverse to confirm the active UAT API-ID/key pairing and correlate the
+actual failed request, or provide a known-answer encryption vector for their
+decoder. Do not change the documented IV/key format by guesswork or submit an
+invented owner signature. After any confirmed correction, the live owner must
+review/sign the real registration request; enrollment and transfer compliance
+still require separate onchain proof.
+
+Validation: all **39 unit tests** and strict TypeScript checks pass, including
+the independent ciphertext vector and outgoing-envelope assertions.
+
+Suggested reply to Cleanverse (no secrets):
+
+> We rechecked the current specification. The client uses AES-256-CBC, a
+> Base64-decoded 32-byte API key, PKCS#7 padding, a 16-byte zero IV and the single
+> `{"data":"<base64>"}` envelope. Our output matches your Node example and an
+> independent OpenSSL test vector. Local and hosted credentials match, and the
+> plaintext status query succeeds. Please confirm the active API-ID/encryption-key
+> pairing for the UAT validator endpoint and correlate the failed request. Could
+> you provide a known-answer test vector or specify which part of the received
+> envelope/key selection differs from this protocol?
