@@ -30,11 +30,15 @@ not evidence that a real-world KYC investigation took place.
 
 The adapter's account and recipient eligibility methods both return true.
 A direct transfer of **0.05 aUSDC** from Confiance to the contractor simulates
-successfully. This is simulation evidence, not a completed payment.
+successfully. A fresh unissued address returns false from the adapter, and its
+aUSDC transfer simulation reverts. The common burn address returned true and
+is not a valid negative fixture. These are simulation checks, not completed
+payment or rejection transactions.
 
 Machine-readable records: [CVI issuance](research/cleanverse-cvi-issuance.json),
 [adapter](research/cleanverse-adapter-deployment.json), and
-[funding and simulation](research/cleanverse-ausdc-funding.json).
+[funding and simulation](research/cleanverse-ausdc-funding.json), and
+[positive/negative eligibility checks](research/cleanverse-current-eligibility.json).
 
 ## Finish through the owner interface
 

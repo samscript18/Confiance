@@ -162,7 +162,7 @@ required before a tool reports execution.
 | Mera          | Original passkey owner signed setup, policy and revocation; live-domain owner deployed its new account, with fresh policy setup pending |
 | ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                                             |
 | Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                                           |
-| Cleanverse    | Registration, treasury/contractor CVIs, adapter and 0.1 aUSDC funding verified; autonomous compliant transfer pending                     |
+| Cleanverse    | Registration, treasury/contractor CVIs, adapter and 0.1 aUSDC funding verified; autonomous compliant transfer pending                   |
 | Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                                             |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**

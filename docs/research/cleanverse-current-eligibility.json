@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "adapter": "0xf2403571b7fe9849f8482ea566177eeee689df99",
+  "ineligible": "0x129b4939ce097bfaf88954be41dc44d04ec1d259",
+  "checks": {
+    "treasury": true,
+    "contractor": true,
+    "unissuedAddress": false
+  },
+  "unissuedTransferSimulationRejected": true,
+  "reason": "The contract function \"transfer\" reverted with the following signature:\n0xa6725971",
+  "fixtureNote": "The commonly used burn address 0x000000000000000000000000000000000000dEaD returned true and was not a valid negative fixture. This negative fixture is a freshly generated public address.",
+  "limitation": "Live read and transfer simulation only; no ineligible transfer transaction or autonomous compliant payment has been submitted."
+}
