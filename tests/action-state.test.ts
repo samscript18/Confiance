@@ -111,3 +111,27 @@ test("a verified task cannot override a session bound to a different milestone",
   assert.match(actions.run.reason, /different milestone/);
   assert.equal(actions.update.enabled, true);
 });
+
+test("milestone diagnostic supports small aUSDC payroll amounts and fails closed above allowance", () => {
+  const state = ready();
+  state.decimals = 6;
+  state.taskAmount = "0.03";
+  state.session = { ...state.session!, limit: "0.05", remaining: "0.05" };
+  assert.equal(
+    sessionActions(state, true, true, token).condition.enabled,
+    true,
+  );
+  for (const amount of ["0.06", "0", "invalid", "0.0300001"]) {
+    state.taskAmount = amount;
+    assert.equal(
+      sessionActions(state, true, true, token).condition.enabled,
+      false,
+    );
+  }
+  state.taskAmount = "0.03";
+  state.session = { ...state.session!, verified: true };
+  assert.equal(
+    sessionActions(state, true, true, token).condition.enabled,
+    false,
+  );
+});
