@@ -21,8 +21,9 @@ revocation, not routine agent payments.
 Public app: [Confiance preview](https://confiance-eta.vercel.app).
 The workspace requires owner sign-in. Evaluators do not need credentials to
 inspect the public evidence below. Owner controls now run on the live domain.
-The new live-owner account is deployed; its first autonomous payment remains
-pending. The completed rehearsals below used the original account.
+The live-owner account has now executed a verified autonomous 0.05 aUSDC
+payment at block 70692069. The earlier CTT rehearsals below used the original
+account; see the Cleanverse update for the new receipt.
 
 ## What is technically distinctive
 
@@ -65,16 +66,16 @@ proof at block **70494094**, not yet a payment proof.
 
 ## Sponsor integration responsibilities
 
-| Integration   | Real responsibility                               | Verified status                                                                       |
-| ------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Monad         | Onchain authorization and ERC-20 settlement       | Deployment and successful/reverted receipts                                           |
-| Mera          | Human passkey-derived owner signer                | Original owner ceremonies plus live-domain owner deployment; new policy setup pending |
-| Privy         | Separate agent signer                             | Real agent wallet and submitted payments                                              |
-| ERC-8004      | Agent identity                                    | Identity 2210, registry wallet binding                                                |
-| Chainlink CRE | Independently verify GitHub and report to account | Two real onchain milestone reports                                                    |
-| Envio         | Index actual activity                             | Hosted HyperSync history matched to both payments                                     |
-| Vertex Gemini | Decide whether to request payroll                 | Real tool-using local and Render runs                                                 |
-| Cleanverse    | Intended compliant token/recipient path           | Official adapter tested; live registration/settlement blocked                         |
+| Integration   | Real responsibility                               | Verified status                                                                                                       |
+| ------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Monad         | Onchain authorization and ERC-20 settlement       | Deployment and successful/reverted receipts                                                                           |
+| Mera          | Human passkey-derived owner signer                | Original owner ceremonies plus live-domain owner deployment; compliant session and autonomous aUSDC payment confirmed |
+| Privy         | Separate agent signer                             | Real agent wallet and submitted payments                                                                              |
+| ERC-8004      | Agent identity                                    | Identity 2210, registry wallet binding                                                                                |
+| Chainlink CRE | Independently verify GitHub and report to account | Two real onchain milestone reports                                                                                    |
+| Envio         | Index actual activity                             | Hosted HyperSync history matched to both payments                                                                     |
+| Vertex Gemini | Decide whether to request payroll                 | Real tool-using local and Render runs                                                                                 |
+| Cleanverse    | Intended compliant token/recipient path           | Official adapter tested; live registration/settlement blocked                                                         |
 
 ## Technical review map
 
@@ -100,3 +101,13 @@ Free Render can sleep; free Envio development deployments have a 30-day lifetime
 The live domain uses its own passkey owner and a new account; the original
 localhost account and its historical proofs remain preserved. Test
 results and exact receipts support each claim; no judging score is asserted.
+
+## Cleanverse payment update — 2026-10-13
+
+The live-domain account has now paid **0.05 test aUSDC** through the real Gemini
+agent and separate Privy signer, without an owner payment signature.
+[Verified transaction](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+block **70692069**. Registration, both CVIs, adapter deployment and funding are
+verified. [Independent receipt/event audit](research/cleanverse-payment.json).
+Current negative CVI evidence is simulation-only; a live rejection and fresh
+aUSDC revocation rehearsal remain separate unfinished checks.

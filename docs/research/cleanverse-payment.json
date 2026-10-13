@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "owner": "0xaf00668625e038f43c302283aECd6fF90265E42F",
+  "agent": "0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D",
+  "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "adapter": "0xf2403571B7fE9849F8482ea566177Eeee689Df99",
+  "hash": "0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc",
+  "block": "70692069",
+  "receiptStatus": "success",
+  "amount": "0.05",
+  "spent": "0.05",
+  "limit": "0.1",
+  "treasuryBalance": "0.05",
+  "recipientBalance": "0.05",
+  "generation": "5",
+  "nonce": "1",
+  "repo": "samscript18/Confiance",
+  "pr": 3,
+  "runtime": "Real Gemini tools, separate Privy signer, owner-approved session; no owner payment signature",
+  "executionLocation": "Shared payroll runtime invoked from engineering workstation using hosted configuration and MongoDB lease/proofs",
+  "tools": [
+    "check_github_milestone",
+    "check_payment_policy",
+    "check_agent_session",
+    "check_recipient",
+    "check_balance",
+    "request_payment"
+  ],
+  "events": [
+    {
+      "address": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+      "event": "PaymentRequested",
+      "args": {
+        "agent": "0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D",
+        "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+        "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+        "amount": "50000",
+        "nonce": "1",
+        "generation": "5"
+      }
+    },
+    {
+      "address": "0xac0893567d43c3e7e6e35a72803df05416c1f20d",
+      "event": "Transfer",
+      "args": {
+        "from": "0xdE4dFD84ED78c4c65d7670e22BE1e002403f057f",
+        "to": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+        "value": "50000"
+      }
+    },
+    {
+      "address": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+      "event": "PaymentExecuted",
+      "args": {
+        "agent": "0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D",
+        "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+        "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+        "amount": "50000",
+        "nonce": "1",
+        "generation": "5"
+      }
+    }
+  ],
+  "limitation": "One compliant payment verified. Ineligible transfer rejection is currently simulation evidence; larger funding and live compliant revocation/rejection rehearsal remain separate work.",
+  "envio": {
+    "endpoint": "https://indexer.dev.hyperindex.xyz/a7c50be/v1/graphql",
+    "paymentRequestedIndexed": true,
+    "paymentExecutedIndexed": true,
+    "block": "70692069",
+    "amountRaw": "50000"
+  }
+}

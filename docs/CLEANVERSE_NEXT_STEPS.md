@@ -1,6 +1,6 @@
 # Cleanverse: verified setup and remaining payment proof
 
-Updated 2026-10-13. These records describe the live-domain Confiance account,
+Updated 2026-10-13. **The first autonomous Cleanverse payment is confirmed.** These records describe the live-domain Confiance account,
 not the earlier localhost account. CTT payments remain separate evidence.
 
 ## Verified on Monad testnet
@@ -40,7 +40,22 @@ Machine-readable records: [CVI issuance](research/cleanverse-cvi-issuance.json),
 [funding and simulation](research/cleanverse-ausdc-funding.json), and
 [positive/negative eligibility checks](research/cleanverse-current-eligibility.json).
 
-## Finish through the owner interface
+## Confirmed autonomous payment
+
+The owner approved generation 5 with a **0.1 aUSDC** total limit and the deployed
+compliance adapter. The real Gemini runtime invoked its tools and requested
+**0.05 aUSDC**. Its separate Privy signer submitted
+[the payment](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+confirmed at block **70692069**. Independent checks matched sender, calldata,
+`PaymentExecuted`, and the aUSDC `Transfer` from Confiance to the contractor.
+Treasury and contractor balances are each **0.05 aUSDC**; session spent is **0.05**.
+No owner payment signature was used. The runtime was invoked from the engineering
+workstation using hosted configuration and the shared MongoDB lease/proof records;
+this receipt is not described as a Render worker execution.
+
+See [machine-readable payment proof](research/cleanverse-payment.json).
+
+## Reproduce through the owner interface
 
 1. Sign in with the live-domain owner passkey and open Agent → Permissions.
 2. Revoke the current CTT session before changing assets. Past receipts remain.
@@ -70,4 +85,6 @@ not counted as treasury funding; see [deposit record](research/cleanverse-usdc-d
 Ask Cleanverse to inspect that conversion or replenish its aUSDC faucet for a
 larger demo. No minter role or compliance bypass was requested.
 
-Until the actual agent payment confirms, Cleanverse settlement is incomplete.
+Compliant settlement is now proven. A real CVI-ineligible rejected transaction
+and a fresh revocation rehearsal with aUSDC remain outstanding; current negative
+CVI evidence is read/simulation only. Larger funding remains limited.

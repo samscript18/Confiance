@@ -59,7 +59,7 @@ and independently checked blocks. See [machine-readable evidence](research/envio
 Reverted transactions have no retained events; rejected attempts are displayed
 from checked receipts and clearly identified diagnostic simulations.
 
-## Cleanverse: setup verified, settlement pending
+## Cleanverse: setup and autonomous settlement verified
 
 The API-key pairing was corrected and the owner-approved account registration
 confirmed at block **70650040**. Using the permissions confirmed by Cleanverse,
@@ -78,8 +78,8 @@ counted as treasury aUSDC.
 
 The owner interface can select the verified asset and adapter. The owner must
 approve the new session; an existing CTT permission is not silently changed.
-The autonomous aUSDC payment and real CVI-ineligible rejection still need live
-proof. Existing CTT payments do not establish Cleanverse settlement.
+The autonomous 0.05 aUSDC payment is verified at block 70692069. A real
+CVI-ineligible rejection transaction still needs proof. Existing CTT payments do not establish Cleanverse settlement.
 
 See [setup receipts and exact remaining steps](CLEANVERSE_NEXT_STEPS.md).
 
@@ -102,3 +102,13 @@ See [setup receipts and exact remaining steps](CLEANVERSE_NEXT_STEPS.md).
 The [historical inspection](research/historical-integration-inspection.md) records
 prior blockers for traceability. Its superseded status statements do not describe
 the current deployment.
+
+## Cleanverse payment update — 2026-10-13
+
+The live-domain account has now paid **0.05 test aUSDC** through the real Gemini
+agent and separate Privy signer, without an owner payment signature.
+[Verified transaction](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+block **70692069**. Registration, both CVIs, adapter deployment and funding are
+verified. [Independent receipt/event audit](research/cleanverse-payment.json).
+Current negative CVI evidence is simulation-only; a live rejection and fresh
+aUSDC revocation rehearsal remain separate unfinished checks.
