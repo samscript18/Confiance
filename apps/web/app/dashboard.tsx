@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { appPages, isAppSection } from "../lib/navigation";
 import CleanverseRegistration from "./cleanverse-registration";
+import AgentRun from "./agent-run";
 import {
   createPublicClient,
   createWalletClient,
@@ -1261,52 +1262,11 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 </section>
               )}
               {section === "agent" && transcript.length > 0 && (
-                <section className="panel transcript">
-                  <h3>Latest agent run</h3>
-                  <p className="footnote">
-                    Reasoning is the model’s interpretation. Payment tool
-                    receipts are the execution proof.
-                  </p>
-                  {transcript.map((row, index) => (
-                    <div key={index}>
-                      <span className="eyebrow">
-                        {row.kind === "tool" ? row.name : "Agent reasoning"}
-                      </span>
-                      {row.kind === "tool" ? (
-                        <details>
-                          <summary>View tool evidence</summary>
-                          <pre>{row.content}</pre>
-                        </details>
-                      ) : (
-                        <p className="agent-reasoning">{row.content}</p>
-                      )}
-                      {row.kind === "tool" &&
-                        (() => {
-                          try {
-                            const value: unknown = JSON.parse(row.content);
-                            const data = object(value);
-                            if (
-                              typeof data.transactionHash === "string" &&
-                              /^0x[0-9a-f]{64}$/i.test(data.transactionHash)
-                            )
-                              return (
-                                <a
-                                  className="tx-link"
-                                  href={`${explorer}/tx/${data.transactionHash}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  View agent transaction ↗
-                                </a>
-                              );
-                          } catch {
-                            /* Text remains visible when no transaction proof exists. */
-                          }
-                          return null;
-                        })()}
-                    </div>
-                  ))}
-                </section>
+                <AgentRun
+                  rows={transcript}
+                  symbol={state.symbol}
+                  asset={state.asset}
+                />
               )}
               {["account", "agent", "settings"].includes(section) && (
                 <section
