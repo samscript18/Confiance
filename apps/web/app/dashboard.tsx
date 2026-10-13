@@ -1129,7 +1129,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                                 session.adapter.toLowerCase()
                                 ? state.cleanverseSetup.treasuryEligible &&
                                   state.cleanverseSetup.recipientEligible
-                                  ? "Cleanverse CVI required"
+                                  ? "CVI credentials verified"
                                   : "Eligibility not satisfied"
                                 : "Configured adapter"
                               : "Not required by this policy"}
@@ -1875,7 +1875,13 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                               <p>{item.detail}</p>
                             </div>
                             <small>
-                              {item.ready ? "Configured" : "Required"}
+                              {item.ready
+                                ? item.name === "Cleanverse"
+                                  ? "Verified"
+                                  : "Configured"
+                                : item.name === "Cleanverse"
+                                  ? "Needs verification"
+                                  : "Required"}
                             </small>
                           </div>
                         ))}
@@ -1971,6 +1977,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                           account={account}
                           signedIn={Boolean(owner)}
                           disabled={disabled}
+                          onchainRegistered={Boolean(
+                            state.cleanverseSetup?.treasuryEligible,
+                          )}
                         />
                       </article>
                     </div>

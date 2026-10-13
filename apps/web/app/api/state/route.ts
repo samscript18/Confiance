@@ -361,14 +361,18 @@ export async function GET(request: Request) {
         const readiness = state.readiness.find(
           (item) => item.name === "Cleanverse",
         );
-        if (readiness)
+        if (readiness) {
+          readiness.ready =
+            state.cleanverseSetup.treasuryEligible &&
+            state.cleanverseSetup.recipientEligible;
           readiness.detail =
             !state.cleanverseSetup.treasuryEligible ||
             !state.cleanverseSetup.recipientEligible
               ? "Current account or recipient is not eligible"
               : state.cleanverseSetup.balance === "0"
                 ? "Eligibility verified; aUSDC funding still required"
-                : "Eligibility and funding verified; compliant settlement still needs proof";
+                : "Account and contractor credentials verified onchain; aUSDC available";
+        }
       } catch (error) {
         logReadFailure("cleanverse_setup_read_failed", error);
         state.cleanverseSetupError =

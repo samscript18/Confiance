@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Address } from "viem";
 import { ownerAccount } from "../lib/mera";
 import { MessageModal } from "./message-modal";
@@ -10,10 +10,12 @@ export default function CleanverseRegistration({
   account,
   signedIn,
   disabled,
+  onchainRegistered = false,
 }: {
   account: Address | undefined;
   signedIn: boolean;
   disabled: boolean;
+  onchainRegistered?: boolean;
 }) {
   const [group, setGroup] = useState("");
   const [issuerRule, setIssuerRule] = useState("");
@@ -23,7 +25,12 @@ export default function CleanverseRegistration({
   const [countries, setCountries] = useState("");
   const [blocklist, setBlocklist] = useState(true);
   const [busy, setBusy] = useState<"status" | "register" | undefined>();
-  const [registered, setRegistered] = useState(false);
+  const [registered, setRegistered] = useState(onchainRegistered);
+  useEffect(() => {
+    setRegistered(onchainRegistered);
+    setAttempted(false);
+    setHash(undefined);
+  }, [account, onchainRegistered]);
   const [attempted, setAttempted] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>();
   const [hash, setHash] = useState<string>();
@@ -81,7 +88,7 @@ export default function CleanverseRegistration({
             : "Account not registered",
         tone: confirmed ? "success" : "info",
         message: confirmed
-          ? "Your account is registered onchain. Identity issuance, contractor eligibility and a compliant payment still need verification."
+          ? "Your account’s Cleanverse registration is confirmed onchain. Current credential eligibility is shown separately in your payment setup."
           : register || result.apiRegistered === true
             ? "Cleanverse accepted the request. Check again for onchain registration; no compliance or payment is confirmed yet."
             : "Your account is not registered yet. Choose the intended eligibility rules before registering.",
@@ -102,10 +109,15 @@ export default function CleanverseRegistration({
       className="cleanverse-registration"
       aria-label="Cleanverse registration"
     >
-      <h3>Register with Cleanverse</h3>
+      <h3>
+        {registered
+          ? "Cleanverse registration confirmed"
+          : "Register with Cleanverse"}
+      </h3>
       <p className="subtle">
-        Enroll your existing Confiance account on Monad Testnet. Registration is
-        separate from identity issuance and compliant payments.
+        {registered
+          ? "Your Confiance account is already registered on Monad Testnet. No new registration is needed."
+          : "Enroll your existing Confiance account on Monad Testnet. Registration is separate from identity issuance and compliant payments."}
       </p>
       <p className="footnote">
         Choose the group and tiers intended for your sandbox integration. No
