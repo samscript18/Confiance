@@ -59,19 +59,29 @@ and independently checked blocks. See [machine-readable evidence](research/envio
 Reverted transactions have no retained events; rejected attempts are displayed
 from checked receipts and clearly identified diagnostic simulations.
 
-## Cleanverse blocker
+## Cleanverse: setup verified, settlement pending
 
-Credentials and the documentation invitation were used for actual sandbox
-inspection. Registration status queries succeed, but owner-signed registration
-returns non-JSON HTTP 403. The evidence does not establish whether the cause is
-provider access policy, app configuration or gateway filtering. Do not guess.
+The API-key pairing was corrected and the owner-approved account registration
+confirmed at block **70650040**. Using the permissions confirmed by Cleanverse,
+the official Generate CVI API issued credentials for the live smart account and
+contractor. Both now pass the validator. No identity documents or bank records
+were invented; optional identity fields were omitted and the provider selected
+the sandbox tier.
 
-The official CVI validator and contract-vault integration are documented in
-[CLEANVERSE.md](CLEANVERSE.md). The adapter has ten Solidity tests and remains
-undeployed until legitimate enrollment/issuance and a direct compliant transfer
-are proven. Confiance currently uses CTT and an owner-pinned recipient without
-claiming A-Pass compliance. Fixing the provider registration failure alone would
-not prove settlement; eligibility and the real transfer must also be exercised.
+The real adapter was deployed at
+`0xf2403571b7fe9849f8482ea566177eeee689df99`, block **70679868**. Its immutable
+account, asset, validator and token-policy bindings were checked. A smaller
+faucet request supplied **0.1 test aUSDC**, block **70681581**, and a direct
+**0.05 aUSDC** transfer simulation passes. The larger funding request failed due
+to faucet balance; a separate 5 USDC deposit remains unconverted and is not
+counted as treasury aUSDC.
+
+The owner interface can select the verified asset and adapter. The owner must
+approve the new session; an existing CTT permission is not silently changed.
+The autonomous aUSDC payment and real CVI-ineligible rejection still need live
+proof. Existing CTT payments do not establish Cleanverse settlement.
+
+See [setup receipts and exact remaining steps](CLEANVERSE_NEXT_STEPS.md).
 
 ## Operational and SDK limitations
 

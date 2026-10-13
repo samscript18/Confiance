@@ -20,6 +20,8 @@ export interface DashboardState {
   decimals?: number;
   balance?: string;
   agentGas?: string;
+  cleanverseSetup?: import("../../../packages/shared/cleanverse-policy.js").CleanversePolicySetup;
+  cleanverseSetupError?: string;
   session?: {
     exists: boolean;
     active: boolean;

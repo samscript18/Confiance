@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-13",
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "chainId": 10143,
+  "depositAddress": "0xfD576A4481b97c17c72C07Cb8EaBce2F516D4faF",
+  "originToken": "0x534b2f3A21130d7a60830c2Df862319e593943A3",
+  "source": "Official sandbox origin-USDC faucet to API-resolved deposit address",
+  "requestedAmount": "50",
+  "providerAmount": "5",
+  "hash": "0xee942f576cf652c7bf9214d2baeedea2621756393bd027de92a419467282067c",
+  "receiptStatus": "success",
+  "block": "70679612",
+  "depositUSDCBalance": "5",
+  "reference": "3729cbdd-1444-45a4-8018-0bc66faee079",
+  "limitation": "USDC deposit only. aUSDC issuance to the treasury must be verified independently."
+}

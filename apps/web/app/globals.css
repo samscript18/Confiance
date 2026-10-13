@@ -2123,6 +2123,23 @@ select:focus {
   margin: 16px 0;
 }
 
+.policy-compliance-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.6;
+}
+
+.policy-compliance-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
 .policy-task-preset p {
   font-family: var(--font-mono);
   font-size: 11px;

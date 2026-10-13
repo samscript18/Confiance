@@ -28,6 +28,7 @@ import { join } from "node:path";
 import { isHex } from "viem";
 import type { DashboardState } from "../../../lib/state";
 import { parseReporterSettings } from "../../../../../packages/shared/reporter";
+import { readCleanversePolicy } from "../../../../../packages/shared/cleanverse-policy";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
   const relay = await relayBackend(request);
@@ -213,7 +214,7 @@ export async function GET(request: Request) {
         name: "Cleanverse",
         ready: false,
         detail:
-          "Validator documented; account/CVI enrollment and compliant transfer pending",
+          "Compliance setup not checked; compliant settlement remains unverified",
       },
       {
         name: "Envio",
@@ -322,6 +323,37 @@ export async function GET(request: Request) {
           verified,
           adapter: session.policy.complianceAdapter,
         };
+      }
+    }
+    if (
+      env.CLEANVERSE_ADAPTER &&
+      env.CLEANVERSE_A_TOKEN &&
+      env.CLEANVERSE_VALIDATOR &&
+      state.recipient
+    ) {
+      try {
+        state.cleanverseSetup = await readCleanversePolicy(
+          client,
+          address(env, "CLEANVERSE_ADAPTER"),
+          state.account,
+          address(env, "CLEANVERSE_A_TOKEN"),
+          address(env, "CLEANVERSE_VALIDATOR"),
+          state.recipient,
+        );
+        const readiness = state.readiness.find(
+          (item) => item.name === "Cleanverse",
+        );
+        if (readiness)
+          readiness.detail =
+            !state.cleanverseSetup.treasuryEligible ||
+            !state.cleanverseSetup.recipientEligible
+              ? "Current account or recipient is not eligible"
+              : state.cleanverseSetup.balance === "0"
+                ? "Eligibility verified; aUSDC funding still required"
+                : "Eligibility and funding verified; compliant settlement still needs proof";
+      } catch {
+        state.cleanverseSetupError =
+          "Cleanverse setup could not be verified onchain. Refresh before selecting this policy.";
       }
     }
     if (state.taskMilestone) {

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "address": "0xf2403571b7fe9849f8482ea566177eeee689df99",
+  "hash": "0x1bcc4c426fe8ce80c293ded01aac2b049f41be48970c223359f8163893a02016",
+  "blockNumber": "70679868",
+  "deployer": "0x9A62195Bb2C8eCeAaF306EC7Ee87f7e4994Ba11D",
+  "validator": "0xA64529732B52EFFD2B245320E88226D72c23b788",
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "policy": "0x36489bE45fa84f70a0c2BDB11D824Be608CB12Dd",
+  "assetEligible": true,
+  "recipientEligible": true,
+  "verification": "Creation receipt/calldata/sender and immutable getters checked; live eligibility methods pass.",
+  "limitation": "Read-only adapter deployment does not authorize a session or prove settlement."
+}

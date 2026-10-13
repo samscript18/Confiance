@@ -44,6 +44,7 @@ import {
   subscribeOwnerSession,
 } from "../lib/mera";
 import { sessionActions } from "../lib/action-state";
+import { readCleanversePolicy } from "../../../packages/shared/cleanverse-policy";
 import type { DashboardState } from "../lib/state";
 import { MessageModal } from "./message-modal";
 import { ActionButton } from "./action-button";
@@ -112,6 +113,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [hash, setHash] = useState<Hex>();
   const [account, setAccount] = useState<Address>();
   const [asset, setAsset] = useState("");
+  const [adapter, setAdapter] = useState<Address>(zeroAddress);
+  const [adapterEdited, setAdapterEdited] = useState(false);
   const [createdToken, setCreatedToken] = useState<Address>();
   const [recipient, setRecipient] = useState("");
   const [limit, setLimit] = useState("50");
@@ -196,6 +199,10 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         identityCommitment(state.registry, BigInt(state.identity.id)),
       );
   }, [state, amountEdited, busy]);
+  useEffect(() => {
+    if (!adapterEdited && state.session && isAddress(state.session.adapter))
+      setAdapter(state.session.adapter);
+  }, [state.session, adapterEdited]);
   useEffect(() => {
     const setup = state.reporterSetup;
     if (setup && !reporterEdited) {
@@ -400,6 +407,25 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       abi: erc20Abi,
       functionName: "decimals",
     });
+    if (adapter !== zeroAddress) {
+      const setup = state.cleanverseSetup;
+      if (!setup || setup.adapter.toLowerCase() !== adapter.toLowerCase())
+        throw new Error(
+          "Refresh the verified Cleanverse setup before authorizing this policy.",
+        );
+      const current = await readCleanversePolicy(
+        client,
+        adapter,
+        account,
+        asset,
+        setup.validator,
+        recipient,
+      );
+      if (!current.treasuryEligible || !current.recipientEligible)
+        throw new Error(
+          "The account and contractor must both have valid Cleanverse credentials before enabling this policy.",
+        );
+    }
     const stored = await client.readContract({
       address: account,
       abi: confianceAbi,
@@ -425,7 +451,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       allowedRecipient: recipient,
       spendingLimit: parseExactAmount(limit, decimals),
       expiry: block.timestamp + 86400n,
-      complianceAdapter: zeroAddress,
+      complianceAdapter: adapter,
       requiredCondition: keccak256(stringToHex(`github:${repo}:${Number(pr)}`)),
     };
     const approvedReceipt = await send(
@@ -642,6 +668,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   ) {
     try {
       policyChanged =
+        adapter.toLowerCase() !== session.adapter.toLowerCase() ||
         asset.toLowerCase() !== state.asset?.toLowerCase() ||
         recipient.toLowerCase() !== state.recipient?.toLowerCase() ||
         parseExactAmount(limit, state.decimals) !==
@@ -1090,8 +1117,14 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                           <p>Compliance</p>
                           <strong>
                             {session?.adapter && session.adapter !== zeroAddress
-                              ? "Configured adapter"
-                              : "A-Pass unverified"}
+                              ? state.cleanverseSetup?.adapter.toLowerCase() ===
+                                session.adapter.toLowerCase()
+                                ? state.cleanverseSetup.treasuryEligible &&
+                                  state.cleanverseSetup.recipientEligible
+                                  ? "Cleanverse CVI required"
+                                  : "Eligibility not satisfied"
+                                : "Configured adapter"
+                              : "Not required by this policy"}
                           </strong>
                         </div>
                         <div>
@@ -1400,8 +1433,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                             : sessionAssetLocked
                               ? "Your current session uses an approved token. Add that token with the form below, or revoke the session before setting up a different test token."
                               : "Create a fresh CTT test token and add 1,000 units directly to this account. Having a token address selected does not mean this account is funded."}{" "}
-                          Test tokens do not enforce A-Pass. Cleanverse
-                          enrollment and a compliant transfer remain pending.
+                          CTT does not enforce Cleanverse credentials. Choose
+                          the Cleanverse asset and credential checks in Agent →
+                          Permissions to review a compliant policy.
                         </p>
                         <div className="funding-fields">
                           {" "}
@@ -1576,6 +1610,55 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                           </p>
                         </div>
                       )}
+                      {state.cleanverseSetup && (
+                        <div className="policy-task-preset">
+                          <p className="eyebrow">CLEANVERSE PAYMENT OPTION</p>
+                          <h3>Pay with {state.cleanverseSetup.symbol}</h3>
+                          <p>
+                            Account credential:{" "}
+                            {state.cleanverseSetup.treasuryEligible
+                              ? "Eligible"
+                              : "Not eligible"}
+                            . Contractor credential:{" "}
+                            {state.cleanverseSetup.recipientEligible
+                              ? "Eligible"
+                              : "Not eligible"}
+                            . Available: {state.cleanverseSetup.balance}{" "}
+                            {state.cleanverseSetup.symbol}.
+                          </p>
+                          <button
+                            disabled={
+                              disabled ||
+                              !state.cleanverseSetup.treasuryEligible ||
+                              !state.cleanverseSetup.recipientEligible
+                            }
+                            onClick={() => {
+                              const setup = state.cleanverseSetup;
+                              if (!setup) return;
+                              setAsset(setup.asset);
+                              setAdapter(setup.adapter);
+                              setAdapterEdited(true);
+                            }}
+                          >
+                            Choose Cleanverse asset and credential checks
+                          </button>
+                          <p className="footnote">
+                            This selects the rules for your review. Your passkey
+                            must approve them.
+                            {state.cleanverseSetup.balance === "0"
+                              ? " Funding is still needed before the agent can pay."
+                              : ""}
+                            {session?.active &&
+                            state.asset?.toLowerCase() !==
+                              state.cleanverseSetup.asset.toLowerCase()
+                              ? " Revoke the existing session before authorizing a different asset."
+                              : ""}
+                          </p>
+                        </div>
+                      )}
+                      {state.cleanverseSetupError && (
+                        <p className="footnote">{state.cleanverseSetupError}</p>
+                      )}
                       <label>
                         Allowed token address
                         <input
@@ -1628,6 +1711,34 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                         Milestone writes are restricted to the configured CRE
                         reporter. This form cannot verify a milestone. Recipient
                         restriction is an exact owner-pinned address.
+                      </p>
+                      <label>
+                        <span className="policy-compliance-toggle">
+                          <input
+                            type="checkbox"
+                            checked={adapter !== zeroAddress}
+                            disabled={
+                              disabled ||
+                              (adapter === zeroAddress &&
+                                (!state.cleanverseSetup ||
+                                  asset.toLowerCase() !==
+                                    state.cleanverseSetup.asset.toLowerCase()))
+                            }
+                            onChange={(event) => {
+                              if (event.target.checked && state.cleanverseSetup)
+                                setAdapter(state.cleanverseSetup.adapter);
+                              else setAdapter(zeroAddress);
+                              setAdapterEdited(true);
+                            }}
+                          />{" "}
+                          Require valid Cleanverse credentials for account and
+                          contractor
+                        </span>
+                      </label>
+                      <p className="footnote">
+                        {adapter !== zeroAddress
+                          ? "Confiance will check both credentials on every payment. The Cleanverse asset also enforces its transfer policy."
+                          : "This policy uses the approved recipient address without Cleanverse credential checks."}
                       </p>
                       <div className="button-row">
                         <ActionButton

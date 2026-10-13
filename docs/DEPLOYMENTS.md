@@ -128,4 +128,25 @@ signer, separate from the LLM payment proof. CTT is not USD or Cleanverse.
   balance remains 30 CTT. No owner signature was used for the failed retry.
 
 The core autonomous-payment and authorization demonstration is proven on Monad.
-Cleanverse enrollment, issuance and compliant settlement remain outstanding.
+Cleanverse enrollment, issuance, adapter deployment and small aUSDC funding are now verified; compliant settlement remains outstanding.
+
+## Live-domain Cleanverse setup — 2026-10-13
+
+Account: `0xde4dfd84ed78c4c65d7670e22be1e002403f057f`, Monad testnet **10143**.
+
+| Operation                    | Block    | Verified transaction                                                                                               |
+| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| Account registration         | 70650040 | [Receipt](https://testnet.monadexplorer.com/tx/0x74fc37c89ae20fed923210d47c073ef4f248aece7d12a33c9fff020699d59243) |
+| Treasury CVI                 | 70678818 | [Receipt](https://testnet.monadexplorer.com/tx/0x8d54b02fd22aafb8d910f7751cff0d56c61c7b459d7c5bdf45596ec9318db6ed) |
+| Contractor CVI               | 70678840 | [Receipt](https://testnet.monadexplorer.com/tx/0xa76496c778e3ee5f1993c3613a1c549b70b135e8e0e313f0ac8ed5c2b5ece1c5) |
+| Read-only adapter deployment | 70679868 | [Receipt](https://testnet.monadexplorer.com/tx/0x1bcc4c426fe8ce80c293ded01aac2b049f41be48970c223359f8163893a02016) |
+| 0.1 aUSDC faucet funding     | 70681581 | [Receipt](https://testnet.monadexplorer.com/tx/0xf7d3dcb81ff31cecf3ab6d4d99ebf71f6f37d425b2a4c092e1117889830c2a7a) |
+
+Adapter: `0xf2403571b7fe9849f8482ea566177eeee689df99`.
+Asset: `0xaC0893567D43C3E7e6e35a72803df05416C1f20D`.
+Validator: `0xA64529732B52EFFD2B245320E88226D72c23b788`.
+Asset policy: `0x36489bE45fa84f70a0c2BDB11D824Be608CB12Dd`.
+
+These receipts establish setup and funding, not autonomous aUSDC settlement.
+The owner must approve the compliant session before the agent can use it.
+See [remaining proof steps](CLEANVERSE_NEXT_STEPS.md).

@@ -96,7 +96,10 @@ The local test token is **CTT, not USD, a stablecoin, or a Cleanverse A-Token**.
 Only test fixtures use mock compliance or reporting. No final UI consumes fixtures.
 Real owner policy approval, provider signing, registry minting, CRE delivery and
 autonomous payment are now verified. The official Cleanverse validator adapter is
-tested but undeployed; Confiance enrollment and compliant settlement remain unproven.
+deployed and its live eligibility checks pass. Registration, both CVIs and
+0.1 test aUSDC funding are verified; autonomous compliant settlement still needs
+owner session approval and a real payment receipt. See [Cleanverse proof and
+remaining steps](docs/CLEANVERSE_NEXT_STEPS.md).
 
 ## Run locally
 
@@ -159,7 +162,7 @@ required before a tool reports execution.
 | Mera          | Original passkey owner signed setup, policy and revocation; live-domain owner deployed its new account, with fresh policy setup pending |
 | ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                                             |
 | Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                                           |
-| Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked                     |
+| Cleanverse    | Registration, treasury/contractor CVIs, adapter and 0.1 aUSDC funding verified; autonomous compliant transfer pending                     |
 | Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                                             |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**
