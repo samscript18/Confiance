@@ -71,6 +71,18 @@ test("Cleanverse failure feedback distinguishes provider rejection from owner si
   );
   const raw = "secret payload fixture";
   assert.ok(!JSON.stringify(cleanverseFailure(raw)).includes(raw));
+  assert.ok(
+    !JSON.stringify(cleanverseFailure("PROVIDER_HTTP_FORBIDDEN", raw)).includes(
+      raw,
+    ),
+  );
+  const failure = cleanverseFailure(
+    "PROVIDER_HTTP_FORBIDDEN",
+    "d3aaa25f-2704-48d8-91bb-83fd9e999485",
+  );
+  assert.ok(failure.nextStep?.includes("d3aaa25f-2704-48d8-91bb-83fd9e999485"));
+  assert.ok(!failure.message.includes("allowlist"));
+  assert.ok(!failure.message.includes("before its API"));
 });
 
 const account = "0x952bbdDeCE639f678733F310890d15E28b213489";

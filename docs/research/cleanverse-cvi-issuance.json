@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "source": "Cleanverse Generate CVI API, provider-confirmed permissions",
+  "optionalIdentityDocumentsOmitted": true,
+  "optionalBankDataOmitted": true,
+  "override": false,
+  "results": [
+    {
+      "role": "treasury",
+      "address": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+      "customerId": "Confiancede4dfd84ed78c4c65d7670e22be1e002403f057f",
+      "status": "submitted",
+      "tier": "20",
+      "hash": "0x8d54b02fd22aafb8d910f7751cff0d56c61c7b459d7c5bdf45596ec9318db6ed",
+      "expirationTime": 1794485591,
+      "reference": "d7a38352-186d-4305-b08c-14ab9342cdda",
+      "receiptStatus": "success",
+      "blockNumber": "70678818"
+    },
+    {
+      "role": "contractor",
+      "address": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+      "customerId": "Confiance421ab98aeb38cb022fe80d5bd1da7ea404bdd90b",
+      "status": "submitted",
+      "tier": "20",
+      "hash": "0xa76496c778e3ee5f1993c3613a1c549b70b135e8e0e313f0ac8ed5c2b5ece1c5",
+      "expirationTime": 1794485598,
+      "reference": "f0e8985f-e00b-41aa-852f-a14afbbaa5dc",
+      "receiptStatus": "success",
+      "blockNumber": "70678840"
+    }
+  ],
+  "limitation": "Receipt success alone does not prove compliance eligibility or payment."
+}

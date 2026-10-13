@@ -2,9 +2,24 @@
 
 ## Three-minute presentation
 
-This demo has two real completed rehearsals. Use their recorded receipts when
+The earlier CTT demo has two real completed rehearsals. Use their recorded receipts when
 reviewing the existing proof; use a new actual PR for a fresh autonomous payment.
 Do not replay a paid milestone or imply historical receipts are new transactions.
+
+## Lead with the Cleanverse proof
+
+Show [the actual 0.05 aUSDC payment](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc), block **70692069**, and its
+[receipt/event audit](research/cleanverse-payment.json). The owner approved the
+0.1 budget, 24-hour session, contractor, CRE milestone and CVI adapter. The real
+Gemini agent requested payment; its Privy signer executed it without an owner
+payment signature. Envio indexes the same transaction. The contractor received
+0.05 aUSDC and the treasury has 0.05 remaining.
+
+Next show [the 500 aUSDC rejection](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**. Label it
+a deterministic attack diagnostic. Current CVI-negative evidence is a live read
+and reverted simulation; do not present it as a mined rejection transaction.
+Use the aUSDC same-key revocation receipts below for the latest proof.
+Earlier CTT receipts remain historical evidence.
 
 ## Which receipts to present
 
@@ -126,7 +141,7 @@ No indexed event may be manufactured for a reverted transaction.
 
 The agent has autonomously paid 30 CTT on Monad and the 500 CTT limit diagnostic
 has reverted. The same-key retry after owner revocation and replay attempt also reverted.
-The remaining compliance scene needs a legitimate Cleanverse compliant payment. Do not delete the paid task receipt
+A legitimate Cleanverse compliant payment is confirmed at block 70692069; the remaining compliance scene is a mined CVI-ineligible rejection. Do not delete the paid task receipt
 or run the same milestone again as a new task to manufacture another payment.
 
 **The key still exists. The authority does not.**
@@ -149,3 +164,14 @@ the same LLM service. Test the boundaries uses the fixed Privy diagnostics.
 Configure DIAGNOSTIC_RECIPIENT for the wrong-address test. This test proves the
 owner-pinned recipient restriction, **not** A-Pass enforcement; the latter remains
 pending Cleanverse support and a real compliant asset transfer.
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

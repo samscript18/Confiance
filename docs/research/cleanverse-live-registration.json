@@ -1,0 +1,20 @@
+{
+  "chainId": 10143,
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "validator": "0xA64529732B52EFFD2B245320E88226D72c23b788",
+  "hash": "0x74fc37c89ae20fed923210d47c073ef4f248aece7d12a33c9fff020699d59243",
+  "receiptStatus": "success",
+  "blockNumber": "70650040",
+  "sender": "0xbd8428761efb5384c4945d16de56817caa6903df",
+  "target": "0xa64529732b52effd2b245320e88226d72c23b788",
+  "validatorTargetMatches": true,
+  "onchainRegistered": true,
+  "apiStatus": {
+    "code": "0000",
+    "registered": true
+  },
+  "logAddresses": ["0xa64529732b52effd2b245320e88226d72c23b788"],
+  "observedDate": "2026-10-13",
+  "verification": "Successful Monad receipt targets the official validator; current isRegistered(account) and Cleanverse status API both confirm registration. Provider accepted the encrypted owner-signed request after the hosted key was synchronized.",
+  "limitations": "Registration alone does not prove recipient identity issuance, eligibility, compliant asset funding or a compliant Confiance payment."
+}

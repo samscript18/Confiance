@@ -12,14 +12,14 @@ The live-domain passkey owner deployed this account. The receipt, chain,
 constructor calldata against the compiled artifact, deployer and immutable
 onchain owner were checked independently. Hosted configuration now points to
 this account, with a separate MongoDB namespace and monitoring disabled during
-setup. The matching CRE reporter is approved onchain. Treasury funding and
-agent/session authorization must be established before its first autonomous payment.
+setup. The matching CRE reporter is approved onchain. Treasury funding and agent/session authorization are now verified; its real
+autonomous 0.05 aUSDC receipt is recorded below.
 The historical payments below belong to the original account.
 
 Hosted cutover is active on Vercel and Render. The replacement CRE workflow is
 `0x0040547646dcd6b590f75960671640368de8850e86b27cce7fad71ef922ac46f`,
 with its configuration pinned to the new receiver. Owner reporter approval is verified against current onchain state;
-new-account condition delivery remains pending. Envio deployment `647f4f0` is synced and
+new-account condition delivery and autonomous aUSDC settlement are verified. Envio deployment `647f4f0` is synced and
 promoted with both addresses; its actual GraphQL endpoint is
 `https://indexer.dev.hyperindex.xyz/a7c50be/v1/graphql`. The endpoint returned all
 17 original-account events after cutover. No new-account payment is claimed yet.
@@ -52,7 +52,7 @@ signature. The temporary local worker was stopped before the merge. Monitoring
 automatically paused after recognizing the task was paid. Machine-readable evidence:
 [payment](research/hosted-payment.json), [CRE](research/cre-deployment.json).
 
-The later live-domain owner account and its pending payment setup are documented
+The later live-domain owner account and its compliant payment setup are documented
 above. Envio now indexes both accounts. This test token is not
 Cleanverse-compliant.
 
@@ -128,4 +128,53 @@ signer, separate from the LLM payment proof. CTT is not USD or Cleanverse.
   balance remains 30 CTT. No owner signature was used for the failed retry.
 
 The core autonomous-payment and authorization demonstration is proven on Monad.
-Cleanverse enrollment, issuance and compliant settlement remain outstanding.
+Cleanverse enrollment, issuance, adapter deployment and small aUSDC funding are now verified; a real 0.05 aUSDC compliant payment is now verified.
+
+## Live-domain Cleanverse setup — 2026-10-13
+
+Account: `0xde4dfd84ed78c4c65d7670e22be1e002403f057f`, Monad testnet **10143**.
+
+| Operation                    | Block    | Verified transaction                                                                                               |
+| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| Account registration         | 70650040 | [Receipt](https://testnet.monadexplorer.com/tx/0x74fc37c89ae20fed923210d47c073ef4f248aece7d12a33c9fff020699d59243) |
+| Treasury CVI                 | 70678818 | [Receipt](https://testnet.monadexplorer.com/tx/0x8d54b02fd22aafb8d910f7751cff0d56c61c7b459d7c5bdf45596ec9318db6ed) |
+| Contractor CVI               | 70678840 | [Receipt](https://testnet.monadexplorer.com/tx/0xa76496c778e3ee5f1993c3613a1c549b70b135e8e0e313f0ac8ed5c2b5ece1c5) |
+| Read-only adapter deployment | 70679868 | [Receipt](https://testnet.monadexplorer.com/tx/0x1bcc4c426fe8ce80c293ded01aac2b049f41be48970c223359f8163893a02016) |
+| 0.1 aUSDC faucet funding     | 70681581 | [Receipt](https://testnet.monadexplorer.com/tx/0xf7d3dcb81ff31cecf3ab6d4d99ebf71f6f37d425b2a4c092e1117889830c2a7a) |
+
+Adapter: `0xf2403571b7fe9849f8482ea566177eeee689df99`.
+Asset: `0xaC0893567D43C3E7e6e35a72803df05416C1f20D`.
+Validator: `0xA64529732B52EFFD2B245320E88226D72c23b788`.
+Asset policy: `0x36489bE45fa84f70a0c2BDB11D824Be608CB12Dd`.
+
+These receipts establish setup and funding, not autonomous aUSDC settlement.
+The owner must approve the compliant session before the agent can use it.
+See [remaining proof steps](CLEANVERSE_NEXT_STEPS.md).
+
+## First autonomous Cleanverse payment
+
+[Payment receipt](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc), block **70692069**, success.
+The real Gemini agent requested **0.05 aUSDC** through the separate Privy signer
+using the live-domain account, generation 5 and nonce 1. Exact calldata,
+Confiance execution event and token Transfer event were independently verified.
+No owner signed this payment. Treasury balance, recipient balance and spent are
+each 0.05 aUSDC. See [full evidence](research/cleanverse-payment.json).
+
+## aUSDC spending-limit proof
+
+[500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**, reverted through the same
+Privy agent under the 0.1 aUSDC session. Pre-submission simulation identified
+`SESSION_SPENDING_LIMIT`. The real reverted receipt, exact sender/target/calldata
+and absent logs were checked. This is a deterministic diagnostic, not LLM
+reasoning. [Recorded proof](research/cleanverse-limit-rejection.json).
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

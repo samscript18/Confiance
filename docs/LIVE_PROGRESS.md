@@ -1,5 +1,20 @@
 # Live setup progress
 
+## Current status — 2026-10-13
+
+This update supersedes the dated historical entries below. Owner controls now
+use the live-domain Mera passkey. Confiance is registered with Cleanverse, both
+addresses have CVIs, and the read-only adapter is deployed. The real Gemini
+agent [paid 0.05 aUSDC](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc) at block **70692069** through its separate
+Privy signer. No owner payment signature was used. Envio indexes the receipt.
+The same signer [failed a 500 aUSDC attack](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353) at block **70693302**.
+Treasury and contractor each hold 0.05 aUSDC; session spent is 0.05 of 0.1.
+
+CVI-negative checks are simulation-only; the fresh live rejection remains outstanding. The larger faucet balance and separate
+5 USDC deposit conversion remain operational limitations.
+
+## Historical progress log
+
 Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 
 ## Current status
@@ -192,3 +207,14 @@ authorization must still be signed with the human's passkey.
 
 Use [SETUP.md](SETUP.md) for the full sequence. Preserve durable deployment and
 payment proof files. The same agent wallet must be used for the revocation test.
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

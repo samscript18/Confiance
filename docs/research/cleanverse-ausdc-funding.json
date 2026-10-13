@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "account": "0xde4dfd84ed78c4c65d7670e22be1e002403f057f",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "hash": "0xf7d3dcb81ff31cecf3ab6d4d99ebf71f6f37d425b2a4c092e1117889830c2a7a",
+  "block": "70681581",
+  "receiptStatus": "success",
+  "amount": "0.1",
+  "balance": "0.1",
+  "transferSimulation": {
+    "amount": "0.05",
+    "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+    "result": true
+  },
+  "limitation": "Faucet funding and transfer simulation only. Owner session approval and autonomous settlement remain required."
+}

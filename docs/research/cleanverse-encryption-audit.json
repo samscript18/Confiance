@@ -11,5 +11,8 @@
   "localAndHostedCredentialsMatch": true,
   "independentVector": "OpenSSL fixture-key regression test",
   "providerAcceptedRegistration": false,
-  "limitation": "Offline fixture only. No registration request submitted, and no provider-side decryption claimed. Provider-confirmed active sandbox API-ID/key pairing remains to be established."
+  "limitation": "Offline fixture only. No registration request submitted, and no provider-side decryption claimed. Provider-confirmed active sandbox API-ID/key pairing remains to be established.",
+  "historical": true,
+  "supersededBy": "cleanverse-live-registration.json",
+  "context": "Offline audit before the successful owner-approved registration. Historical booleans are not current integration status."
 }

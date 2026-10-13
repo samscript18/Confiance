@@ -9,7 +9,10 @@ import {
 export function chainClient() {
   return createPublicClient({
     chain: targetChain,
-    transport: http(rpcUrl(process.env), { timeout: 15000 }),
+    transport: http(rpcUrl(process.env), {
+      timeout: 15000,
+      batch: { wait: 20, batchSize: 20 },
+    }),
   });
 }
 export async function checkedClient() {

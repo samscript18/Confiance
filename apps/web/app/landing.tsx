@@ -168,6 +168,40 @@ export default function Landing() {
             </div>
           </div>
 
+          <aside
+            className="verified-proof-strip"
+            aria-label="Verified Monad transaction evidence"
+          >
+            <div>
+              <p className="eyebrow">REAL MONAD TESTNET EVIDENCE</p>
+              <strong>
+                0.05 aUSDC paid by the agent. No owner payment signature.
+              </strong>
+              <p>
+                Confirmed in block 70692069. These receipts are separate from
+                the illustrative interface below.
+              </p>
+            </div>
+            <div className="button-row">
+              <a
+                className="landing-button dark"
+                href="https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Verify real payment ↗
+              </a>
+              <a
+                className="landing-button light"
+                href="https://github.com/samscript18/Confiance/blob/dev/docs/DEPLOYMENTS.md"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Verified transaction history ↗
+              </a>
+            </div>
+          </aside>
+
           {/* 3D Interactive Cockpit Card (Moves in 3D on Hover) */}
           <Hero3DCard />
 
@@ -232,7 +266,7 @@ export default function Landing() {
         {/* Primary Demo Use Case: Payroll Agent */}
         <section className="landing-payroll">
           <div>
-            <p className="eyebrow">PRIMARY DEMO USE CASE</p>
+            <p className="eyebrow">ILLUSTRATIVE PAYROLL SCENARIO</p>
             <h2>
               The Payroll Agent.
               <br />
@@ -240,14 +274,16 @@ export default function Landing() {
             </h2>
             <p>
               Acme Corporation gives its Payroll Agent a job: pay contractor
-              David $30 when GitHub PR #42 is verified merged.
+              David 30 token units when GitHub PR #42 is verified merged. These
+              names, amounts and PR number illustrate the workflow; the actual
+              payment receipts are linked above.
             </p>
             <p>
               While PR #42 remains open, any payment attempt reverts onchain
               with CONDITION_NOT_VERIFIED. When Chainlink CRE cryptographically
               reports completion, the agent executes autonomously. Attempting
-              $500 reverts with SPENDING_LIMIT_EXCEEDED. Revoking the session
-              shuts off authority instantly.
+              500 token units reverts with SPENDING_LIMIT_EXCEEDED. Revoking the
+              session shuts off authority instantly.
             </p>
             <div style={{ marginTop: "16px" }}>
               <Link href="/app/agent" className="landing-button dark">
@@ -257,8 +293,8 @@ export default function Landing() {
           </div>
 
           <div className="landing-scenario">
-            <p className="eyebrow">DEMO SPECIFICATION · MONAD TESTNET</p>
-            <h3>Active Session Policy</h3>
+            <p className="eyebrow">EXAMPLE POLICY · NOT LIVE ACCOUNT DATA</p>
+            <h3>Example Session Policy</h3>
             <dl>
               <div>
                 <dt>Agent Identity</dt>
@@ -266,11 +302,11 @@ export default function Landing() {
               </div>
               <div>
                 <dt>Session Budget Ceiling</dt>
-                <dd>$50.00 CTT Tokens</dd>
+                <dd>50 CTT token units</dd>
               </div>
               <div>
                 <dt>Requested Payout</dt>
-                <dd>$30.00 CTT Tokens</dd>
+                <dd>30 CTT token units</dd>
               </div>
               <div>
                 <dt>Approved Recipient</dt>
@@ -398,7 +434,7 @@ export default function Landing() {
               [
                 "□",
                 "Verifiable Transaction Evidence",
-                "Every execution, rejection, and policy update emits events indexed by Envio and viewable directly on the Monad testnet explorer.",
+                "Successful executions and policy updates emit events indexed by Envio. Reverted transactions retain no logs: rejected attempts are shown through verified failed receipts, with reasons identified separately by pre-submission simulation.",
               ],
             ].map(([icon, title, text]) => (
               <article key={title}>

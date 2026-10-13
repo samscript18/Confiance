@@ -63,7 +63,11 @@ export async function runAttack(
       abi: erc20Abi,
       functionName: "decimals",
     });
-    const amount = parseExactAmount(attacks[mode].amount, decimals);
+    const requestedAmount =
+      mode === "attack-condition" ? env.PAYMENT_AMOUNT : attacks[mode].amount;
+    if (!requestedAmount)
+      throw new Error("Configure the payroll payment amount first.");
+    const amount = parseExactAmount(requestedAmount, decimals);
     const args = [recipient, asset, amount, nonce, session.generation] as const;
     let rejection: ReturnType<typeof contractError> | undefined;
     try {
@@ -127,7 +131,7 @@ export async function runAttack(
       account,
       recipient,
       asset,
-      amount: attacks[mode].amount,
+      amount: requestedAmount,
       reason: rejection.code,
       reasonSource: "pre-submission onchain simulation; receipt proves revert",
       explorer: `${targetChain.blockExplorers.default.url}/tx/${hash}`,

@@ -1,9 +1,12 @@
 import type { Feedback } from "./feedback.js";
-export function cleanverseFailure(reason: unknown): Feedback {
+export function cleanverseFailure(
+  reason: unknown,
+  reference?: unknown,
+): Feedback {
   const messages: Record<string, [string, string]> = {
     PROVIDER_HTTP_FORBIDDEN: [
       "Cleanverse blocked this request",
-      "Cleanverse returned an access-denied response before its API could confirm registration. Status-query access does not establish access to the registration endpoint. Ask Cleanverse to check this sandbox app’s registration access and outbound-IP allowlist.",
+      "Cleanverse rejected the registration request without a usable explanation. Registration is not confirmed. Share the request reference with Cleanverse so they can investigate this specific attempt.",
     ],
     PROVIDER_RESPONSE_INVALID: [
       "Cleanverse returned an unexpected response",
@@ -57,5 +60,17 @@ export function cleanverseFailure(reason: unknown): Feedback {
           "Cleanverse rejected registration",
           "Cleanverse rejected the request without a recognized explanation. No successful registration is confirmed. The response reference has been saved for investigation.",
         ];
-  return { title, message, tone: "error" };
+  return {
+    title,
+    message,
+    tone: "error",
+    ...(typeof reference === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      reference,
+    )
+      ? {
+          nextStep: `For Cleanverse support, quote this request reference: ${reference}.`,
+        }
+      : {}),
+  };
 }

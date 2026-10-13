@@ -7,7 +7,11 @@ Confiance is an onchain execution firewall that lets AI agents act autonomously 
 **Working Monad testnet MVP:** a real Gemini agent has independently paid a
 contractor through its own Privy signer after Chainlink CRE verified a real GitHub
 merge. Confiance enforced the owner's 50 CTT session and rejected over-limit,
-replayed and revoked-key attempts. The latest payment ran on the Render worker.
+replayed and revoked-key attempts. The live-domain owner has now approved a
+Cleanverse session and the real agent has paid **0.05 aUSDC** through the deployed
+CVI adapter. [Verify the payment](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+block **70692069**. The earlier CTT payment ran unattended on Render; the aUSDC
+runtime run used hosted configuration from the engineering workstation.
 
 [Open the product](https://confiance-eta.vercel.app) ·
 [Evaluator guide](docs/JUDGE_GUIDE.md) ·
@@ -56,7 +60,8 @@ flowchart LR
 **Intelligence requests. Authority validates. Monad settles.**
 
 Public preview: **https://confiance-eta.vercel.app**.
-Owner console for this preview: **http://localhost:3050** (existing localhost passkey).
+Owner controls use the passkey established on the live Vercel domain. The original
+localhost account and its historical proofs remain separate.
 The Render-hosted Gemini worker paid another real 30 CTT after PR #2 was merged and
 the task-discovery CRE workflow verified it. MongoDB stores tasks, monitoring,
 execution intents and receipts. Task setup and Start/Pause monitoring work in the
@@ -68,8 +73,8 @@ its session, CRE verified the merged GitHub PR, and Vertex Gemini requested a
 Confiance recorded 30 spent of a 50-token budget and rejected a 500-token attempt.
 ERC-8004 identity 2210 is minted and Envio indexing is live.
 The same Privy key also failed after owner revocation, and reused nonce execution
-reverted. The complete compliance requirement still needs Cleanverse
-enrollment/issuance and compliant-transfer proof.
+reverted. Cleanverse registration, both CVIs and a real 0.05 aUSDC agent payment
+are now confirmed; a live CVI-ineligible rejection still needs proof.
 Verified addresses and receipts are in [DEPLOYMENTS.md](docs/DEPLOYMENTS.md), with
 current blockers in [LIVE_PROGRESS.md](docs/LIVE_PROGRESS.md).
 
@@ -96,7 +101,9 @@ The local test token is **CTT, not USD, a stablecoin, or a Cleanverse A-Token**.
 Only test fixtures use mock compliance or reporting. No final UI consumes fixtures.
 Real owner policy approval, provider signing, registry minting, CRE delivery and
 autonomous payment are now verified. The official Cleanverse validator adapter is
-tested but undeployed; Confiance enrollment and compliant settlement remain unproven.
+deployed and its live eligibility checks pass. Registration, both CVIs and
+0.1 test aUSDC funding and a 0.05 aUSDC autonomous payment are verified. See [Cleanverse proof and
+remaining steps](docs/CLEANVERSE_NEXT_STEPS.md).
 
 ## Run locally
 
@@ -152,15 +159,15 @@ required before a tool reports execution.
 
 ## Integrations and limitations
 
-| Integration   | Status                                                                                                                                  |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Monad         | Real account deployment, two autonomous payments, limit/replay/revocation receipts verified                                             |
-| Privy         | Real separate agent wallet signs payments; SDK 0.35.0                                                                                   |
-| Mera          | Original passkey owner signed setup, policy and revocation; live-domain owner deployed its new account, with fresh policy setup pending |
-| ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                                             |
-| Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                                           |
-| Cleanverse    | Official validator adapter tested; registration HTTP 403, enrollment/issuance and compliant transfer remain blocked                     |
-| Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                                             |
+| Integration   | Status                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Monad         | Real account deployment, two autonomous payments, limit/replay/revocation receipts verified                                                |
+| Privy         | Real separate agent wallet signs payments; SDK 0.35.0                                                                                      |
+| Mera          | Original passkey owner signed setup, policy and revocation; live-domain owner approved its compliant session and the agent paid 0.05 aUSDC |
+| ERC-8004      | Real agent identity 2210 minted and wallet binding verified                                                                                |
+| Chainlink CRE | Real PR #1 and task-discovered PR #2 reports verified onchain                                                                              |
+| Cleanverse    | Registration, treasury/contractor CVIs, adapter and 0.1 aUSDC funding verified; 0.05 aUSDC autonomous transfer confirmed at block 70692069 |
+| Envio         | Hosted HyperSync indexer verified against both actual 30 CTT payment events                                                                |
 
 Privy gives the agent a signer. **Confiance gives that signer bounded authority.**
 Mera belongs to the human owner and will not supply the agent key. Chainlink
@@ -185,3 +192,23 @@ Start with the [evaluator guide](docs/JUDGE_GUIDE.md) for the evidence and sourc
 - [Deployment status](docs/DEPLOYMENTS.md)
 - [Validation results](docs/VALIDATION.md)
 - [Inspection and implementation plan](docs/IMPLEMENTATION_PLAN.md)
+
+## Cleanverse payment update — 2026-10-13
+
+The live-domain account has now paid **0.05 test aUSDC** through the real Gemini
+agent and separate Privy signer, without an owner payment signature.
+[Verified transaction](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+block **70692069**. Registration, both CVIs, adapter deployment and funding are
+verified. [Independent receipt/event audit](docs/research/cleanverse-payment.json).
+Current negative CVI evidence is simulation-only; a live rejection remains a separate unfinished check.
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](docs/research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

@@ -42,6 +42,13 @@ export function Hero3DCard() {
       onMouseLeave={handleMouseLeave}
       className="hero-3d-wrap"
     >
+      <div className="illustration-notice">
+        <strong>Interactive illustration · simulated activity</strong>
+        <span>
+          Example identities, amounts and activity below are not live account
+          data. The simulator submits no transaction.
+        </span>
+      </div>
       <div
         className="hero-3d-card"
         style={{
@@ -231,7 +238,7 @@ export function Hero3DCard() {
                   color: "var(--foreground)",
                 }}
               >
-                Firewall Security Feed
+                Example Security Feed
               </span>
               <span
                 style={{
@@ -241,7 +248,7 @@ export function Hero3DCard() {
                   letterSpacing: "0.16em",
                 }}
               >
-                LIVE
+                SIMULATION
               </span>
             </div>
 
@@ -284,7 +291,7 @@ export function Hero3DCard() {
                     display: "block",
                   }}
                 >
-                  Payroll Agent → Paid David $30.00 CTT
+                  Example: Payroll Agent → Paid David 30 CTT
                 </span>
                 <div
                   style={{
@@ -717,7 +724,7 @@ export function Hero3DCard() {
                       }}
                     >
                       {simulatedExecution
-                        ? "✓ Payment $30 Confirmed on Monad Testnet"
+                        ? "✓ Simulation complete — no transaction submitted"
                         : "Click to simulate autonomous agent execution"}
                     </p>
                   </div>
@@ -728,7 +735,7 @@ export function Hero3DCard() {
                     }}
                     className="sim-button"
                   >
-                    {simulatedExecution ? "Executed!" : "Simulate Payment"}
+                    {simulatedExecution ? "Simulated!" : "Simulate Payment"}
                     <svg
                       width="14"
                       height="14"

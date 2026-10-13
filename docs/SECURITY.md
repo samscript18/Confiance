@@ -102,18 +102,40 @@ that endpoint nor public indexer data can change authorization.
 
 ## Verified defenses and assurance limits
 
-| Boundary          | Implementation                                         | Evidence                                               |
-| ----------------- | ------------------------------------------------------ | ------------------------------------------------------ |
-| Owner-only policy | Immutable owner and owner-only mutations               | Foundry tests and owner-signed session receipts        |
-| Bounded agent     | Asset, exact recipient, cumulative spending, expiry    | 30 CTT success and real 500 CTT revert                 |
-| Revocation        | Session status checked per execution                   | Same Privy key rejected after owner revocation         |
-| Replay            | Lifetime nonce and policy generation                   | Reused-nonce revert and unit/fuzz tests                |
-| Milestone         | Authorized forwarder/workflow and domain-bound reports | Two real CRE ConditionVerified receipts                |
-| Duplicate task    | Durable intents, Privy idempotency, shared Mongo lease | Concurrent database tests and worker already-paid stop |
-| UI access         | Owner-authenticated state reads and sign-out lock      | Browser/API authentication regression suite            |
-| Compliance        | Official adapter fails closed                          | Adapter tests only; live Cleanverse settlement blocked |
+| Boundary          | Implementation                                         | Evidence                                                                |
+| ----------------- | ------------------------------------------------------ | ----------------------------------------------------------------------- |
+| Owner-only policy | Immutable owner and owner-only mutations               | Foundry tests and owner-signed session receipts                         |
+| Bounded agent     | Asset, exact recipient, cumulative spending, expiry    | 30 CTT success and real 500 CTT revert                                  |
+| Revocation        | Session status checked per execution                   | Same Privy key rejected after owner revocation                          |
+| Replay            | Lifetime nonce and policy generation                   | Reused-nonce revert and unit/fuzz tests                                 |
+| Milestone         | Authorized forwarder/workflow and domain-bound reports | Two real CRE ConditionVerified receipts                                 |
+| Duplicate task    | Durable intents, Privy idempotency, shared Mongo lease | Concurrent database tests and worker already-paid stop                  |
+| UI access         | Owner-authenticated state reads and sign-out lock      | Browser/API authentication regression suite                             |
+| Compliance        | Official adapter fails closed                          | Real adapter, both CVIs, 0.05 aUSDC settlement; CVI-negative simulation |
 
 Tests and testnet receipts establish specific demonstrated properties; they do
 not constitute an independent security audit or a guarantee against all attacks.
 The owner remains a trusted authority. Operator compromise can use the agent's
 remaining permission, but cannot enlarge it without the owner's signature.
+
+## Cleanverse session: observed execution and limit rejection
+
+On 2026-10-13 the live owner approved the aUSDC policy with the deployed CVI
+adapter. The separate Privy agent [paid 0.05 aUSDC](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc) at block 70692069.
+The same agent's [500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353) reverted at block 70693302
+under the 0.1 total limit. Simulation identifies the limit error; the receipt
+proves the revert. These are testnet observations, not a third-party audit.
+
+A fresh unissued address fails the adapter check and token-transfer simulation.
+A mined CVI-ineligible rejection remains unfinished; earlier CTT revocation receipts are kept separately.
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

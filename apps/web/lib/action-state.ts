@@ -1,4 +1,5 @@
 import { zeroHash } from "viem";
+import { parseExactAmount } from "../../../agent/tools/amount.js";
 import type { DashboardState } from "./state.js";
 
 export interface ActionState {
@@ -54,6 +55,15 @@ export function sessionActions(
     mismatch,
   ];
   const active = !live && "This test requires an active, unexpired session.";
+  let conditionAmountReady = false;
+  try {
+    const decimals = state.decimals ?? 18;
+    conditionAmountReady =
+      parseExactAmount(state.taskAmount, decimals) <=
+      parseExactAmount(session?.remaining ?? "0", decimals);
+  } catch {
+    // Invalid or unavailable amounts cannot advertise a ready diagnostic.
+  }
   return {
     create: action(
       live
@@ -117,8 +127,8 @@ export function sessionActions(
         "The milestone is already verified; this test is no longer applicable.",
       session?.condition === zeroHash &&
         "This session has no required milestone.",
-      Number(session?.remaining ?? 0) < 30 &&
-        "This test needs at least 30 tokens of remaining authority.",
+      !conditionAmountReady &&
+        "This test needs a valid configured payment within the remaining allowance.",
     ),
     recipient: action(
       "Attempt wrong recipient",

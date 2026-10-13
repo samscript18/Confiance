@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-13",
+  "chainId": 10143,
+  "account": "0xdE4dFD84ED78c4c65d7670e22BE1e002403f057f",
+  "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "policy": "0x36489bE45fa84f70a0c2BDB11D824Be608CB12Dd",
+  "decimals": 6,
+  "simulatedAmount": "1",
+  "checks": {
+    "accountRegistered": true,
+    "treasuryEligible": false,
+    "recipientEligible": false,
+    "balanceRaw": "0",
+    "transferPolicyPermitsOneUnit": {
+      "available": false,
+      "reason": "The contract function \"canTransfer\" reverted with the following signature:\n0xa6725971"
+    }
+  },
+  "limitation": "Read-only checks; no mint, issuance, transfer, adapter deployment or compliance bypass attempted.",
+  "directTransferSimulation": {
+    "success": false,
+    "reason": "The contract function \"transfer\" reverted with the following signature:\n0xa6725971"
+  },
+  "historical": true,
+  "context": "Read-only snapshot before CVI issuance and funding; superseded by cleanverse-current-eligibility.json and cleanverse-payment.json."
+}

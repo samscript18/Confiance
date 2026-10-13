@@ -7,7 +7,7 @@ Verified 2026-10-12 against the current source and pinned dependencies.
 | Check                                       | Result                                                                                                                                                                                                   |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Foundry contracts                           | PASS: 59 tests, 0 failed, 0 skipped; includes 512 fuzz runs                                                                                                                                              |
-| TypeScript unit tests                       | PASS: 39 tests                                                                                                                                                                                           |
+| TypeScript unit tests                       | PASS: 46 tests                                                                                                                                                                                           |
 | Strict TypeScript and Next production build | PASS                                                                                                                                                                                                     |
 | Formatting lint                             | PASS                                                                                                                                                                                                     |
 | Production-server browser tests             | PASS: 19 tests; five signed-out pages at desktop/tablet/mobile sizes, menu controls, private-state withholding and authentication boundaries                                                             |
@@ -19,7 +19,7 @@ Verified 2026-10-12 against the current source and pinned dependencies.
 | 500 CTT request                             | PASS: same Privy signer transaction reverted; simulation identified SESSION_SPENDING_LIMIT                                                                                                               |
 | Reused nonce                                | PASS: same Privy signer transaction reverted, block 70423647; simulation identified INVALID_NONCE                                                                                                        |
 | Live same-key attempt after revocation      | PASS: same Privy key reverted at block 70425005; session inactive and balances unchanged                                                                                                                 |
-| Cleanverse compliant transfer               | Pending Confiance/recipient enrollment and issuance; adapter fixture tests are not live compliance proof                                                                                                 |
+| Cleanverse compliant transfer               | PASS: real 0.05 aUSDC payment at block 70692069; exact execution and token events independently verified                                                                                                 |
 
 The primary hosted evidence is [hosted-payment.json](research/hosted-payment.json),
 matching block **70465941**. [DEPLOYMENTS.md](DEPLOYMENTS.md) is the canonical
@@ -31,7 +31,8 @@ PR #2 payment's timeline.
 The live-domain owner subsequently deployed account
 `0xde4dfd84ed78c4c65d7670e22be1e002403f057f` at block **70494094**.
 Its deployment is verified and hosted services are connected; its CRE reporter approval is verified onchain. Funding,
-session approval and its first autonomous payment remain pending proof.
+session approval and the autonomous 0.05 aUSDC payment are now verified at
+block 70692069.
 
 Browser fixtures use an unfunded authentication key and unconfigured application;
 they cannot submit payments. Live proofs come from separate actual provider/chain
@@ -93,3 +94,31 @@ termination. SDK declaration repairs change types only and are documented in
 [INTEGRATIONS.md](INTEGRATIONS.md).
 
 Follow [SETUP.md](SETUP.md) to provision services, deploy and run the real demo.
+
+## Cleanverse live verification — 2026-10-13
+
+The owner-approved compliant session and real Gemini/Privy payment succeeded:
+**0.05 aUSDC**, block **70692069**. The independent audit matched the sender,
+exact execution calldata, `PaymentExecuted`, token `Transfer` and updated spent
+amount. [Receipt and audit](research/cleanverse-payment.json). Both recipient and
+treasury now hold 0.05 aUSDC. Real CVI-negative rejection remains simulation-only
+evidence; no such rejection transaction is claimed.
+
+## aUSDC spending-limit proof
+
+[500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**, reverted through the same
+Privy agent under the 0.1 aUSDC session. Pre-submission simulation identified
+`SESSION_SPENDING_LIMIT`. The real reverted receipt, exact sender/target/calldata
+and absent logs were checked. This is a deterministic diagnostic, not LLM
+reasoning. [Recorded proof](research/cleanverse-limit-rejection.json).
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

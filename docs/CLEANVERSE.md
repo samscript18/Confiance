@@ -1,3 +1,5 @@
+> Current status (2026-10-13): Registration, both CVIs and an autonomous 0.05 aUSDC payment are confirmed. See [current evidence](CLEANVERSE_NEXT_STEPS.md). The investigation entries below are historical; their earlier failures do not describe current registration status. A mined CVI-ineligible rejection remains unproven; its negative evidence is simulation-only.
+
 # Cleanverse investigation — 12 October 2026
 
 The supplied invitation code opened the official developer documentation. The

@@ -148,3 +148,26 @@ test("owner authentication verifies a Mera signature and consumes the challenge"
     session.end();
   }
 });
+
+test("landing examples cannot be mistaken for submitted transactions", async ({
+  page,
+}) => {
+  const submissions: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() === "POST") submissions.push(request.url());
+  });
+  await page.goto("/");
+  await expect(
+    page.getByText("Interactive illustration · simulated activity"),
+  ).toBeVisible();
+  const proof = page.getByRole("link", { name: "Verify real payment" });
+  await expect(proof).toHaveAttribute(
+    "href",
+    "https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc",
+  );
+  await page.getByRole("button", { name: "Simulate Payment" }).click();
+  await expect(
+    page.getByText("✓ Simulation complete — no transaction submitted"),
+  ).toBeVisible();
+  expect(submissions).toEqual([]);
+});

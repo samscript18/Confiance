@@ -1,0 +1,28 @@
+{
+  "type": "deterministic security diagnostic; not LLM reasoning",
+  "status": "reverted",
+  "hash": "0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274",
+  "block": "70693748",
+  "chainId": 10143,
+  "sender": "0x9a62195bb2c8eceaaf306ec7ee87f7e4994ba11d",
+  "account": "0xdE4dFD84ED78c4c65d7670e22BE1e002403f057f",
+  "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "amount": "30",
+  "reason": "SESSION_REVOKED",
+  "reasonSource": "pre-submission onchain simulation; receipt proves revert",
+  "explorer": "https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274",
+  "ownerRevocation": {
+    "hash": "0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c",
+    "block": "70693560",
+    "sender": "0xaf00668625e038f43c302283aecd6ff90265e42f",
+    "receiptStatus": "success",
+    "indexedByEnvio": true
+  },
+  "afterRetry": {
+    "active": false,
+    "generation": "5",
+    "spentRaw": "50000",
+    "treasuryBalanceRaw": "50000"
+  }
+}
