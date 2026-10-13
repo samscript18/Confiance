@@ -30,6 +30,24 @@ import type { DashboardState } from "../../../lib/state";
 import { parseReporterSettings } from "../../../../../packages/shared/reporter";
 import { readCleanversePolicy } from "../../../../../packages/shared/cleanverse-policy";
 export const runtime = "nodejs";
+function logReadFailure(event: string, error: unknown) {
+  const causes: { name: string; status?: number; code?: number }[] = [];
+  let current = error;
+  for (let i = 0; i < 8 && current instanceof Error; i++) {
+    causes.push({
+      name: current.name.slice(0, 80),
+      ...("status" in current && typeof current.status === "number"
+        ? { status: current.status }
+        : {}),
+      ...("code" in current && typeof current.code === "number"
+        ? { code: current.code }
+        : {}),
+    });
+    current = current.cause;
+  }
+  // Error messages, URLs, request bodies and credentials are deliberately excluded.
+  console.warn(JSON.stringify({ event, causes }));
+}
 export async function GET(request: Request) {
   const relay = await relayBackend(request);
   if (relay) return relay;
@@ -351,7 +369,8 @@ export async function GET(request: Request) {
               : state.cleanverseSetup.balance === "0"
                 ? "Eligibility verified; aUSDC funding still required"
                 : "Eligibility and funding verified; compliant settlement still needs proof";
-      } catch {
+      } catch (error) {
+        logReadFailure("cleanverse_setup_read_failed", error);
         state.cleanverseSetupError =
           "Cleanverse setup could not be verified onchain. Refresh before selecting this policy.";
       }
@@ -602,7 +621,8 @@ export async function GET(request: Request) {
           : 0,
     );
     return publicResponse(state);
-  } catch {
+  } catch (error) {
+    logReadFailure("account_state_read_failed", error);
     return publicResponse({
       ...state,
       error:

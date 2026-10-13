@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { appPages, isAppSection } from "../lib/navigation";
@@ -101,6 +101,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("hashchange", revealTests);
   }, [section]);
   const [state, setState] = useState(empty);
+  const refreshInFlight = useRef(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [navigationOpen, setNavigationOpen] = useState(false);
   useEffect(() => setNavigationOpen(false), [pathname]);
   const [owner, setOwner] = useState<Address>();
@@ -139,6 +141,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     { kind: string; content: string; name?: string }[]
   >([]);
   const refresh = useCallback(async () => {
+    if (refreshInFlight.current) return;
+    refreshInFlight.current = true;
+    setRefreshing(true);
     try {
       const response = await fetch("/api/state", { cache: "no-store" });
       if (!response.ok) throw new Error("State unavailable.");
@@ -149,6 +154,9 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       setError(
         "We couldn’t load the latest account information. Check your connection and try again.",
       );
+    } finally {
+      refreshInFlight.current = false;
+      setRefreshing(false);
     }
   }, []);
   useEffect(() => {
@@ -1656,8 +1664,22 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                           </p>
                         </div>
                       )}
-                      {state.cleanverseSetupError && (
-                        <p className="footnote">{state.cleanverseSetupError}</p>
+                      {!state.cleanverseSetup && (
+                        <div className="policy-task-preset">
+                          <h3>Check Cleanverse payment setup</h3>
+                          <p>
+                            {state.cleanverseSetupError ||
+                              "Load the current account and contractor eligibility before choosing a Cleanverse policy."}
+                          </p>
+                          <ActionButton
+                            pending={refreshing}
+                            pendingLabel="Checking account…"
+                            disabled={disabled || refreshing}
+                            onClick={() => void refresh()}
+                          >
+                            Check account again
+                          </ActionButton>
+                        </div>
                       )}
                       <label>
                         Allowed token address
