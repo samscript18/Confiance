@@ -1,5 +1,21 @@
 # Live setup progress
 
+## Current status — 2026-10-13
+
+This update supersedes the dated historical entries below. Owner controls now
+use the live-domain Mera passkey. Confiance is registered with Cleanverse, both
+addresses have CVIs, and the read-only adapter is deployed. The real Gemini
+agent [paid 0.05 aUSDC](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc) at block **70692069** through its separate
+Privy signer. No owner payment signature was used. Envio indexes the receipt.
+The same signer [failed a 500 aUSDC attack](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353) at block **70693302**.
+Treasury and contractor each hold 0.05 aUSDC; session spent is 0.05 of 0.1.
+
+CVI-negative checks are simulation-only; the fresh live rejection and aUSDC
+revocation rehearsal remain outstanding. The larger faucet balance and separate
+5 USDC deposit conversion remain operational limitations.
+
+## Historical progress log
+
 Verified 2026-10-12. A real autonomous Monad payment is now confirmed.
 
 ## Current status

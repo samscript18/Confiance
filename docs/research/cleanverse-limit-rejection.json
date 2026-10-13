@@ -1,0 +1,15 @@
+{
+  "type": "deterministic security diagnostic; not LLM reasoning",
+  "status": "reverted",
+  "hash": "0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353",
+  "block": "70693302",
+  "chainId": 10143,
+  "sender": "0x9a62195bb2c8eceaaf306ec7ee87f7e4994ba11d",
+  "account": "0xdE4dFD84ED78c4c65d7670e22BE1e002403f057f",
+  "recipient": "0x421Ab98aeb38cB022fE80d5bd1da7ea404BDD90b",
+  "asset": "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+  "amount": "500",
+  "reason": "SESSION_SPENDING_LIMIT",
+  "reasonSource": "pre-submission onchain simulation; receipt proves revert",
+  "explorer": "https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353"
+}

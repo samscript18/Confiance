@@ -159,3 +159,11 @@ using the live-domain account, generation 5 and nonce 1. Exact calldata,
 Confiance execution event and token Transfer event were independently verified.
 No owner signed this payment. Treasury balance, recipient balance and spent are
 each 0.05 aUSDC. See [full evidence](research/cleanverse-payment.json).
+
+## aUSDC spending-limit proof
+
+[500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**, reverted through the same
+Privy agent under the 0.1 aUSDC session. Pre-submission simulation identified
+`SESSION_SPENDING_LIMIT`. The real reverted receipt, exact sender/target/calldata
+and absent logs were checked. This is a deterministic diagnostic, not LLM
+reasoning. [Recorded proof](research/cleanverse-limit-rejection.json).

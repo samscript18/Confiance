@@ -7,7 +7,11 @@ Confiance is an onchain execution firewall that lets AI agents act autonomously 
 **Working Monad testnet MVP:** a real Gemini agent has independently paid a
 contractor through its own Privy signer after Chainlink CRE verified a real GitHub
 merge. Confiance enforced the owner's 50 CTT session and rejected over-limit,
-replayed and revoked-key attempts. The latest payment ran on the Render worker.
+replayed and revoked-key attempts. The live-domain owner has now approved a
+Cleanverse session and the real agent has paid **0.05 aUSDC** through the deployed
+CVI adapter. [Verify the payment](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc),
+block **70692069**. The earlier CTT payment ran unattended on Render; the aUSDC
+runtime run used hosted configuration from the engineering workstation.
 
 [Open the product](https://confiance-eta.vercel.app) ·
 [Evaluator guide](docs/JUDGE_GUIDE.md) ·
@@ -56,7 +60,8 @@ flowchart LR
 **Intelligence requests. Authority validates. Monad settles.**
 
 Public preview: **https://confiance-eta.vercel.app**.
-Owner console for this preview: **http://localhost:3050** (existing localhost passkey).
+Owner controls use the passkey established on the live Vercel domain. The original
+localhost account and its historical proofs remain separate.
 The Render-hosted Gemini worker paid another real 30 CTT after PR #2 was merged and
 the task-discovery CRE workflow verified it. MongoDB stores tasks, monitoring,
 execution intents and receipts. Task setup and Start/Pause monitoring work in the

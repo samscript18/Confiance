@@ -103,3 +103,11 @@ exact execution calldata, `PaymentExecuted`, token `Transfer` and updated spent
 amount. [Receipt and audit](research/cleanverse-payment.json). Both recipient and
 treasury now hold 0.05 aUSDC. Real CVI-negative rejection remains simulation-only
 evidence; no such rejection transaction is claimed.
+
+## aUSDC spending-limit proof
+
+[500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**, reverted through the same
+Privy agent under the 0.1 aUSDC session. Pre-submission simulation identified
+`SESSION_SPENDING_LIMIT`. The real reverted receipt, exact sender/target/calldata
+and absent logs were checked. This is a deterministic diagnostic, not LLM
+reasoning. [Recorded proof](research/cleanverse-limit-rejection.json).

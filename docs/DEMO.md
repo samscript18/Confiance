@@ -2,9 +2,24 @@
 
 ## Three-minute presentation
 
-This demo has two real completed rehearsals. Use their recorded receipts when
+The earlier CTT demo has two real completed rehearsals. Use their recorded receipts when
 reviewing the existing proof; use a new actual PR for a fresh autonomous payment.
 Do not replay a paid milestone or imply historical receipts are new transactions.
+
+## Lead with the Cleanverse proof
+
+Show [the actual 0.05 aUSDC payment](https://testnet.monadexplorer.com/tx/0x2bfdeac44d85e01c8303bdc181f8231b92332b7d90b4683aef0f32569b1829fc), block **70692069**, and its
+[receipt/event audit](research/cleanverse-payment.json). The owner approved the
+0.1 budget, 24-hour session, contractor, CRE milestone and CVI adapter. The real
+Gemini agent requested payment; its Privy signer executed it without an owner
+payment signature. Envio indexes the same transaction. The contractor received
+0.05 aUSDC and the treasury has 0.05 remaining.
+
+Next show [the 500 aUSDC rejection](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**. Label it
+a deterministic attack diagnostic. Current CVI-negative evidence is a live read
+and reverted simulation; do not present it as a mined rejection transaction.
+Use the earlier CTT receipts below for the already-completed same-key revocation
+proof until the fresh aUSDC revocation rehearsal is recorded.
 
 ## Which receipts to present
 

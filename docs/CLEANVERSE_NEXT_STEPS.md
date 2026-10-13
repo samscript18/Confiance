@@ -88,3 +88,11 @@ larger demo. No minter role or compliance bypass was requested.
 Compliant settlement is now proven. A real CVI-ineligible rejected transaction
 and a fresh revocation rehearsal with aUSDC remain outstanding; current negative
 CVI evidence is read/simulation only. Larger funding remains limited.
+
+## aUSDC spending-limit proof
+
+[500 aUSDC request](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**, reverted through the same
+Privy agent under the 0.1 aUSDC session. Pre-submission simulation identified
+`SESSION_SPENDING_LIMIT`. The real reverted receipt, exact sender/target/calldata
+and absent logs were checked. This is a deterministic diagnostic, not LLM
+reasoning. [Recorded proof](research/cleanverse-limit-rejection.json).
