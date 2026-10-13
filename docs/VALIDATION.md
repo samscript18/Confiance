@@ -1,16 +1,16 @@
 # Validation results
 
-Verified 2026-10-12 against the current source and pinned dependencies.
+Automated application checks updated 2026-10-13 against the current source and pinned dependencies. Blockchain rows refer to their individually recorded receipts.
 
 ## Current results
 
 | Check                                       | Result                                                                                                                                                                                                   |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Foundry contracts                           | PASS: 59 tests, 0 failed, 0 skipped; includes 512 fuzz runs                                                                                                                                              |
-| TypeScript unit tests                       | PASS: 46 tests                                                                                                                                                                                           |
+| TypeScript unit tests                       | PASS: 47 tests                                                                                                                                                                                           |
 | Strict TypeScript and Next production build | PASS                                                                                                                                                                                                     |
 | Formatting lint                             | PASS                                                                                                                                                                                                     |
-| Production-server browser tests             | PASS: 19 tests; five signed-out pages at desktop/tablet/mobile sizes, menu controls, private-state withholding and authentication boundaries                                                             |
+| Production-server browser tests             | PASS: 20 tests; five signed-out pages at desktop/tablet/mobile sizes, menu controls, private-state withholding, authentication boundaries and a simulation that submits no requests                      |
 | Desktop/mobile visual inspection            | PASS: public landing and app screenshots inspected                                                                                                                                                       |
 | CRE WASM compilation                        | PASS; updated deployed workflow uses 500,000 report gas                                                                                                                                                  |
 | Latest hosted CRE delivery                  | PASS: PR #2 ConditionVerified at block 70465820; [receipt](https://testnet.monadexplorer.com/tx/0x237d5539133dc31be0c9278de41be2c0c883e8d480c0f506c04347dc867036ff)                                      |
