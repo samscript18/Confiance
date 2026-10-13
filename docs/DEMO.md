@@ -18,8 +18,8 @@ payment signature. Envio indexes the same transaction. The contractor received
 Next show [the 500 aUSDC rejection](https://testnet.monadexplorer.com/tx/0x7c7034399816faeee275945a19b538a366722a79bc392d5afcbb8792305a1353), block **70693302**. Label it
 a deterministic attack diagnostic. Current CVI-negative evidence is a live read
 and reverted simulation; do not present it as a mined rejection transaction.
-Use the earlier CTT receipts below for the already-completed same-key revocation
-proof until the fresh aUSDC revocation rehearsal is recorded.
+Use the aUSDC same-key revocation receipts below for the latest proof.
+Earlier CTT receipts remain historical evidence.
 
 ## Which receipts to present
 
@@ -164,3 +164,14 @@ the same LLM service. Test the boundaries uses the fixed Privy diagnostics.
 Configure DIAGNOSTIC_RECIPIENT for the wrong-address test. This test proves the
 owner-pinned recipient restriction, **not** A-Pass enforcement; the latter remains
 pending Cleanverse support and a real compliant asset transfer.
+
+## Same agent key after aUSDC session revocation
+
+The owner [revoked the current session](https://testnet.monadexplorer.com/tx/0x987ca54849ec33ef85602e1ac056695dd27b52ee2a56b4b2a90ea5a23f28255c) at block **70693560**.
+The same Privy agent then [retried 30 aUSDC](https://testnet.monadexplorer.com/tx/0xd10888163b2e1e0f7e23f79a505de45613722b0cb60c09940a0c0456b7ece274) at block **70693748**:
+the transaction reverted. Pre-submission simulation returned `SESSION_REVOKED`.
+The mined receipt and sender/target/calldata were checked. Session generation 5
+is inactive; spent and treasury balance remain **0.05 aUSDC**. No human signed
+the retry. [Paired receipt audit](research/cleanverse-revoked-rejection.json).
+
+**The key still exists. The authority does not.**

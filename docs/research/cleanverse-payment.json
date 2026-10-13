@@ -64,7 +64,7 @@
       }
     }
   ],
-  "limitation": "One compliant payment verified. Ineligible transfer rejection is currently simulation evidence; larger funding and live compliant revocation/rejection rehearsal remain separate work.",
+  "limitation": "One compliant payment, over-limit revert and same-key revocation retry verified. CVI-ineligible rejection remains simulation-only; larger faucet/deposit funding remains limited.",
   "envio": {
     "endpoint": "https://indexer.dev.hyperindex.xyz/a7c50be/v1/graphql",
     "paymentRequestedIndexed": true,
